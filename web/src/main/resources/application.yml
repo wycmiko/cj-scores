@@ -1,0 +1,65 @@
+# spring-boot-webapi moudule 通用配置
+# create 2018-03-22
+
+#active {profile}
+spring:
+  profiles:
+    active: @profileActive@
+  aop:
+    proxy-target-class: true
+  cache:
+    type: redis
+  http:
+    multipart:
+      maxFileSize: 20Mb
+      maxRequestSize: 20Mb
+
+
+mybatis:
+  mapper-locations: classpath*:mapping/*.xml
+  config-location: classpath:mybatis-config.xml
+
+#pagehelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+#请求处理的超时时间
+ribbon:
+  ReadTimeout: 120000
+ #请求连接的超时时间
+  ConnectTimeout: 60000
+
+endpoints:
+  enabled: false
+  metrics:
+    enabled: true
+    sensitive: false
+    path: /ep/metrics
+  info:
+    enabled: true
+    sensitive: false
+    path: /ep/info
+  heapdump:
+    enabled: true
+    sensitive: false
+    path: /ep/heapdump
+  trace:
+    enabled: true
+    sensitive: false
+    path: /ep/trace
+  health:
+    enabled: true
+    sensitive: false
+
+# JWT
+jwt:
+  header: Authorization
+  secret: cj-match|secret
+  expiration: 3600
+  tokenHead: "Bearer "
+
+cjmatch:
+  user-app-id: platform_app

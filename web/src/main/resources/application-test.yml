@@ -1,0 +1,110 @@
+# dev开发环境
+
+# mysql - local - url
+spring:
+  application:
+    name: match-api
+  datasource:
+          name: test
+          url: jdbc:mysql://${MYSQL}:${MYSQL_PORT}/cj_match?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&useSSL=false
+          username: ${MYSQL_USER}
+          password: ${MYSQL_PWD}
+          # 使用druid数据源
+          type: com.alibaba.druid.pool.DruidDataSource
+          driver-class-name: com.mysql.jdbc.Driver
+          filters: stat
+          maxActive: 20
+          initialSize: 1
+          maxWait: 60000
+          minIdle: 1
+          timeBetweenEvictionRunsMillis: 60000
+          minEvictableIdleTimeMillis: 300000
+          validationQuery: select 'x'
+          testWhileIdle: true
+          testOnBorrow: false
+          testOnReturn: false
+          poolPreparedStatements: true
+          maxOpenPreparedStatements: 20
+  cloud:
+      consul:
+        host: ${CONSUL}
+        port: ${CONSUL_PORT}
+        discovery:
+          register: false
+  redis:
+    host: ${REDIS}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PWD}
+    pool:
+      max-idle: 100
+      min-idle: 1
+      max-active: 1000
+      max-wait: -1
+    expire-time: 1200
+#  rabbitmq:
+#      host: ${MQ}
+#      port: ${MQ_PORT}
+#      username: ${MQ_USER}
+#      password: ${MQ_PWD}
+#      listener:
+#        simple:
+#          acknowledge-mode: manual
+#      publisher-confirms: true
+
+
+ucapi:
+    service-name: uc
+    app-id: platform_app
+    secret: 1ArLkQgVaWUYFPHv7NwzkpudzDFsfsaQ
+    pool-max-total: 50
+    pool-block-when-exhausted: true
+    pool-max-wait-millis: -1
+    pool-min-evictable-idle-time-millis: 600000
+    pool-max-idle: 10
+    pool-min-idle: 0
+
+seaweed:
+  ip: ${SEAWEED}
+  port: ${SEAWEED_PORT}
+
+wechat:
+  #  app-id: wxbea125c311c43dd2
+  app-id: ${APP_ID}
+  redirect-uri: http://demo.com
+  #  app-secret: 78717f140c4394ce13a345a0242ae3c7
+  app-secret: ${APP_SECRET}
+
+server:
+  port: 8001
+  compression:
+    enabled: true
+    min-response-size: 2048
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  tomcat:
+    uri-encoding: UTF-8
+
+#redis:
+#      cluster:
+#          nodes: 172.28.3.45:32878
+#          max-redirects: 6
+#      pool:
+#        max-idle: 20
+#        min-idle: 5
+#        max-wait: -1
+#        max-active: 30
+#        password: abc123
+#        so-timeout: 6000
+#        timeout: 6000
+#        max-attempts: 6
+#        host: 172.28.3.45
+#        port: 32878
+
+# cj-match config
+cjmatch:
+  vaild:
+    template: 429246
+    app-template: 425206
+    limit: 10
+    expires: 60
+
+
