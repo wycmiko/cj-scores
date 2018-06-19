@@ -28,7 +28,7 @@ public class Swagger2 extends WebMvcConfigurerAdapter {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("赛事平台API文档")
+                .title("购物平台API文档")
                 .description("赛事平台API文档 by tang")
                 .termsOfServiceUrl("http://未知/")
                 .version("1.0")
