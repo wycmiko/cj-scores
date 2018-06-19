@@ -74,7 +74,18 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>com.cj.shop</groupId>
+			<artifactId>ucapi</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>grpc-netty</artifactId>
+					<groupId>io.grpc</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

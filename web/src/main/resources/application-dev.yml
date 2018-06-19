@@ -4,13 +4,13 @@ spring:
   application:
     name: match-api
   datasource:
-#          name: dev
-#          url: jdbc:mysql://127.0.0.1:3306/cjmatch?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
-#          username: root
-#          password: root
-          url: jdbc:mysql://172.28.3.45:20010/cj_match?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
-          username: cj_weng
-          password: 123456
+          name: dev
+          url: jdbc:mysql://127.0.0.1:3306/cjmatch?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
+          username: root
+          password: root
+#          url: jdbc:mysql://172.28.3.45:20010/cj_match?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
+#          username: cj_weng
+#          password: 123456
 #          url: jdbc:mysql://47.100.222.71:3306/cj_match?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
 #          username: m_match
 #          password: YEMINHE2du0xYBna
@@ -83,44 +83,13 @@ server:
   tomcat:
     uri-encoding: UTF-8
 # uc-api module config
-#ucapi:
-#    service-name: uc
-#    app-id: platform_app
-#    secret: 1ArLkQgVaWUYFPHv7NwzkpudzDFsfsaQ
-#    pool-max-total: 50
-#    pool-block-when-exhausted: true
-#    pool-max-wait-millis: -1
-#    pool-min-evictable-idle-time-millis: 600000
-#    pool-max-idle: 10
-#    pool-min-idle: 0
-
-
-
-# cj-match config
-cjmatch:
-  vaild:
-    template: 429246
-    app-template: 425206
-    limit: 5
-    expires: 60
-
-# keycloak config
-#keycloak:
-#  realm: match-platform
-#  auth-server-url: http://localhost:8080/auth
-#  public-client: true
-#  ssl-required: none
-#  resource: match-app
-#  credentials:
-#    secret: 5ab301b3-5d9e-4bd6-9231-ceae1df97ba7
-#    use-resource-role-mappings: true
-#  securityConstraints[0]:
-#    authRoles[1]: user
-#    securityCollections[0]:
-#      name: user
-#      patterns[0]: /v1/match
-#  securityConstraints[1]:
-#    authRoles[0]: admin
-#    securityCollections[0]:
-#      name: admin
-#      patterns[0]: /v1/match/manage
+ucapi:
+    service-name: uc
+    app-id: platform_app
+    secret: 1ArLkQgVaWUYFPHv7NwzkpudzDFsfsaQ
+    pool-max-total: 50
+    pool-block-when-exhausted: true
+    pool-max-wait-millis: -1
+    pool-min-evictable-idle-time-millis: 600000
+    pool-max-idle: 10
+    pool-min-idle: 0
