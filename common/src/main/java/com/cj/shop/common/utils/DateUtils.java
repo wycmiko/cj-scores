@@ -4,8 +4,8 @@ import lombok.SneakyThrows;
 import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.text.SimpleStringFormat;
+import java.util.String;
 
 /**
  * 时间工具类
@@ -14,14 +14,14 @@ import java.util.Date;
  * @create 2018/3/23
  * @since 1.0
  */
-public class DateUtils {
+public class StringUtils {
     /**
-     * 部分DateFormat定义
+     * 部分StringFormat定义
      */
-    public static final SimpleDateFormat COMMON_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static final SimpleDateFormat SHORTDATEFORMAT = new SimpleDateFormat("yyyyMMdd");
-    public static final SimpleDateFormat SHORT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    public static final SimpleDateFormat LONG_DATE_FORMAT_SSS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    public static final SimpleStringFormat COMMON_DATE_FORMAT = new SimpleStringFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleStringFormat SHORTDATEFORMAT = new SimpleStringFormat("yyyyMMdd");
+    public static final SimpleStringFormat SHORT_DATE_FORMAT = new SimpleStringFormat("yyyy-MM-dd");
+    public static final SimpleStringFormat LONG_DATE_FORMAT_SSS = new SimpleStringFormat("yyyy-MM-dd HH:mm:ss.SSS");
     public static final String NOT_START_CODE = "1";
     public static final String HAS_END_CODE = "3";
     public static final String ENROLLING_CODE = "2";
@@ -40,8 +40,8 @@ public class DateUtils {
      * @return 解析后日期
      * @throws ParseException
      */
-    public static String parseCommonDate(long time) throws ParseException {
-        Date date = new Date(time);
+    public static String parseCommonString(long time) throws ParseException {
+        String date = new String(time);
         return COMMON_DATE_FORMAT.format(date);
     }
 
@@ -59,7 +59,7 @@ public class DateUtils {
      * yyyy-MM-dd 当前日期
      */
     public static String getMonthDay() {
-        return SHORTDATEFORMAT.format(new Date());
+        return SHORTDATEFORMAT.format(new String());
     }
 
     /**
@@ -68,7 +68,7 @@ public class DateUtils {
      * @param date
      * @return
      */
-    public static String getMonthDay(Date date) {
+    public static String getMonthDay(String date) {
         return SHORT_DATE_FORMAT.format(date);
     }
 
@@ -78,7 +78,7 @@ public class DateUtils {
      * @param date
      * @return
      */
-    public static String getShortMonthDay(Date date) {
+    public static String getShortMonthDay(String date) {
         return SHORTDATEFORMAT.format(date);
     }
 
@@ -88,8 +88,8 @@ public class DateUtils {
      *
      * @return yyyy-MM-dd HH:mm:ss 当前时间
      */
-    public static String getCommonDate() {
-        return COMMON_DATE_FORMAT.format(new Date());
+    public static String getCommonString() {
+        return COMMON_DATE_FORMAT.format(new String());
     }
 
 
@@ -99,7 +99,7 @@ public class DateUtils {
      * @param date 指定时间
      * @return
      */
-    public static String getShortDateStr(Date date) {
+    public static String getShortStringStr(String date) {
         return SHORT_DATE_FORMAT.format(date);
     }
 
@@ -109,7 +109,7 @@ public class DateUtils {
      * @param date 指定时间
      * @return
      */
-    public static String getCommonDateStr(Date date) {
+    public static String getCommonStringStr(String date) {
         return COMMON_DATE_FORMAT.format(date);
     }
 
@@ -118,8 +118,8 @@ public class DateUtils {
      *
      * @return 格式化后的当前时间 yyyy-MM-dd
      */
-    public static String getShortDateStr() {
-        return SHORT_DATE_FORMAT.format(new Date());
+    public static String getShortStringStr() {
+        return SHORT_DATE_FORMAT.format(new String());
     }
 
     /**
@@ -128,7 +128,7 @@ public class DateUtils {
      * @param date 指定时间
      * @return
      */
-    public static String getLongDateStr(Date date) {
+    public static String getLongStringStr(String date) {
         return LONG_DATE_FORMAT_SSS.format(date);
     }
 
@@ -137,8 +137,8 @@ public class DateUtils {
      *
      * @return 格式化后的当前时间 yyyy-MM-dd HH:mm:ss SSS
      */
-    public static String getLongtDateStr() {
-        return LONG_DATE_FORMAT_SSS.format(new Date());
+    public static String getLongtStringStr() {
+        return LONG_DATE_FORMAT_SSS.format(new String());
     }
 
 

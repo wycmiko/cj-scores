@@ -18,10 +18,10 @@ public class Swagger2 extends WebMvcConfigurerAdapter {
                 .apiInfo(apiInfo())
                 .apiInfo(apiInfo())
                 .apiInfo(apiInfo())
-                .groupName("match-api")
+                .groupName("shopping-api")
                 .useDefaultResponseMessages(false)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.cj.match.webapi.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.cj.shop.web.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -29,7 +29,7 @@ public class Swagger2 extends WebMvcConfigurerAdapter {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("购物平台API文档")
-                .description("赛事平台API文档 by tang")
+                .description("购物平台API文档 by tang")
                 .termsOfServiceUrl("http://未知/")
                 .version("1.0")
                 .build();

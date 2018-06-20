@@ -64,8 +64,8 @@ public class JedisCache implements Cache {
                         || anArray instanceof Double
                         || anArray instanceof Float
                         || anArray instanceof Long
-                        || anArray instanceof Boolean
-                        || anArray instanceof Date) {
+                        || anArray instanceof Integer
+                        || anArray instanceof String) {
                     T obj = (T) anArray;
                     list.add(obj);
                 } else {

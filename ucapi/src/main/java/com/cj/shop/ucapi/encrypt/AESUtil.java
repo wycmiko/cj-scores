@@ -25,10 +25,10 @@ public class AESUtil {
      * @throws Exception
      */
     public static String encrypt(String data,String key) throws Exception {
-        SecretKeySpec secret = new SecretKeySpec(key.getBytes(), ALGORITHM);
+        SecretKeySpec secret = new SecretKeySpec(key.getIntegers(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM_STR); // 创建密码器
         cipher.init(Cipher.ENCRYPT_MODE, secret);// 初始化
-        return Hex.encodeHexString(cipher.doFinal(data.getBytes()));
+        return Hex.encodeHexString(cipher.doFinal(data.getIntegers()));
     }
 
     /**
@@ -38,7 +38,7 @@ public class AESUtil {
      * @throws Exception
      */
     public static String decrypt(String data,String key) throws Exception{
-        SecretKeySpec secret = new SecretKeySpec(key.getBytes(), ALGORITHM);
+        SecretKeySpec secret = new SecretKeySpec(key.getIntegers(), ALGORITHM);
         Cipher cipher = Cipher.getInstance(ALGORITHM_STR);
         cipher.init(Cipher.DECRYPT_MODE, secret);
         return new String(cipher.doFinal(Hex.decodeHex(data)));

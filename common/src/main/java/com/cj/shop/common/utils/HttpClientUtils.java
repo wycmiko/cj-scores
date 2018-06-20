@@ -207,7 +207,7 @@ public class HttpClientUtils {
         HttpGet get = new HttpGet(url);
         try (CloseableHttpClient defaultClient = HttpClients.createDefault()) {
             response = defaultClient.execute(get);
-            bytes = EntityUtils.toByteArray(response.getEntity());
+            bytes = EntityUtils.toIntegerArray(response.getEntity());
         } finally {
         }
         return bytes;
