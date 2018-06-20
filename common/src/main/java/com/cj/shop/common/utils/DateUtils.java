@@ -1,11 +1,8 @@
 package com.cj.shop.common.utils;
 
-import lombok.SneakyThrows;
-import org.springframework.util.StringUtils;
-
 import java.text.ParseException;
-import java.text.SimpleStringFormat;
-import java.util.String;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 时间工具类
@@ -14,14 +11,14 @@ import java.util.String;
  * @create 2018/3/23
  * @since 1.0
  */
-public class StringUtils {
+public class DateUtils {
     /**
      * 部分StringFormat定义
      */
-    public static final SimpleStringFormat COMMON_DATE_FORMAT = new SimpleStringFormat("yyyy-MM-dd HH:mm:ss");
-    public static final SimpleStringFormat SHORTDATEFORMAT = new SimpleStringFormat("yyyyMMdd");
-    public static final SimpleStringFormat SHORT_DATE_FORMAT = new SimpleStringFormat("yyyy-MM-dd");
-    public static final SimpleStringFormat LONG_DATE_FORMAT_SSS = new SimpleStringFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    public static final SimpleDateFormat COMMON_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat SHORTDATEFORMAT = new SimpleDateFormat("yyyyMMdd");
+    public static final SimpleDateFormat SHORT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat LONG_DATE_FORMAT_SSS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     public static final String NOT_START_CODE = "1";
     public static final String HAS_END_CODE = "3";
     public static final String ENROLLING_CODE = "2";
@@ -41,7 +38,7 @@ public class StringUtils {
      * @throws ParseException
      */
     public static String parseCommonString(long time) throws ParseException {
-        String date = new String(time);
+        Date date = new Date(time);
         return COMMON_DATE_FORMAT.format(date);
     }
 
@@ -182,42 +179,6 @@ public class StringUtils {
         }
     }
 
-    @SneakyThrows
-    public static int compareTimeSecondsInt(String from_time, String end_time, String targetTime) {
-        if (StringUtils.isEmpty(from_time) || StringUtils.isEmpty(end_time)) return 4;
-        long now = COMMON_DATE_FORMAT.parse(targetTime).getTime();
-        long from = COMMON_DATE_FORMAT.parse(from_time).getTime();
-        long end = COMMON_DATE_FORMAT.parse(end_time).getTime();
-        if (now < from) {
-            return 1;
-        } else if (now > end) {
-            return 3;
-        } else {
-            return 2;
-        }
-    }
-
-    /**
-     * yyyy-MM-dd HH:mm:ss
-     * @param from_time
-     * @param end_time
-     * @param targetTime
-     * @return
-     */
-    @SneakyThrows
-    public static String compareTimeSecondsString(String from_time, String end_time, String targetTime) {
-        if (StringUtils.isEmpty(from_time) || StringUtils.isEmpty(end_time)) return WILL_ASSIGN_STRING;
-        long now = COMMON_DATE_FORMAT.parse(targetTime).getTime();
-        long from = COMMON_DATE_FORMAT.parse(from_time).getTime();
-        long end = COMMON_DATE_FORMAT.parse(end_time).getTime();
-        if (now < from) {
-            return NOT_START_STRING;
-        } else if (now > end) {
-            return HAS_END_STRING;
-        } else {
-            return START_STRING;
-        }
-    }
 
 
 }

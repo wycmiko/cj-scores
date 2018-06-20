@@ -139,8 +139,8 @@ public final class User {
     /**
      * <code>string message = 2;</code>
      */
-    com.google.protobuf.IntegerString
-    getMessageIntegers();
+    com.google.protobuf.ByteString
+    getMessageBytes();
 
     /**
      * <pre>
@@ -157,8 +157,8 @@ public final class User {
      *
      * <code>string body = 3;</code>
      */
-    com.google.protobuf.IntegerString
-    getBodyIntegers();
+    com.google.protobuf.ByteString
+    getBodyBytes();
   }
   /**
    * Protobuf type {@code Result}
@@ -375,8 +375,8 @@ public final class User {
       if (ref instanceof String) {
         return (String) ref;
       } else {
-        com.google.protobuf.IntegerString bs =
-                (com.google.protobuf.IntegerString) ref;
+        com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
         message_ = s;
         return s;
@@ -385,17 +385,17 @@ public final class User {
     /**
      * <code>string message = 2;</code>
      */
-    public com.google.protobuf.IntegerString
-    getMessageIntegers() {
+    public com.google.protobuf.ByteString
+    getMessageBytes() {
       Object ref = message_;
       if (ref instanceof String) {
-        com.google.protobuf.IntegerString b =
-                com.google.protobuf.IntegerString.copyFromUtf8(
+        com.google.protobuf.ByteString b =
+                com.google.protobuf.ByteString.copyFromUtf8(
                         (String) ref);
         message_ = b;
         return b;
       } else {
-        return (com.google.protobuf.IntegerString) ref;
+        return (com.google.protobuf.ByteString) ref;
       }
     }
 
@@ -413,8 +413,8 @@ public final class User {
       if (ref instanceof String) {
         return (String) ref;
       } else {
-        com.google.protobuf.IntegerString bs =
-                (com.google.protobuf.IntegerString) ref;
+        com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
         body_ = s;
         return s;
@@ -427,17 +427,17 @@ public final class User {
      *
      * <code>string body = 3;</code>
      */
-    public com.google.protobuf.IntegerString
-    getBodyIntegers() {
+    public com.google.protobuf.ByteString
+    getBodyBytes() {
       Object ref = body_;
       if (ref instanceof String) {
-        com.google.protobuf.IntegerString b =
-                com.google.protobuf.IntegerString.copyFromUtf8(
+        com.google.protobuf.ByteString b =
+                com.google.protobuf.ByteString.copyFromUtf8(
                         (String) ref);
         body_ = b;
         return b;
       } else {
-        return (com.google.protobuf.IntegerString) ref;
+        return (com.google.protobuf.ByteString) ref;
       }
     }
 
@@ -456,10 +456,10 @@ public final class User {
       if (status_ != Status.SUCCESS.getNumber()) {
         output.writeEnum(1, status_);
       }
-      if (!getMessageIntegers().isEmpty()) {
+      if (!getMessageBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, message_);
       }
-      if (!getBodyIntegers().isEmpty()) {
+      if (!getBodyBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, body_);
       }
       unknownFields.writeTo(output);
@@ -474,10 +474,10 @@ public final class User {
         size += com.google.protobuf.CodedOutputStream
                 .computeEnumSize(1, status_);
       }
-      if (!getMessageIntegers().isEmpty()) {
+      if (!getMessageBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, message_);
       }
-      if (!getBodyIntegers().isEmpty()) {
+      if (!getBodyBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, body_);
       }
       size += unknownFields.getSerializedSize();
@@ -524,23 +524,23 @@ public final class User {
     }
 
     public static Result parseFrom(
-            java.nio.IntegerBuffer data)
+            java.nio.ByteBuffer data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static Result parseFrom(
-            java.nio.IntegerBuffer data,
+            java.nio.ByteBuffer data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static Result parseFrom(
-            com.google.protobuf.IntegerString data)
+            com.google.protobuf.ByteString data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static Result parseFrom(
-            com.google.protobuf.IntegerString data,
+            com.google.protobuf.ByteString data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
@@ -808,8 +808,8 @@ public final class User {
       public String getMessage() {
         Object ref = message_;
         if (!(ref instanceof String)) {
-          com.google.protobuf.IntegerString bs =
-                  (com.google.protobuf.IntegerString) ref;
+          com.google.protobuf.ByteString bs =
+                  (com.google.protobuf.ByteString) ref;
           String s = bs.toStringUtf8();
           message_ = s;
           return s;
@@ -820,17 +820,17 @@ public final class User {
       /**
        * <code>string message = 2;</code>
        */
-      public com.google.protobuf.IntegerString
-      getMessageIntegers() {
+      public com.google.protobuf.ByteString
+      getMessageBytes() {
         Object ref = message_;
         if (ref instanceof String) {
-          com.google.protobuf.IntegerString b =
-                  com.google.protobuf.IntegerString.copyFromUtf8(
+          com.google.protobuf.ByteString b =
+                  com.google.protobuf.ByteString.copyFromUtf8(
                           (String) ref);
           message_ = b;
           return b;
         } else {
-          return (com.google.protobuf.IntegerString) ref;
+          return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
@@ -858,12 +858,12 @@ public final class User {
       /**
        * <code>string message = 2;</code>
        */
-      public Builder setMessageIntegers(
-              com.google.protobuf.IntegerString value) {
+      public Builder setMessageBytes(
+              com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        checkIntegerStringIsUtf8(value);
+        checkByteStringIsUtf8(value);
 
         message_ = value;
         onChanged();
@@ -881,8 +881,8 @@ public final class User {
       public String getBody() {
         Object ref = body_;
         if (!(ref instanceof String)) {
-          com.google.protobuf.IntegerString bs =
-                  (com.google.protobuf.IntegerString) ref;
+          com.google.protobuf.ByteString bs =
+                  (com.google.protobuf.ByteString) ref;
           String s = bs.toStringUtf8();
           body_ = s;
           return s;
@@ -897,17 +897,17 @@ public final class User {
        *
        * <code>string body = 3;</code>
        */
-      public com.google.protobuf.IntegerString
-      getBodyIntegers() {
+      public com.google.protobuf.ByteString
+      getBodyBytes() {
         Object ref = body_;
         if (ref instanceof String) {
-          com.google.protobuf.IntegerString b =
-                  com.google.protobuf.IntegerString.copyFromUtf8(
+          com.google.protobuf.ByteString b =
+                  com.google.protobuf.ByteString.copyFromUtf8(
                           (String) ref);
           body_ = b;
           return b;
         } else {
-          return (com.google.protobuf.IntegerString) ref;
+          return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
@@ -947,12 +947,12 @@ public final class User {
        *
        * <code>string body = 3;</code>
        */
-      public Builder setBodyIntegers(
-              com.google.protobuf.IntegerString value) {
+      public Builder setBodyBytes(
+              com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        checkIntegerStringIsUtf8(value);
+        checkByteStringIsUtf8(value);
 
         body_ = value;
         onChanged();
@@ -1018,8 +1018,8 @@ public final class User {
     /**
      * <code>string app_id = 1;</code>
      */
-    com.google.protobuf.IntegerString
-    getAppIdIntegers();
+    com.google.protobuf.ByteString
+    getAppIdBytes();
 
     /**
      * <code>string body = 2;</code>
@@ -1028,8 +1028,8 @@ public final class User {
     /**
      * <code>string body = 2;</code>
      */
-    com.google.protobuf.IntegerString
-    getBodyIntegers();
+    com.google.protobuf.ByteString
+    getBodyBytes();
   }
   /**
    * Protobuf type {@code Request}
@@ -1125,8 +1125,8 @@ public final class User {
       if (ref instanceof String) {
         return (String) ref;
       } else {
-        com.google.protobuf.IntegerString bs =
-                (com.google.protobuf.IntegerString) ref;
+        com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
         appId_ = s;
         return s;
@@ -1135,17 +1135,17 @@ public final class User {
     /**
      * <code>string app_id = 1;</code>
      */
-    public com.google.protobuf.IntegerString
-    getAppIdIntegers() {
+    public com.google.protobuf.ByteString
+    getAppIdBytes() {
       Object ref = appId_;
       if (ref instanceof String) {
-        com.google.protobuf.IntegerString b =
-                com.google.protobuf.IntegerString.copyFromUtf8(
+        com.google.protobuf.ByteString b =
+                com.google.protobuf.ByteString.copyFromUtf8(
                         (String) ref);
         appId_ = b;
         return b;
       } else {
-        return (com.google.protobuf.IntegerString) ref;
+        return (com.google.protobuf.ByteString) ref;
       }
     }
 
@@ -1159,8 +1159,8 @@ public final class User {
       if (ref instanceof String) {
         return (String) ref;
       } else {
-        com.google.protobuf.IntegerString bs =
-                (com.google.protobuf.IntegerString) ref;
+        com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
         String s = bs.toStringUtf8();
         body_ = s;
         return s;
@@ -1169,17 +1169,17 @@ public final class User {
     /**
      * <code>string body = 2;</code>
      */
-    public com.google.protobuf.IntegerString
-    getBodyIntegers() {
+    public com.google.protobuf.ByteString
+    getBodyBytes() {
       Object ref = body_;
       if (ref instanceof String) {
-        com.google.protobuf.IntegerString b =
-                com.google.protobuf.IntegerString.copyFromUtf8(
+        com.google.protobuf.ByteString b =
+                com.google.protobuf.ByteString.copyFromUtf8(
                         (String) ref);
         body_ = b;
         return b;
       } else {
-        return (com.google.protobuf.IntegerString) ref;
+        return (com.google.protobuf.ByteString) ref;
       }
     }
 
@@ -1195,10 +1195,10 @@ public final class User {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
             throws java.io.IOException {
-      if (!getAppIdIntegers().isEmpty()) {
+      if (!getAppIdBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, appId_);
       }
-      if (!getBodyIntegers().isEmpty()) {
+      if (!getBodyBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, body_);
       }
       unknownFields.writeTo(output);
@@ -1209,10 +1209,10 @@ public final class User {
       if (size != -1) return size;
 
       size = 0;
-      if (!getAppIdIntegers().isEmpty()) {
+      if (!getAppIdBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, appId_);
       }
-      if (!getBodyIntegers().isEmpty()) {
+      if (!getBodyBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, body_);
       }
       size += unknownFields.getSerializedSize();
@@ -1256,23 +1256,23 @@ public final class User {
     }
 
     public static Request parseFrom(
-            java.nio.IntegerBuffer data)
+            java.nio.ByteBuffer data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static Request parseFrom(
-            java.nio.IntegerBuffer data,
+            java.nio.ByteBuffer data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
     public static Request parseFrom(
-            com.google.protobuf.IntegerString data)
+            com.google.protobuf.ByteString data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
     public static Request parseFrom(
-            com.google.protobuf.IntegerString data,
+            com.google.protobuf.ByteString data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
@@ -1490,8 +1490,8 @@ public final class User {
       public String getAppId() {
         Object ref = appId_;
         if (!(ref instanceof String)) {
-          com.google.protobuf.IntegerString bs =
-                  (com.google.protobuf.IntegerString) ref;
+          com.google.protobuf.ByteString bs =
+                  (com.google.protobuf.ByteString) ref;
           String s = bs.toStringUtf8();
           appId_ = s;
           return s;
@@ -1502,17 +1502,17 @@ public final class User {
       /**
        * <code>string app_id = 1;</code>
        */
-      public com.google.protobuf.IntegerString
-      getAppIdIntegers() {
+      public com.google.protobuf.ByteString
+      getAppIdBytes() {
         Object ref = appId_;
         if (ref instanceof String) {
-          com.google.protobuf.IntegerString b =
-                  com.google.protobuf.IntegerString.copyFromUtf8(
+          com.google.protobuf.ByteString b =
+                  com.google.protobuf.ByteString.copyFromUtf8(
                           (String) ref);
           appId_ = b;
           return b;
         } else {
-          return (com.google.protobuf.IntegerString) ref;
+          return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
@@ -1540,12 +1540,12 @@ public final class User {
       /**
        * <code>string app_id = 1;</code>
        */
-      public Builder setAppIdIntegers(
-              com.google.protobuf.IntegerString value) {
+      public Builder setAppIdBytes(
+              com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        checkIntegerStringIsUtf8(value);
+        checkByteStringIsUtf8(value);
 
         appId_ = value;
         onChanged();
@@ -1559,8 +1559,8 @@ public final class User {
       public String getBody() {
         Object ref = body_;
         if (!(ref instanceof String)) {
-          com.google.protobuf.IntegerString bs =
-                  (com.google.protobuf.IntegerString) ref;
+          com.google.protobuf.ByteString bs =
+                  (com.google.protobuf.ByteString) ref;
           String s = bs.toStringUtf8();
           body_ = s;
           return s;
@@ -1571,17 +1571,17 @@ public final class User {
       /**
        * <code>string body = 2;</code>
        */
-      public com.google.protobuf.IntegerString
-      getBodyIntegers() {
+      public com.google.protobuf.ByteString
+      getBodyBytes() {
         Object ref = body_;
         if (ref instanceof String) {
-          com.google.protobuf.IntegerString b =
-                  com.google.protobuf.IntegerString.copyFromUtf8(
+          com.google.protobuf.ByteString b =
+                  com.google.protobuf.ByteString.copyFromUtf8(
                           (String) ref);
           body_ = b;
           return b;
         } else {
-          return (com.google.protobuf.IntegerString) ref;
+          return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
@@ -1609,12 +1609,12 @@ public final class User {
       /**
        * <code>string body = 2;</code>
        */
-      public Builder setBodyIntegers(
-              com.google.protobuf.IntegerString value) {
+      public Builder setBodyBytes(
+              com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        checkIntegerStringIsUtf8(value);
+        checkByteStringIsUtf8(value);
 
         body_ = value;
         onChanged();
