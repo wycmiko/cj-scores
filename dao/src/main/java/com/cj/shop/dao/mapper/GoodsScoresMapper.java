@@ -1,7 +1,9 @@
 package com.cj.shop.dao.mapper;
 
 import com.cj.shop.api.entity.GoodsScores;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface GoodsScoresMapper {
     int deleteByPrimaryKey(Long id);
 

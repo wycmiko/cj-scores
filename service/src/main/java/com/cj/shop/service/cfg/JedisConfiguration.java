@@ -1,14 +1,15 @@
-package com.cj.shop.common.caching;
+package com.cj.shop.service.cfg;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
-//@Configuration
+@Configuration
 @Slf4j
 public class JedisConfiguration {
 

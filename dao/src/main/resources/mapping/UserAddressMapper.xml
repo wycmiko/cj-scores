@@ -39,7 +39,17 @@
     delete from s_user_address
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.UserAddress" >
+
+  <select id="selectAll" parameterType="Long" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from s_user_address
+    where uid = #{0}
+  </select>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.cj.shop.api.entity.UserAddress" >
     insert into s_user_address
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="uid != null" >
@@ -71,12 +81,6 @@
       </if>
       <if test="defaultFlag != null" >
         default_flag,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="createTime != null" >
-        create_time,
       </if>
       <if test="sortFlag != null" >
         sort_flag,
@@ -116,12 +120,6 @@
       <if test="defaultFlag != null" >
         #{defaultFlag,jdbcType=INTEGER},
       </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=VARCHAR},
-      </if>
       <if test="sortFlag != null" >
         #{sortFlag,jdbcType=INTEGER},
       </if>
@@ -133,9 +131,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.UserAddress" >
     update s_user_address
     <set >
-      <if test="uid != null" >
-        uid = #{uid,jdbcType=BIGINT},
-      </if>
       <if test="userName != null" >
         user_name = #{userName,jdbcType=VARCHAR},
       </if>
@@ -162,12 +157,6 @@
       </if>
       <if test="defaultFlag != null" >
         default_flag = #{defaultFlag,jdbcType=INTEGER},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=VARCHAR},
       </if>
       <if test="sortFlag != null" >
         sort_flag = #{sortFlag,jdbcType=INTEGER},

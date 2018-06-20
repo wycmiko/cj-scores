@@ -44,7 +44,7 @@ spring:
       min-idle: 1
       max-active: 1000
       max-wait: -1
-    expire-time: 120
+    expire-time: 1200
 #  rabbitmq:
 #      host: 172.28.3.45
 #      port: 5672

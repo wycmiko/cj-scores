@@ -1,9 +1,12 @@
-package com.cj.shop.common.caching;
+package com.cj.shop.service.cfg;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cj.shop.common.caching.Cache;
+import com.cj.shop.common.caching.CacheObjectSerializer;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -24,6 +27,9 @@ public class JedisCache implements Cache {
 
     @Autowired
     private JedisPool jedisCluster;
+
+    @Value("${spring.redis.expire-time}")
+    private Long default_time;
 
     @Autowired
     private CacheObjectSerializer serializer;
@@ -92,6 +98,20 @@ public class JedisCache implements Cache {
         }
         return false;
     }
+
+    public <T> boolean setByDefaultTime(String key, T obj) {
+        if (null == obj) {
+            return false;
+        }
+        String str = serializer.serialize(obj);
+        try (Jedis jedis = jedisCluster.getResource()) {
+            return "OK".equals(jedis.setex(key, Long.valueOf(default_time).intValue(), str));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     @Override
     public boolean del(String key) {

@@ -1,4 +1,4 @@
-package com.cj.shop.common.caching;
+package com.cj.shop.service.cfg;
 
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;

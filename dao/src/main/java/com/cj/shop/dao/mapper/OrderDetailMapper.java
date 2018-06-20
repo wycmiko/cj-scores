@@ -1,8 +1,9 @@
 package com.cj.shop.dao.mapper;
 
-import com.cj.shop.api.entity.OrderDetail;
 import com.cj.shop.api.entity.OrderDetailWithBLOBs;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface OrderDetailMapper {
     int deleteByPrimaryKey(Long id);
 
