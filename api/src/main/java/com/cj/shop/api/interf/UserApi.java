@@ -3,8 +3,6 @@ package com.cj.shop.api.interf;
 import com.cj.shop.api.entity.UserAddress;
 import com.cj.shop.api.response.PagedList;
 
-import java.util.List;
-
 /**
  * 用户service接口
  */
@@ -20,9 +18,9 @@ public interface UserApi {
     /**
      * 用户查询全部收货地址
      */
-    PagedList<List<UserAddress>> getAllAddress(Long uid, Integer pageNum, Integer pageSize);
+    PagedList<UserAddress> getAllAddress(Long uid, Integer pageNum, Integer pageSize);
 
-    UserAddress getDetailById(Long addr_id);
+    UserAddress getDetailById(Long uid, Long addr_id);
     /**
      * 用户删除收货地址
      */

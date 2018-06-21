@@ -1,11 +1,11 @@
 package com.cj.shop.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.cj.shop.api.entity.UserAddress;
 import com.cj.shop.api.interf.UserApi;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.dao.mapper.UserAddressMapper;
 import com.cj.shop.service.cfg.JedisCache;
+import com.cj.shop.service.consts.ResultMsg;
 import com.cj.shop.service.util.ResultMsgUtil;
 import com.cj.shop.service.util.ValidatorUtil;
 import com.github.pagehelper.Page;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,9 +43,9 @@ public class UserService implements UserApi {
         if (i > 0) {
             //添加成功 加入缓存
             Long id = userAddress.getId();
-            String key = JEDIS_PREFIX_USER + "address:" + id;
-            jedisCache.setByDefaultTime(key, JSON.toJSONString(userAddress));
-            jedisCache.del(JEDIS_PREFIX_USER + "address:list:" + userAddress.getUid());
+            String key = JEDIS_PREFIX_USER + "address:detail:" + id;
+            jedisCache.setByDefaultTime(key, userAddress);
+            jedisCache.hset(JEDIS_PREFIX_USER + "address:list:" + userAddress.getUid()+":", id.toString(), userAddress);
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -55,32 +56,44 @@ public class UserService implements UserApi {
      * @param uid
      */
     @Override
-    public PagedList<List<UserAddress>> getAllAddress(Long uid, Integer pageNum, Integer pageSize) {
-        String key = JEDIS_PREFIX_USER + "address:list:" + uid;
-        PagedList pagedList = jedisCache.get(key, PagedList.class);
-        if (pagedList == null) {
-            long count = 0;
-            List<UserAddress> list = null;
-            list = ValidatorUtil.checkNotEmpty(userAddressMapper.selectAll(uid));
-            if (pageNum != null && pageSize != null) {
-                Page<Object> objects = PageHelper.startPage(pageNum, pageSize);
-                count = objects.getTotal();
-            } else {
-                pageNum = 0;
-                pageSize = 0;
-            }
-            pagedList = new PagedList(list, count, pageNum, pageSize);
+    public PagedList<UserAddress> getAllAddress(Long uid, Integer pageNum, Integer pageSize) {
+        String key = JEDIS_PREFIX_USER + "address:list:" + uid + ":";
+        long count = 0;
+        Page<Object> objects = null;
+        List<UserAddress> resultList = new ArrayList<>();
+        if (pageNum != null && pageSize != null) {
+            objects = PageHelper.startPage(pageNum, pageSize);
+        } else {
+            pageNum = 0;
+            pageSize = 0;
         }
+        //查询出ID列表
+        List<Long> addrIds = ValidatorUtil.checkNotEmpty(userAddressMapper.selectAllIds(uid));
+        if (objects != null) count = objects.getTotal();
+        //根据ID 去Redis中查询对象
+        if (!addrIds.isEmpty()) {
+            for (Long id : addrIds) {
+                UserAddress userAddress = jedisCache.hget(key, id.toString(), UserAddress.class);
+                if (userAddress == null) {
+                    UserAddress detailById = getDetailById(uid, id);
+                    jedisCache.hset(key, id.toString(), detailById);
+                    resultList.add(detailById);
+                } else {
+                    resultList.add(userAddress);
+                }
+            }
+        }
+        PagedList<UserAddress> pagedList = new PagedList(resultList, count, pageNum, pageSize);
         return pagedList;
     }
 
     @Override
-    public UserAddress getDetailById(Long addr_id) {
-        String key = JEDIS_PREFIX_USER + "address:" + addr_id;
+    public UserAddress getDetailById(Long uid, Long addr_id) {
+        String key = JEDIS_PREFIX_USER + "address:detail:" + addr_id;
         UserAddress userAddress = jedisCache.get(key, UserAddress.class);
         if (userAddress == null) {
-            userAddress = userAddressMapper.selectByPrimaryKey(addr_id);
-            jedisCache.setByDefaultTime(key, JSON.toJSONString(userAddress));
+            userAddress = userAddressMapper.selectByPrimaryKey(uid, addr_id);
+            jedisCache.setByDefaultTime(key, userAddress);
         }
         return userAddress;
     }
@@ -92,11 +105,17 @@ public class UserService implements UserApi {
      */
     @Override
     public String deleteAddress(Long addr_id, Long uid) {
-        int i = userAddressMapper.deleteByPrimaryKey(addr_id);
+        UserAddress detailById = getDetailById(uid, addr_id);
+        if (detailById == null) {
+            return ResultMsg.ADDRESS_NOT_EXISTS;
+        }
+
+        int i = userAddressMapper.deleteByPrimaryKey(uid, addr_id);
         if (i > 0) {
-            String key1 = JEDIS_PREFIX_USER + "address:" + addr_id;
+            String key1 = JEDIS_PREFIX_USER + "address:detail:" + addr_id;
             String key2 = JEDIS_PREFIX_USER + "address:list:" + uid;
-            jedisCache.dels(new String[]{key1, key2});
+            jedisCache.del(key1);
+            jedisCache.hdel(key2+":", addr_id.toString());
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -108,11 +127,28 @@ public class UserService implements UserApi {
      */
     @Override
     public String updateAddress(UserAddress userAddress) {
+        UserAddress detailById = getDetailById(userAddress.getUid(), userAddress.getId());
+        if (detailById == null) {
+            return ResultMsg.ADDRESS_NOT_EXISTS;
+        }
+        //
+        if (1 == userAddress.getDefaultFlag()) {
+            List<UserAddress> list = getAllAddress(userAddress.getUid(), null, null).getList();
+            if (!list.isEmpty()) {
+                for (UserAddress address : list) {
+                    if (1 == address.getDefaultFlag()) {
+                        return ResultMsg.DEFAULT_ADDR_ALREADY_EXIST;
+                    }
+                }
+            }
+        }
+
         int i = userAddressMapper.updateByPrimaryKeySelective(userAddress);
         if (i > 0) {
-            String key1 = JEDIS_PREFIX_USER + "address:" + userAddress.getId();
+            String key1 = JEDIS_PREFIX_USER + "address:detail:" + userAddress.getId();
             String key2 = JEDIS_PREFIX_USER + "address:list:" + userAddress.getUid();
-            jedisCache.dels(new String[]{key1, key2});
+            jedisCache.del(key1);
+            jedisCache.hdel(key2+":", userAddress.getId().toString());
         }
         return ResultMsgUtil.dmlResult(i);
     }

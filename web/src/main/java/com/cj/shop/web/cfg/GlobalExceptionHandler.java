@@ -1,8 +1,8 @@
 package com.cj.shop.web.cfg;
 
+import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,9 +18,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @ControllerAdvice
 @ResponseBody
+@Slf4j
 public class GlobalExceptionHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * 全局异常处理
@@ -33,8 +32,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public Result allExceptionHandler(HttpServletRequest request,
                                       Exception e) throws Exception {
-        logger.error("【error】  path: {}:{}{}, errMsg:{}", request.getRemoteAddr(), request.getLocalPort(), request.getRequestURI(), e.getMessage());
-        return new Result("1101","error");
+        log.error("【error】  path: {}:{}{}, errMsg:{}", request.getRemoteAddr(), request.getLocalPort(), request.getRequestURI(), e.getMessage());
+        Result result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        if (e != null) result.setData(e.getMessage());
+        return result;
     }
 
 }

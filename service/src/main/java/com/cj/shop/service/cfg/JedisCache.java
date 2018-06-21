@@ -29,7 +29,7 @@ public class JedisCache implements Cache {
     private JedisPool jedisCluster;
 
     @Value("${spring.redis.expire-time}")
-    private Long default_time;
+    private int default_time;
 
     @Autowired
     private CacheObjectSerializer serializer;
@@ -173,7 +173,9 @@ public class JedisCache implements Cache {
     @Override
     public <T> boolean hset(String key, String fieldKey, T obj) {
         try (Jedis jedis = jedisCluster.getResource()) {
-            return jedis.hset(key, fieldKey, serializer.serialize(obj)) > 0;
+            Long hset = jedis.hset(key, fieldKey, serializer.serialize(obj));
+            jedis.expire(key, default_time);
+            return hset > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -223,5 +225,24 @@ public class JedisCache implements Cache {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public <T> List<T> hmget(String key,  Class<T> valueType, String ...params) {
+        List<String> strs = new ArrayList<>();
+        try (Jedis jedis = jedisCluster.getResource()) {
+            strs = jedis.hmget(key,params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<T> list = new ArrayList<>();
+        for (String str : strs) {
+            if (Strings.isNullOrEmpty(str)) {
+                continue;
+            }
+            T obj = serializer.deserialize(str, valueType);
+            list.add(obj);
+        }
+        return list;
     }
 }

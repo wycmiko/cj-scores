@@ -33,11 +33,11 @@
     ,
     <include refid="Blob_Column_List" />
     from s_user_address
-    where id = #{id,jdbcType=BIGINT}
+    where  uid=#{uid} and id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from s_user_address
-    where id = #{id,jdbcType=BIGINT}
+    where uid=#{uid} and  id = #{id,jdbcType=BIGINT}
   </delete>
 
   <select id="selectAll" parameterType="Long" resultMap="ResultMapWithBLOBs">
@@ -45,6 +45,13 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
+    from s_user_address
+    where uid = #{0}
+  </select>
+
+  <select id="selectAllIds" parameterType="Long" resultType="Long">
+    select
+    id
     from s_user_address
     where uid = #{0}
   </select>
@@ -165,6 +172,6 @@
         properties = #{properties,jdbcType=LONGVARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where uid=#{uid} and id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
