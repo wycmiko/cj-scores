@@ -39,6 +39,12 @@ public class GoodsTypeService implements GoodsTypeApi {
      */
     @Override
     public String addGoodsType(GoodsTypeRequest request) {
+        if (request.getParentId() != null) {
+            GoodsType goodsTypeById = goodsTypeMapper.selectByPrimaryKey(request.getParentId());
+            if (goodsTypeById == null) {
+                return ResultMsg.PARTYPE_NOT_EXISTS;
+            }
+        }
         GoodsType goodsType = new GoodsType();
         if (request.getProperties() == null || request.getProperties().isEmpty()) {
             goodsType.setProperties("{}");

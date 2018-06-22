@@ -15,7 +15,7 @@
         <result column="properties" property="properties" jdbcType="LONGVARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, parent_id, show_flag, type_name, delete_flag, update_time, create_time, sort_flag
+    id, parent_id, show_flag, type_name, delete_flag, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time,  DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
   </sql>
     <sql id="Blob_Column_List">
     properties

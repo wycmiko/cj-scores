@@ -21,7 +21,6 @@ public class GoodsType extends PropertyEntity implements Serializable {
     private String typeName;
     @JsonProperty("delete_flag")
     private Integer deleteFlag;
-    private Integer round;
     @JsonProperty("update_time")
     private String updateTime;
     @JsonProperty("create_time")

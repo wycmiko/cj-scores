@@ -86,7 +86,10 @@ public class DateUtils {
      * @return yyyy-MM-dd HH:mm:ss 当前时间
      */
     public static String getCommonString() {
-        return COMMON_DATE_FORMAT.format(new String());
+        return COMMON_DATE_FORMAT.format(new Date());
+    }
+    public static String getShortString() {
+        return SHORTDATEFORMAT.format(new Date());
     }
 
 
@@ -108,15 +111,6 @@ public class DateUtils {
      */
     public static String getCommonStringStr(String date) {
         return COMMON_DATE_FORMAT.format(date);
-    }
-
-    /**
-     * yyyyMMdd
-     *
-     * @return 格式化后的当前时间 yyyy-MM-dd
-     */
-    public static String getShortStringStr() {
-        return SHORT_DATE_FORMAT.format(new String());
     }
 
     /**
