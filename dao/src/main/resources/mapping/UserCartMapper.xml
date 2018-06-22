@@ -32,7 +32,7 @@
     delete from s_user_cart
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.UserCart" >
+  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.UserCart" useGeneratedKeys="true" keyProperty="id">
     insert into s_user_cart
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="uid != null" >
@@ -90,9 +90,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.UserCart" >
     update s_user_cart
     <set >
-      <if test="uid != null" >
-        uid = #{uid,jdbcType=BIGINT},
-      </if>
       <if test="goodsId != null" >
         goods_id = #{goodsId,jdbcType=BIGINT},
       </if>

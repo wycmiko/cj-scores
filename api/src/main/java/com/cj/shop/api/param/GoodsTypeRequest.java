@@ -1,17 +1,21 @@
-package com.cj.shop.api.entity;
+package com.cj.shop.api.param;
 
-import com.cj.shop.common.model.PropertyEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Map;
+/**
+ * 商品分类请求参数
+ *
+ * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @date 2018/6/22
+ * @since 1.0
+ */
 @Getter
 @Setter
-public class GoodsType extends PropertyEntity implements Serializable {
+public class GoodsTypeRequest implements Serializable {
     private Long id;
     @JsonProperty("parent_id")
     private Long parentId;
@@ -21,14 +25,7 @@ public class GoodsType extends PropertyEntity implements Serializable {
     private String typeName;
     @JsonProperty("delete_flag")
     private Integer deleteFlag;
-    private Integer round;
-    @JsonProperty("update_time")
-    private String updateTime;
-    @JsonProperty("create_time")
-    private String createTime;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
-    //子菜单列表
-    @JsonProperty("sub_list")
-    private List<GoodsType> subList = new ArrayList<>();
+    private Map<String,Object> properties;
 }

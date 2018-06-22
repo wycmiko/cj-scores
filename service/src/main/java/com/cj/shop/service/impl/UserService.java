@@ -1,11 +1,14 @@
 package com.cj.shop.service.impl;
 
 import com.cj.shop.api.entity.UserAddress;
+import com.cj.shop.api.entity.UserCart;
 import com.cj.shop.api.interf.UserApi;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.dao.mapper.UserAddressMapper;
+import com.cj.shop.dao.mapper.UserCartMapper;
 import com.cj.shop.service.cfg.JedisCache;
 import com.cj.shop.service.consts.ResultMsg;
+import com.cj.shop.service.util.PropertiesUtil;
 import com.cj.shop.service.util.ResultMsgUtil;
 import com.cj.shop.service.util.ValidatorUtil;
 import com.github.pagehelper.Page;
@@ -13,9 +16,11 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yuchuanWeng(wycmiko @ foxmail.com)
@@ -27,6 +32,9 @@ import java.util.List;
 public class UserService implements UserApi {
     @Autowired
     private UserAddressMapper userAddressMapper;
+    @Autowired
+    private UserCartMapper userCartMapper;
+
     @Autowired
     private JedisCache jedisCache;
     private static final String JEDIS_PREFIX_USER = "cj_shop:mall:user:";
@@ -45,7 +53,7 @@ public class UserService implements UserApi {
             Long id = userAddress.getId();
             String key = JEDIS_PREFIX_USER + "address:detail:" + id;
             jedisCache.setByDefaultTime(key, userAddress);
-            jedisCache.hset(JEDIS_PREFIX_USER + "address:list:" + userAddress.getUid()+":", id.toString(), userAddress);
+            jedisCache.hset(JEDIS_PREFIX_USER + "address:list:" + userAddress.getUid() + ":", id.toString(), userAddress);
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -115,7 +123,7 @@ public class UserService implements UserApi {
             String key1 = JEDIS_PREFIX_USER + "address:detail:" + addr_id;
             String key2 = JEDIS_PREFIX_USER + "address:list:" + uid;
             jedisCache.del(key1);
-            jedisCache.hdel(key2+":", addr_id.toString());
+            jedisCache.hdel(key2 + ":", addr_id.toString());
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -126,7 +134,7 @@ public class UserService implements UserApi {
      * @param userAddress
      */
     @Override
-    public String updateAddress(UserAddress userAddress) {
+    public String updateAddress(UserAddress userAddress, Map<String, Object> properties) {
         UserAddress detailById = getDetailById(userAddress.getUid(), userAddress.getId());
         if (detailById == null) {
             return ResultMsg.ADDRESS_NOT_EXISTS;
@@ -142,14 +150,83 @@ public class UserService implements UserApi {
                 }
             }
         }
-
+        userAddress.setProperties(PropertiesUtil.changeProperties(detailById.getProperties(), properties));
         int i = userAddressMapper.updateByPrimaryKeySelective(userAddress);
         if (i > 0) {
             String key1 = JEDIS_PREFIX_USER + "address:detail:" + userAddress.getId();
             String key2 = JEDIS_PREFIX_USER + "address:list:" + userAddress.getUid();
             jedisCache.del(key1);
-            jedisCache.hdel(key2+":", userAddress.getId().toString());
+            jedisCache.hdel(key2 + ":", userAddress.getId().toString());
         }
         return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 加入购物车 执行逻辑：
+     * 1、判断商品是否存在
+     * 2、判断商品是否存在 以及规格是否相同 相同则数量+1 不同则加入一条记录
+     * 3、保存加入时商品价格
+     *
+     * @param userCart
+     */
+    @Override
+    public String addCart(UserCart userCart) {
+        //json-property default {}
+        if (StringUtils.isEmpty(userCart.getProperties())) {
+            userCart.setProperties("{}");
+        }
+        int i = userCartMapper.insertSelective(userCart);
+        if (i > 0) {
+            //添加成功 加入缓存
+            Long id = userCart.getId();
+            String key = JEDIS_PREFIX_USER + "cart:detail:" + id;
+            jedisCache.setByDefaultTime(key, userCart);
+            jedisCache.hset(JEDIS_PREFIX_USER + "cart:list:" + userCart.getUid() + ":", id.toString(), userCart);
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 修改购物车商品
+     *
+     * @param userCart
+     */
+    @Override
+    public String updateCart(UserCart userCart, Map<String, Object> properties) {
+        return null;
+    }
+
+    /**
+     * 删除购物车商品
+     *
+     * @param cartId
+     * @param uid
+     */
+    @Override
+    public String deleteFromCart(Long cartId, Long uid) {
+        return null;
+    }
+
+    /**
+     * 查询我的购物车
+     *
+     * @param uid
+     * @param pageNum
+     * @param pageSize
+     */
+    @Override
+    public List<UserCart> getGoodsFromCart(Long uid, Integer pageNum, Integer pageSize) {
+        return null;
+    }
+
+    /**
+     * 查询单条购物车详情
+     *
+     * @param cartId
+     * @param uid
+     */
+    @Override
+    public UserCart getCartGoodById(Long cartId, Long uid) {
+        return null;
     }
 }

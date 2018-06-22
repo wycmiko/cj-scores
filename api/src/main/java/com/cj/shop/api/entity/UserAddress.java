@@ -33,6 +33,8 @@ public class UserAddress extends PropertyEntity implements Serializable {
 
     @JsonProperty("default_flag")
     private Integer defaultFlag;
+    @JsonProperty("delete_flag")
+    private Integer deleteFlag;
 
     @JsonProperty("update_time")
     private String updateTime;

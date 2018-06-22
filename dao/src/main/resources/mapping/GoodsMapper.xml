@@ -23,6 +23,7 @@
     <result column="recom_desc" property="recomDesc" jdbcType="VARCHAR" />
     <result column="first_type_id" property="firstTypeId" jdbcType="INTEGER" />
     <result column="second_type_id" property="secondTypeId" jdbcType="INTEGER" />
+    <result column="third_type_id" property="thirdTypeId" jdbcType="INTEGER" />
     <result column="good_status" property="goodStatus" jdbcType="INTEGER" />
     <result column="preview_img" property="previewImg" jdbcType="VARCHAR" />
     <result column="team_buy_flag" property="teamBuyFlag" jdbcType="INTEGER" />
@@ -40,7 +41,7 @@
   <sql id="Base_Column_List" >
     id, goods_sn, goods_name, brand_id, shop_id, goods_title, market_price, shop_price, 
     sale_count, book_flag, stock_num, warn_stock, warn_stock_flag, sale_flag, hot_flag, 
-    new_flag, recommand_flag, best_flag, recom_desc, first_type_id, second_type_id, good_status, 
+    new_flag, recommand_flag, best_flag, recom_desc, first_type_id, second_type_id, third_type_id, good_status,
     preview_img, team_buy_flag, second_goods_id, delete_flag, update_time, create_time, 
     sort_flag
   </sql>
@@ -121,6 +122,9 @@
       </if>
       <if test="secondTypeId != null" >
         second_type_id,
+      </if>
+      <if test="thirdTypeId != null" >
+        third_type_id,
       </if>
       <if test="goodStatus != null" >
         good_status,
@@ -315,6 +319,9 @@
       <if test="secondTypeId != null" >
         second_type_id = #{secondTypeId,jdbcType=INTEGER},
       </if>
+      <if test="thirdTypeId != null" >
+        third_type_id = #{thirdTypeId,jdbcType=INTEGER},
+      </if>
       <if test="goodStatus != null" >
         good_status = #{goodStatus,jdbcType=INTEGER},
       </if>
@@ -329,12 +336,6 @@
       </if>
       <if test="deleteFlag != null" >
         delete_flag = #{deleteFlag,jdbcType=TINYINT},
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=VARCHAR},
       </if>
       <if test="sortFlag != null" >
         sort_flag = #{sortFlag,jdbcType=INTEGER},

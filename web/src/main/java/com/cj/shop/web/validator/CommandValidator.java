@@ -4,6 +4,9 @@ package com.cj.shop.web.validator;
 import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * 接口参数非空校验器 （不适用于低延迟场合）
  *
@@ -35,6 +38,22 @@ public class CommandValidator {
         Result result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.PARAM_NULL_MSG);
         result.setData(ResultConsts.PARAM_NULL);
         return result;
+    }
+
+    /**
+     * 手机号验证
+     *
+     * @param  str
+     * @return 验证通过返回true
+     */
+    public static boolean isMobile(String str) {
+        Pattern p = null;
+        Matcher m = null;
+        boolean b = false;
+        p = Pattern.compile("^[1][3,4,5,6,7,8][0-9]{9}$"); // 验证手机号
+        m = p.matcher(str);
+        b = m.matches();
+        return b;
     }
 
 }

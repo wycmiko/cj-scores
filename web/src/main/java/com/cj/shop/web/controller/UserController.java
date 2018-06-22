@@ -1,5 +1,6 @@
 package com.cj.shop.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cj.shop.api.entity.UserAddress;
 import com.cj.shop.api.param.UserAddressRequest;
@@ -12,6 +13,7 @@ import com.cj.shop.web.validator.TokenValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -50,6 +52,7 @@ public class UserController {
             UserAddress detail = userService.getDetailById(tokenValidator.getUidByToken(token), id);
             result.setData(detail == null ? new JSONObject() : detail);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("getAddressDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
@@ -78,6 +81,7 @@ public class UserController {
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
             result.setData(userService.getAllAddress(uid, page_num, page_size));
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("addressList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
@@ -95,7 +99,8 @@ public class UserController {
         //token校验
         Result result = null;
         try {
-            if (CommandValidator.isEmpty(request.getToken())) {
+            if (CommandValidator.isEmpty(request.getToken(), request.getUserName(), request.getMobile(), request.getDetailAddr())
+                    || !CommandValidator.isMobile(request.getMobile())) {
                 return CommandValidator.paramEmptyResult();
             }
             if (!tokenValidator.checkToken(request.getToken())) {
@@ -106,10 +111,16 @@ public class UserController {
             UserAddress address = new UserAddress();
             BeanUtils.copyProperties(request, address);
             address.setUid(uid);
+            if (!StringUtils.isEmpty(request.getProperties())) {
+                address.setProperties(JSON.toJSONString(request.getProperties()));
+            } else {
+                address.setProperties("{}");
+            }
             String s = userService.addAddress(address);
             result = ResultUtil.getVaildResult(s, result);
             log.info("addAddress end");
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("addAddress error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
@@ -127,7 +138,8 @@ public class UserController {
         //token校验
         Result result = null;
         try {
-            if (CommandValidator.isEmpty(request.getId(), request.getToken())) {
+            if (CommandValidator.isEmpty(request.getId(), request.getToken())
+                    || !CommandValidator.isMobile(request.getMobile())) {
                 return CommandValidator.paramEmptyResult();
             }
             if (!tokenValidator.checkToken(request.getToken())) {
@@ -138,10 +150,11 @@ public class UserController {
             UserAddress address = new UserAddress();
             BeanUtils.copyProperties(request, address);
             address.setUid(uid);
-            String s = userService.updateAddress(address);
+            String s = userService.updateAddress(address, request.getProperties());
             result = ResultUtil.getVaildResult(s, result);
             log.info("updateAddr end");
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("updateAddr error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
@@ -171,6 +184,7 @@ public class UserController {
             result = ResultUtil.getVaildResult(s, result);
             log.info("deleteAddr end");
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("deleteAddr error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }

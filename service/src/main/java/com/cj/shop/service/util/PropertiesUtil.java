@@ -1,6 +1,7 @@
 package com.cj.shop.service.util;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class PropertiesUtil {
      */
     public static String changeProperties(String properties_json, Map<String, Object> map) {
         JSONObject jsonObject = null;
-        if (map != null && !map.isEmpty()) {
+        if (map != null && !map.isEmpty() && !StringUtils.isEmpty(properties_json)) {
             jsonObject = JSONObject.parseObject(properties_json, JSONObject.class);
             Set<Map.Entry<String, Object>> entries = map.entrySet();
             for (Map.Entry<String, Object> m : entries) {

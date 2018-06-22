@@ -13,6 +13,7 @@
     <result column="post_code" property="postCode" jdbcType="CHAR" />
     <result column="detail_addr" property="detailAddr" jdbcType="VARCHAR" />
     <result column="default_flag" property="defaultFlag" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
     <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="VARCHAR" />
     <result column="sort_flag" property="sortFlag" jdbcType="INTEGER" />
@@ -22,7 +23,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, uid, user_name, mobile, tel, province, city, area, post_code, detail_addr, default_flag, 
-    update_time, create_time, sort_flag
+    DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag,delete_flag
   </sql>
   <sql id="Blob_Column_List" >
     properties
@@ -35,10 +36,11 @@
     from s_user_address
     where  uid=#{uid} and id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from s_user_address
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    update s_user_address
+    set delete_flag=1,default_flag=0
     where uid=#{uid} and  id = #{id,jdbcType=BIGINT}
-  </delete>
+  </update>
 
   <select id="selectAll" parameterType="Long" resultMap="ResultMapWithBLOBs">
     select
@@ -46,14 +48,16 @@
     ,
     <include refid="Blob_Column_List" />
     from s_user_address
-    where uid = #{0}
+    where uid = #{0} and delete_flag=0
+    order by default_flag desc,sort_flag desc
   </select>
 
   <select id="selectAllIds" parameterType="Long" resultType="Long">
     select
     id
     from s_user_address
-    where uid = #{0}
+    where uid = #{0} and delete_flag=0
+    order by default_flag desc,sort_flag desc
   </select>
 
   <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.cj.shop.api.entity.UserAddress" >
@@ -169,7 +173,7 @@
         sort_flag = #{sortFlag,jdbcType=INTEGER},
       </if>
       <if test="properties != null" >
-        properties = #{properties,jdbcType=LONGVARCHAR},
+        properties = #{properties},
       </if>
     </set>
     where uid=#{uid} and id = #{id,jdbcType=BIGINT}

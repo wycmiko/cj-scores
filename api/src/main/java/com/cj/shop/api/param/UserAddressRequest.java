@@ -1,11 +1,11 @@
 package com.cj.shop.api.param;
 
-import com.cj.shop.common.model.PropertyEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author yuchuanWeng(wycmiko @ foxmail.com)
@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class UserAddressRequest extends PropertyEntity implements Serializable {
+public class UserAddressRequest  implements Serializable {
     private Long id;
 
     private String token;
@@ -42,4 +42,6 @@ public class UserAddressRequest extends PropertyEntity implements Serializable {
 
     @JsonProperty("sort_flag")
     private Integer sortFlag;
+
+    private Map<String,Object> properties;
 }

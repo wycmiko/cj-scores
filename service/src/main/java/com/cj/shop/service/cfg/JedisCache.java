@@ -123,6 +123,29 @@ public class JedisCache implements Cache {
         return false;
     }
 
+    public boolean del(String... keys) {
+        boolean result = true;
+        try (Jedis jedis = jedisCluster.getResource()) {
+            jedis.del(keys);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean delWithPattern(String pattern) {
+        boolean result = true;
+        try (Jedis jedis = jedisCluster.getResource()) {
+            Set<String> keys = jedis.keys(pattern);
+            for (String key : keys) {
+                jedis.del(key);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     @Override
     public long dels(String[] keys) {
         long c = 0;
@@ -228,10 +251,10 @@ public class JedisCache implements Cache {
     }
 
 
-    public <T> List<T> hmget(String key,  Class<T> valueType, String ...params) {
+    public <T> List<T> hmget(String key, Class<T> valueType, String... params) {
         List<String> strs = new ArrayList<>();
         try (Jedis jedis = jedisCluster.getResource()) {
-            strs = jedis.hmget(key,params);
+            strs = jedis.hmget(key, params);
         } catch (Exception e) {
             e.printStackTrace();
         }

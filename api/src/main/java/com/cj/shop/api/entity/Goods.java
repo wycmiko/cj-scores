@@ -50,6 +50,7 @@ public class Goods extends PropertyEntity implements Serializable {
     private Integer firstTypeId;
 
     private Integer secondTypeId;
+    private Integer thirdTypeId;
 
     private Integer goodStatus;
 

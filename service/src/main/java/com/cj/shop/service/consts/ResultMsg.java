@@ -14,4 +14,6 @@ public class ResultMsg {
 
     public static final String ADDRESS_NOT_EXISTS = "地址不存在";
     public static final String DEFAULT_ADDR_ALREADY_EXIST = "默认地址已存在";
+
+    public static final String TYPE_NOT_EXISTS = "类型不存在";
 }
