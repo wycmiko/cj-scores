@@ -3,7 +3,7 @@
 # mysql - local - url
 spring:
   application:
-    name: match-api
+    name: mall-api
   datasource:
           name: prod
           url: jdbc:mysql://${MYSQL}:${MYSQL_PORT}/cj_match?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false

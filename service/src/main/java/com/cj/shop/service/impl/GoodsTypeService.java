@@ -46,9 +46,7 @@ public class GoodsTypeService implements GoodsTypeApi {
             }
         }
         GoodsType goodsType = new GoodsType();
-        if (request.getProperties() == null || request.getProperties().isEmpty()) {
-            goodsType.setProperties("{}");
-        }
+        goodsType.setProperties(PropertiesUtil.addProperties(request.getProperties()));
         BeanUtils.copyProperties(request, goodsType);
         int i = goodsTypeMapper.insertSelective(goodsType);
         if (i > 0) {

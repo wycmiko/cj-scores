@@ -22,12 +22,7 @@ public interface GoodsTypeApi {
 
     /**
      * 查询全部商品分类
-     * 三级对应关系:
-     * {type1 :[
-     *  type2 :[
-     *  "type3","type4"
-     *  ]
-     * ]}
+     * 三级对应关系
      */
     List<GoodsType> getAllGoodsType(Integer type);
 

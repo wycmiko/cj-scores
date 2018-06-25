@@ -43,7 +43,7 @@ public abstract class ResultConsts {
     public static final String TOKEN_FAILURE = "Token不合法!";
     public static final String PWD_ERROR = "用户名或密码错误!";
     public static final String CARD_NO_FAILURE = "身份证号不合法!";
-    public static final String PARAM_NULL = "参数不能为空!";
+    public static final String PARAM_NULL = "必传参数不能为空";
     //player
     //
 

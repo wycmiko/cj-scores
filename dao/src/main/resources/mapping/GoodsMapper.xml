@@ -7,6 +7,7 @@
     <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
     <result column="brand_id" property="brandId" jdbcType="BIGINT" />
     <result column="shop_id" property="shopId" jdbcType="BIGINT" />
+    <result column="supply_id" property="supplyId" jdbcType="BIGINT" />
     <result column="goods_title" property="goodsTitle" jdbcType="VARCHAR" />
     <result column="market_price" property="marketPrice" jdbcType="DECIMAL" />
     <result column="shop_price" property="shopPrice" jdbcType="DECIMAL" />
@@ -39,7 +40,7 @@
     <result column="properties" property="properties" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, goods_sn, goods_name, brand_id, shop_id, goods_title, market_price, shop_price, 
+    id, goods_sn, goods_name, brand_id, shop_id, supply_id, goods_title, market_price, shop_price,
     sale_count, book_flag, stock_num, warn_stock, warn_stock_flag, sale_flag, hot_flag, 
     new_flag, recommand_flag, best_flag, recom_desc, first_type_id, second_type_id, third_type_id, good_status,
     preview_img, team_buy_flag, second_goods_id, delete_flag, update_time, create_time, 
@@ -74,6 +75,9 @@
       </if>
       <if test="shopId != null" >
         shop_id,
+      </if>
+      <if test="supplyId != null" >
+        supply_id,
       </if>
       <if test="goodsTitle != null" >
         goods_title,
@@ -173,6 +177,9 @@
       <if test="shopId != null" >
         #{shopId,jdbcType=BIGINT},
       </if>
+      <if test="supplyId != null" >
+        #{supplyId,jdbcType=BIGINT},
+      </if>
       <if test="goodsTitle != null" >
         #{goodsTitle,jdbcType=VARCHAR},
       </if>
@@ -270,6 +277,9 @@
       </if>
       <if test="shopId != null" >
         shop_id = #{shopId,jdbcType=BIGINT},
+      </if>
+      <if test="supplyId != null" >
+        supply_id = #{supplyId,jdbcType=BIGINT},
       </if>
       <if test="goodsTitle != null" >
         goods_title = #{goodsTitle,jdbcType=VARCHAR},

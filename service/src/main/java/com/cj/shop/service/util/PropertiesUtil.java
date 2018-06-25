@@ -1,5 +1,6 @@
 package com.cj.shop.service.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.util.StringUtils;
 
@@ -35,5 +36,13 @@ public class PropertiesUtil {
             return jsonObject.toJSONString();
         }
         return null;
+    }
+
+    public static String addProperties(Map<String, Object> map) {
+        if (map == null || map.isEmpty()) {
+           return "{}";
+        } else {
+            return JSON.toJSONString(map);
+        }
     }
 }
