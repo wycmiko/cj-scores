@@ -3,9 +3,10 @@ package com.cj.shop.service.impl;
 import com.cj.shop.api.entity.GoodsBrand;
 import com.cj.shop.api.entity.GoodsSupply;
 import com.cj.shop.api.interf.GoodsApi;
+import com.cj.shop.api.param.GoodsBrandRequest;
 import com.cj.shop.api.param.GoodsSupplyRequest;
 import com.cj.shop.api.response.PagedList;
-import com.cj.shop.common.utils.DateUtils;
+import com.cj.shop.dao.mapper.GoodsBrandMapper;
 import com.cj.shop.dao.mapper.GoodsSupplyMapper;
 import com.cj.shop.service.cfg.JedisCache;
 import com.cj.shop.service.consts.ResultMsg;
@@ -38,6 +39,9 @@ public class GoodsService implements GoodsApi {
     private JedisCache jedisCache;
     @Autowired
     private GoodsSupplyMapper goodsSupplyMapper;
+    @Autowired
+    private GoodsBrandMapper goodsBrandMapper;
+
     private static final String JEDIS_PREFIX_GOODS_TYPE = "cj_shop:mall:goods:";
     private static final String JEDIS_PREFIX_GOODS_SUPPLY = JEDIS_PREFIX_GOODS_TYPE + "supply:";
     private static final String JEDIS_PREFIX_GOODS_BRAND = JEDIS_PREFIX_GOODS_TYPE + "brand:";
@@ -53,10 +57,9 @@ public class GoodsService implements GoodsApi {
         GoodsSupply supply = new GoodsSupply();
         BeanUtils.copyProperties(request, supply);
         supply.setProperties(PropertiesUtil.addProperties(request.getProperties()));
-        supply.setCreateTime(DateUtils.getCommonString());
         int i = goodsSupplyMapper.insertSelective(supply);
         if (i > 0) {
-            jedisCache.hset(JEDIS_PREFIX_GOODS_SUPPLY, supply.getId().toString(), supply);
+            jedisCache.hset(JEDIS_PREFIX_GOODS_SUPPLY, supply.getId().toString(), goodsBrandMapper.selectByPrimaryKey(supply.getId()));
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -93,7 +96,6 @@ public class GoodsService implements GoodsApi {
     @Override
     public PagedList<GoodsSupply> findAllSupplies(String supplyName, Integer pageNum, Integer pageSize, String type) {
         Integer flag = null;
-        log.info("{}, type={}",supplyName, type);
         if (!"all".equals(type.toLowerCase())) {
             flag = 1;
         }
@@ -136,23 +138,41 @@ public class GoodsService implements GoodsApi {
     /**
      * 添加品牌
      *
-     * @param goodsBrand
+     * @param request
      * @return
      */
     @Override
-    public String insertBrand(GoodsBrand goodsBrand) {
-        return null;
+    public String insertBrand(GoodsBrandRequest request) {
+        GoodsBrand brand = new GoodsBrand();
+        BeanUtils.copyProperties(request, brand);
+        brand.setProperties(PropertiesUtil.addProperties(request.getProperties()));
+        int i = goodsBrandMapper.insertSelective(brand);
+        if (i > 0) {
+            jedisCache.hset(JEDIS_PREFIX_GOODS_BRAND, brand.getId().toString(), goodsBrandMapper.selectByPrimaryKey(brand.getId()));
+        }
+        return ResultMsgUtil.dmlResult(i);
     }
 
     /**
      * 修改品牌
      *
-     * @param goodsBrand
+     * @param request
      * @return
      */
     @Override
-    public String updateBrand(GoodsBrand goodsBrand) {
-        return null;
+    public String updateBrand(GoodsBrandRequest request) {
+        GoodsBrand brandDetail = getBrandDetail(request.getId());
+        if (brandDetail == null) {
+            return ResultMsg.BRAND_NOT_EXISTS;
+        }
+        GoodsBrand brand = new GoodsBrand();
+        BeanUtils.copyProperties(request, brand);
+        brand.setProperties(PropertiesUtil.changeProperties(brandDetail.getProperties(), request.getProperties()));
+        int i = goodsBrandMapper.updateByPrimaryKeySelective(brand);
+        if (i > 0) {
+            jedisCache.hset(JEDIS_PREFIX_GOODS_BRAND, request.getId().toString(), goodsBrandMapper.selectByPrimaryKey(request.getId()));
+        }
+        return ResultMsgUtil.dmlResult(i);
     }
 
     /**
@@ -162,21 +182,47 @@ public class GoodsService implements GoodsApi {
      * @return
      */
     @Override
-    public String getBrandDetail(Long brandId) {
-        return null;
+    public GoodsBrand getBrandDetail(Long brandId) {
+        GoodsBrand hget = jedisCache.hget(JEDIS_PREFIX_GOODS_BRAND, brandId.toString(), GoodsBrand.class);
+        if (hget == null) {
+            hget = goodsBrandMapper.selectByPrimaryKey(brandId);
+            jedisCache.hset(JEDIS_PREFIX_GOODS_BRAND, brandId.toString(), hget);
+        }
+        return hget;
     }
 
     /**
      * 查询全部品牌
      *
-     * @param supplyName
-     * @param pageNum
-     * @param pageSize
-     * @param type
+     * @param brandName 品牌名模糊匹配
+     * @param pageNum   当前页
+     * @param pageSize  每页条数
+     * @param type      类型 all=显示全部 其它显示未被禁用的
      * @return
      */
     @Override
-    public PagedList<GoodsBrand> findAllBrands(String supplyName, Integer pageNum, Integer pageSize, String type) {
-        return null;
+    public PagedList<GoodsBrand> findAllBrands(String brandName, Integer pageNum, Integer pageSize, String type) {
+        Integer flag = null;
+        if (!"all".equals(type.toLowerCase())) {
+            flag = 1;
+        }
+        Page<Object> objects = null;
+        List<GoodsBrand> list = null;
+        if (pageNum != null && pageSize != null) {
+            objects = PageHelper.startPage(pageNum, pageSize);
+        } else {
+            pageNum = 0;
+            pageSize = 0;
+        }
+        List<Long> longs = ValidatorUtil.checkNotEmpty(goodsBrandMapper.selectBrandIds(brandName, flag));
+        if (!longs.isEmpty()) {
+            list = new ArrayList<>();
+            for (Long id : longs) {
+                GoodsBrand brandDetail = getBrandDetail(id);
+                list.add(brandDetail);
+            }
+        }
+        PagedList<GoodsBrand> pagedList = new PagedList<>(list, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
+        return pagedList;
     }
 }

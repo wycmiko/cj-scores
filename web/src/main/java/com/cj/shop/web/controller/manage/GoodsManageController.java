@@ -1,6 +1,7 @@
 package com.cj.shop.web.controller.manage;
 
 import com.cj.shop.api.entity.GoodsSupply;
+import com.cj.shop.api.param.GoodsBrandRequest;
 import com.cj.shop.api.param.GoodsSupplyRequest;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.service.impl.GoodsService;
@@ -130,6 +131,108 @@ public class GoodsManageController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("updateSupply error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 查询品牌详情
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/brand/{id}")
+    public Result getGoodsBrandDetail(@PathVariable Long id) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(id)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            log.info("getGoodsBrandDetail begin");
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsService.getBrandDetail(id));
+            log.info("getGoodsBrandDetail end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getGoodsBrandDetail error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 查询品牌列表
+     *
+     * @return
+     */
+    @GetMapping("/brandList")
+    public Result brandList(Integer page_num, Integer page_size, String brand_name, String type) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(type)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!StringUtils.isBlank(brand_name)) {
+                brand_name = URLDecoder.decode(brand_name, "UTF-8");
+            }
+            log.info("brandList begin");
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsService.findAllBrands(brand_name, page_num, page_size, type));
+            log.info("brandList end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("brandList error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 添加品牌
+     *
+     * @return
+     */
+    @PostMapping("/addBrand")
+    public Result addBrand(@RequestBody GoodsBrandRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(request.getBrandName())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            log.info("addBrand begin");
+            result = ResultUtil.getVaildResult(goodsService.insertBrand(request), result);
+            log.info("addBrand end");
+        } catch (Exception e) {
+            log.error("addBrand error {}", e.getMessage());
+            e.printStackTrace();
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 修改品牌
+     *
+     * @return
+     */
+    @PutMapping("/updateBrand")
+    public Result updateBrand(@RequestBody GoodsBrandRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(request.getId(), request.getBrandName())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            log.info("updateBrand begin");
+            result = ResultUtil.getVaildResult(goodsService.updateBrand(request), result);
+            log.info("updateBrand end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("updateBrand error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

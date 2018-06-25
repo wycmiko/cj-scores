@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cj.match.dao.mapper.FileUploadMapper">
+<mapper namespace="com.cj.shop.dao.mapper.FileUploadMapper">
     <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.FileUpload">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="uid" property="uid" />
@@ -15,7 +15,7 @@
     id, uid, file_type, file_name,file_url,file_size, req_ip, role,post_time
   </sql>
     <insert id="addRecord" parameterType="com.cj.shop.api.entity.FileUpload">
-        insert into m_file_upload
+        insert into s_file_upload
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="uid != null">
                 uid,

@@ -2,6 +2,7 @@ package com.cj.shop.api.interf;
 
 import com.cj.shop.api.entity.GoodsBrand;
 import com.cj.shop.api.entity.GoodsSupply;
+import com.cj.shop.api.param.GoodsBrandRequest;
 import com.cj.shop.api.param.GoodsSupplyRequest;
 import com.cj.shop.api.response.PagedList;
 
@@ -46,34 +47,32 @@ public interface GoodsApi {
      */
     /**
      * 添加品牌
-     * @param goodsBrand
+     * @param request
      * @return
      */
-    String insertBrand(GoodsBrand goodsBrand);
+    String insertBrand(GoodsBrandRequest request);
 
     /**
      * 修改品牌
-     * @param goodsBrand
+     * @param request
      * @return
      */
-    String updateBrand(GoodsBrand goodsBrand);
+    String updateBrand(GoodsBrandRequest request);
 
     /**
      * 查询品牌详情
      * @param brandId
      * @return
      */
-    String getBrandDetail(Long brandId);
+    GoodsBrand getBrandDetail(Long brandId);
 
     /**
      * 查询全部品牌
-     * @param supplyName
+     * @param brandName
      * @param pageNum
      * @param pageSize
      * @param type
      * @return
      */
-    PagedList<GoodsBrand> findAllBrands(String supplyName, Integer pageNum, Integer pageSize, String type);
-
-
+    PagedList<GoodsBrand> findAllBrands(String brandName, Integer pageNum, Integer pageSize, String type);
 }

@@ -31,7 +31,21 @@
     set delete_flag=1
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsBrand" >
+
+  <select id="selectBrandIds" resultType="Long">
+    select id from s_goods_brand
+    <where>
+      1=1
+      <if test="brandName != null">
+        and brand_name like concat('%','${brandName}','%')
+      </if>
+      <if test="adminFlag != null">
+        and delete_flag=0
+      </if>
+    </where>
+    order by sort_flag desc
+  </select>
+  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsBrand" useGeneratedKeys="true" keyProperty="id">
     insert into s_goods_brand
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="brandName != null" >
