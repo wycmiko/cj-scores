@@ -2,8 +2,10 @@ package com.cj.shop.api.interf;
 
 import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
 import com.cj.shop.api.entity.GoodsTag;
+import com.cj.shop.api.entity.GoodsUnit;
 import com.cj.shop.api.param.GoodsSpecRequest;
 import com.cj.shop.api.param.GoodsTagRequest;
+import com.cj.shop.api.param.GoodsUnitRequest;
 import com.cj.shop.api.response.PagedList;
 
 /**
@@ -61,4 +63,30 @@ public interface GoodsExtensionApi {
      * @return
      */
     PagedList<GoodsTag> findAllTags(Integer pageNum, Integer pageSize, String type);
+
+    /**
+     * 添加计量单位
+     * @param request
+     * @return
+     */
+    String insertGoodsUnit(GoodsUnitRequest request);
+
+    /**
+     * 修改计量单位
+     */
+    String updateGoodsUnit(GoodsUnitRequest request);
+
+    /**
+     * 查询计量单位详情
+     */
+    GoodsUnit getGoodsUnitDetail(Long unitId);
+
+    /**
+     * 查询全部计量单位
+     * @param pageNum
+     * @param pageSize
+     * @param type all 显示全部(包含禁用) exist(显示未被删除的)
+     * @return
+     */
+    PagedList<GoodsUnit> findAllUnits(Integer pageNum, Integer pageSize, String type);
 }

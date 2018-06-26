@@ -74,4 +74,16 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
+
+    <select id="selectUnitIds" resultType="Long">
+        select id
+        from s_goods_unit
+        <where>
+            1=1
+            <if test='type == "exist" '>
+                and delete_flag=0
+            </if>
+        </where>
+        order by sort_flag desc
+    </select>
 </mapper>

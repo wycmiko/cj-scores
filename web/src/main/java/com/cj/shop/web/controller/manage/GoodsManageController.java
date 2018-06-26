@@ -1,10 +1,7 @@
 package com.cj.shop.web.controller.manage;
 
 import com.cj.shop.api.entity.GoodsSupply;
-import com.cj.shop.api.param.GoodsBrandRequest;
-import com.cj.shop.api.param.GoodsSpecRequest;
-import com.cj.shop.api.param.GoodsSupplyRequest;
-import com.cj.shop.api.param.GoodsTagRequest;
+import com.cj.shop.api.param.*;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.service.impl.GoodsExtensionService;
 import com.cj.shop.service.impl.GoodsService;
@@ -440,6 +437,103 @@ public class GoodsManageController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("updateTag error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 添加单位
+     * @return
+     */
+    @PostMapping("/addUnit")
+    public Result addUnit(@RequestBody GoodsUnitRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("addUnit begin");
+            if (CommandValidator.isEmpty(request.getUnitName())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.insertGoodsUnit(request));
+            log.info("addUnit end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("addUnit error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 修改单位
+     * @return
+     */
+    @PutMapping("/updateUnit")
+    public Result updateUnit(@RequestBody GoodsUnitRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("updateUnit begin");
+            if (CommandValidator.isEmpty(request.getId())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.updateGoodsUnit(request));
+            log.info("updateUnit end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("updateUnit error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 查询全部单位
+     * @return
+     */
+    @GetMapping("/unitList")
+    public Result unitList(String type, Integer page_num, Integer page_size) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("unitList begin");
+            if (CommandValidator.isEmpty(type)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.findAllUnits(page_num, page_size, type));
+            log.info("unitList end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("unitList error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 查询单位详情
+     * @return
+     */
+    @GetMapping("/unit/{id}")
+    public Result getUnitDetail(@PathVariable Long id) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("getUnitDetail begin");
+            if (CommandValidator.isEmpty(id)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.getGoodsUnitDetail(id));
+            log.info("getUnitDetail end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getUnitDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

@@ -2,9 +2,11 @@ package com.cj.shop.service.impl;
 
 import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
 import com.cj.shop.api.entity.GoodsTag;
+import com.cj.shop.api.entity.GoodsUnit;
 import com.cj.shop.api.interf.GoodsExtensionApi;
 import com.cj.shop.api.param.GoodsSpecRequest;
 import com.cj.shop.api.param.GoodsTagRequest;
+import com.cj.shop.api.param.GoodsUnitRequest;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.dao.mapper.GoodsSpecMapper;
 import com.cj.shop.dao.mapper.GoodsTagMapper;
@@ -212,6 +214,87 @@ public class GoodsExtensionService implements GoodsExtensionApi {
             }
         }
         PagedList<GoodsTag> pagedList = new PagedList<>(returnList, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
+        return pagedList;
+    }
+
+    /**
+     * 添加计量单位
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public String insertGoodsUnit(GoodsUnitRequest request) {
+        GoodsUnit goodsUnit = new GoodsUnit();
+        BeanUtils.copyProperties(request, goodsUnit);
+        goodsUnit.setProperties(PropertiesUtil.addProperties(request.getProperties()));
+        int i = goodsUnitMapper.insertSelective(goodsUnit);
+        if (i > 0) {
+            jedisCache.hset(UNIT_KEY, goodsUnit.getId().toString(), goodsUnitMapper.selectByPrimaryKey(goodsUnit.getId()));
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 修改计量单位
+     *
+     * @param request
+     */
+    @Override
+    public String updateGoodsUnit(GoodsUnitRequest request) {
+        GoodsUnit goodsUnitDetail = getGoodsUnitDetail(request.getId());
+        if (goodsUnitDetail == null) {
+            return ResultMsg.UNIT_NOT_EXISTS;
+        }
+        BeanUtils.copyProperties(request, goodsUnitDetail);
+        int i = goodsUnitMapper.updateByPrimaryKeySelective(goodsUnitDetail);
+        if (i > 0) {
+            jedisCache.hset(UNIT_KEY, request.getId().toString(), goodsUnitMapper.selectByPrimaryKey(request.getId()));
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 查询计量单位详情
+     *
+     * @param unitId
+     */
+    @Override
+    public GoodsUnit getGoodsUnitDetail(Long unitId) {
+        GoodsUnit goodsUnit = jedisCache.hget(UNIT_KEY, unitId.toString(), GoodsUnit.class);
+        if (goodsUnit == null) {
+            goodsUnit = goodsUnitMapper.selectByPrimaryKey(unitId);
+            jedisCache.hset(UNIT_KEY, unitId.toString(), goodsUnit);
+        }
+        return goodsUnit;
+    }
+
+    /**
+     * 查询全部计量单位
+     *
+     * @param pageNum
+     * @param pageSize
+     * @param type     all 显示全部(包含禁用) exist(显示未被删除的)
+     * @return
+     */
+    @Override
+    public PagedList<GoodsUnit> findAllUnits(Integer pageNum, Integer pageSize, String type) {
+        Page<Object> objects = null;
+        List<GoodsUnit> returnList = new ArrayList<>();
+        if (pageNum != null && pageSize != null) {
+            objects = PageHelper.startPage(pageNum, pageSize);
+        } else {
+            pageNum = 0;
+            pageSize = 0;
+        }
+        List<Long> ids = ValidatorUtil.checkNotEmptyList(goodsUnitMapper.selectUnitIds(type));
+        if (!ids.isEmpty()) {
+            for (Long id : ids) {
+                GoodsUnit goodsUnit = getGoodsUnitDetail(id);
+                returnList.add(goodsUnit);
+            }
+        }
+        PagedList<GoodsUnit> pagedList = new PagedList<>(returnList, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
         return pagedList;
     }
 }
