@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cj.shop.dao.mapper.GoodsSpecMapper">
+    <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.GoodsSpecWithBLOBs">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="sort_flag" property="sortFlag" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.cj.shop.api.entity.GoodsSpecWithBLOBs" extends="BaseResultMap">
+        <result column="spec_properties" property="specProperties" jdbcType="LONGVARCHAR"/>
+        <result column="size_properties" property="sizeProperties" jdbcType="LONGVARCHAR"/>
+        <result column="properties" property="properties" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, delete_flag, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
+    , properties
+  </sql>
+    <sql id="Blob_Column_List">
+    spec_properties, size_properties
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from s_goods_spec
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from s_goods_spec
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsSpecWithBLOBs" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into s_goods_spec
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sortFlag != null">
+                sort_flag,
+            </if>
+            <if test="specProperties != null">
+                spec_properties,
+            </if>
+            <if test="sizeProperties != null">
+                size_properties,
+            </if>
+            <if test="properties != null">
+                properties,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sortFlag != null">
+                #{sortFlag,jdbcType=INTEGER},
+            </if>
+            <if test="specProperties != null">
+                #{specProperties,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="sizeProperties != null">
+                #{sizeProperties,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="properties != null">
+                #{properties,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.GoodsSpecWithBLOBs">
+        update s_goods_spec
+        <set>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="sortFlag != null">
+                sort_flag = #{sortFlag,jdbcType=INTEGER},
+            </if>
+            <if test="specProperties != null">
+                spec_properties = #{specProperties,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="sizeProperties != null">
+                size_properties = #{sizeProperties,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="properties != null">
+                properties = #{properties,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectAllSpecIds" resultType="Long">
+        select id from s_goods_spec
+        <where>
+            1=1
+            <if test='type == "exist"'>
+                and delete_flag=0
+            </if>
+        </where>
+        order by sort_flag desc
+    </select>
+</mapper>

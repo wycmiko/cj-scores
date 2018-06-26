@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cj.shop.dao.mapper.GoodsTagMapper" >
+  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.GoodsTag" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="tag_name" property="tagName" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="sort_flag" property="sortFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.cj.shop.api.entity.GoodsTag" extends="BaseResultMap" >
+    <result column="properties" property="properties" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, tag_name, delete_flag, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
+  </sql>
+  <sql id="Blob_Column_List" >
+    properties
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from s_goods_tag
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from s_goods_tag
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <select id="selectTagIds" resultType="Long">
+    select id
+    from s_goods_tag
+    <where>
+      1=1
+      <if test='type == "exist" '>
+        and delete_flag=0
+      </if>
+    </where>
+    order by sort_flag desc
+  </select>
+  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsTag" useGeneratedKeys="true" keyProperty="id" >
+    insert into s_goods_tag
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tagName != null" >
+        tag_name,
+      </if>
+      <if test="sortFlag != null" >
+        sort_flag,
+      </if>
+      <if test="properties != null" >
+        properties,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tagName != null" >
+        #{tagName,jdbcType=VARCHAR},
+      </if>
+      <if test="sortFlag != null" >
+        #{sortFlag,jdbcType=INTEGER},
+      </if>
+      <if test="properties != null" >
+        #{properties,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.GoodsTag" >
+    update s_goods_tag
+    <set >
+      <if test="tagName != null" >
+        tag_name = #{tagName,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      </if>
+      <if test="sortFlag != null" >
+        sort_flag = #{sortFlag,jdbcType=INTEGER},
+      </if>
+      <if test="properties != null" >
+        properties = #{properties,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

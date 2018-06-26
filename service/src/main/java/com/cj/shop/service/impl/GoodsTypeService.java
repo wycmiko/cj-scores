@@ -90,7 +90,7 @@ public class GoodsTypeService implements GoodsTypeApi {
         String key = JEDIS_PREFIX_GOODS_TYPE + "type:list:";
         //查出顶级父类ID列表
         List<GoodsType> returnList = new ArrayList<>();
-        List<Long> ids = ValidatorUtil.checkNotEmpty(goodsTypeMapper.selectIds(1, null, types));
+        List<Long> ids = ValidatorUtil.checkNotEmptyList(goodsTypeMapper.selectIds(1, null, types));
         if (!ids.isEmpty()) {
             for (Long id : ids) {
                 GoodsType hget = jedisCache.hget(key, id.toString(), GoodsType.class);

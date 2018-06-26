@@ -1,12 +1,7 @@
 package com.cj.shop.service.util;
 
-import com.cj.shop.common.utils.DateUtils;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.LongAdder;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -25,7 +20,7 @@ public class ValidatorUtil {
      * @param <T>
      * @return
      */
-    public static <T> List<T> checkNotEmpty(List<T> list) {
+    public static <T> List<T> checkNotEmptyList(List<T> list) {
         if (list == null) {
             return new ArrayList<>();
         }

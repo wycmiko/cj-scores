@@ -2,8 +2,11 @@ package com.cj.shop.web.controller.manage;
 
 import com.cj.shop.api.entity.GoodsSupply;
 import com.cj.shop.api.param.GoodsBrandRequest;
+import com.cj.shop.api.param.GoodsSpecRequest;
 import com.cj.shop.api.param.GoodsSupplyRequest;
+import com.cj.shop.api.param.GoodsTagRequest;
 import com.cj.shop.api.response.PagedList;
+import com.cj.shop.service.impl.GoodsExtensionService;
 import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
@@ -28,6 +31,8 @@ public class GoodsManageController {
 
     @Autowired
     private GoodsService goodsService;
+    @Autowired
+    private GoodsExtensionService goodsExtensionService;
 
     /**
      * 查询供应商详情
@@ -237,4 +242,208 @@ public class GoodsManageController {
         }
         return result;
     }
+
+
+    /**
+     * 添加商品规格
+     *
+     * @return
+     */
+    @PostMapping("/addSpec")
+    public Result addSpec(@RequestBody GoodsSpecRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("addSpec begin");
+            if (CommandValidator.isEmpty(request.getSizeProperties(), request.getSpecProperties())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = ResultUtil.getVaildResult(goodsExtensionService.insertGoodsSpec(request), result);
+            log.info("addSpec end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("addSpec error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 修改商品规格
+     *
+     * @return
+     */
+    @PutMapping("/updateSpec")
+    public Result updateSpec(@RequestBody GoodsSpecRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("updateSpec begin");
+            if (CommandValidator.isEmpty(request.getId())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = ResultUtil.getVaildResult(goodsExtensionService.updateGoodsSpec(request), result);
+            log.info("updateSpec end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("updateSpec error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 查询商品规格详情
+     *
+     * @return
+     */
+    @GetMapping("/spec/{id}")
+    public Result getSpecDetail(@PathVariable Long id) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("getSpecDetail begin");
+            if (CommandValidator.isEmpty(id)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.getGoodsSpecDetail(id));
+            log.info("getSpecDetail end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getSpecDetail error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 查询商品规格列表
+     *
+     * @return
+     */
+    @GetMapping("/specList")
+    public Result specList(String type, Integer page_num, Integer page_size) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("specList begin");
+            if (CommandValidator.isEmpty(type)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.findAllSpecs(page_num, page_size, type));
+            log.info("specList end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("specList error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 查询商品标签列表
+     *
+     * @return
+     */
+    @GetMapping("/tagList")
+    public Result tagList(String type, Integer page_num, Integer page_size) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("tagList begin");
+            if (CommandValidator.isEmpty(type)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.findAllTags(page_num, page_size, type));
+            log.info("tagList end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("tagList error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 查询商品标签详情
+     *
+     * @return
+     */
+    @GetMapping("/tag/{id}")
+    public Result tagDetail(@PathVariable Long id) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("tagDetail begin");
+            if (CommandValidator.isEmpty(id)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.getGoodsTagDetail(id));
+            log.info("tagDetail end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("tagDetail error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 添加商品标签
+     *
+     * @return
+     */
+    @PostMapping("/addTag")
+    public Result addTag(@RequestBody GoodsTagRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(request.getTagName())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            log.info("addTag begin");
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.insertGoodsTag(request));
+            log.info("addTag end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("addTag error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 修改商品标签
+     * @return
+     */
+    @PutMapping("/updateTag")
+    public Result updateTag(@RequestBody GoodsTagRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("updateTag begin");
+            if (CommandValidator.isEmpty(request.getTagName())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.updateGoodsTag(request));
+            log.info("updateTag end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("updateTag error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
 }

@@ -76,7 +76,7 @@ public class UserService implements UserApi {
             pageSize = 0;
         }
         //查询出ID列表
-        List<Long> addrIds = ValidatorUtil.checkNotEmpty(userAddressMapper.selectAllIds(uid));
+        List<Long> addrIds = ValidatorUtil.checkNotEmptyList(userAddressMapper.selectAllIds(uid));
         if (objects != null) count = objects.getTotal();
         //根据ID 去Redis中查询对象
         if (!addrIds.isEmpty()) {

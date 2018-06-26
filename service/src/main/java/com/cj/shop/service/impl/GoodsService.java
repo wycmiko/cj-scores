@@ -100,16 +100,16 @@ public class GoodsService implements GoodsApi {
             flag = 1;
         }
         Page<Object> objects = null;
-        List<GoodsSupply> list = null;
+        List<GoodsSupply> list = new ArrayList<>();
         if (pageNum != null && pageSize != null) {
             objects = PageHelper.startPage(pageNum, pageSize);
         } else {
             pageNum = 0;
             pageSize = 0;
         }
-        List<Long> longs = ValidatorUtil.checkNotEmpty(goodsSupplyMapper.selectAllSupplyIds(supplyName, flag));
+        List<Long> longs = ValidatorUtil.checkNotEmptyList(goodsSupplyMapper.selectAllSupplyIds(supplyName, flag));
         if (!longs.isEmpty()) {
-            list = new ArrayList<>();
+
             for (Long id : longs) {
                 GoodsSupply supplyDetail = getSupplyDetail(id);
                 list.add(supplyDetail);
@@ -214,7 +214,7 @@ public class GoodsService implements GoodsApi {
             pageNum = 0;
             pageSize = 0;
         }
-        List<Long> longs = ValidatorUtil.checkNotEmpty(goodsBrandMapper.selectBrandIds(brandName, flag));
+        List<Long> longs = ValidatorUtil.checkNotEmptyList(goodsBrandMapper.selectBrandIds(brandName, flag));
         if (!longs.isEmpty()) {
             list = new ArrayList<>();
             for (Long id : longs) {
