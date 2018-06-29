@@ -1,6 +1,7 @@
 package com.cj.shop.service.util;
 
 import com.cj.shop.common.utils.DateUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.LongAdder;
@@ -11,6 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2018/6/22
  * @since 1.0
  */
+@Slf4j
 public class NumberUtil {
 
     public static final LongAdder AUTOINCRENUM = new LongAdder();
@@ -51,5 +53,11 @@ public class NumberUtil {
         }
         String orderNum = String.valueOf(hashCodeV).substring(0,5) + goodId;
         return orderNum;
+    }
+
+
+    public static void main(String[] args) {
+        log.info(getOrderIdByUUId());
+        log.info(getGoodsNum(12L));
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * 货物扩展属性服务层 （规格、标签、单位CURD服务）
@@ -59,12 +60,10 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     public String insertGoodsSpec(GoodsSpecRequest request) {
         GoodsSpecWithBLOBs bloBs = new GoodsSpecWithBLOBs();
         BeanUtils.copyProperties(request, bloBs);
-        bloBs.setSpecProperties(PropertiesUtil.addProperties(request.getSpecProperties()));
-        bloBs.setSizeProperties(PropertiesUtil.addProperties(request.getSizeProperties()));
         bloBs.setProperties(PropertiesUtil.addProperties(request.getProperties()));
         int i = goodsSpecMapper.insertSelective(bloBs);
         if (i > 0) {
-            jedisCache.hset(SPEC_KEY, bloBs.getId().toString(), goodsSpecMapper.selectByPrimaryKey(bloBs.getId()));
+            jedisCache.delWithPattern(SPEC_KEY + "*");
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -76,19 +75,40 @@ public class GoodsExtensionService implements GoodsExtensionApi {
      */
     @Override
     public String updateGoodsSpec(GoodsSpecRequest request) {
-        GoodsSpecWithBLOBs specDetail = getGoodsSpecDetail(request.getId());
+        GoodsSpecWithBLOBs specDetail = getGoodsSpecDetail(request.getId(), "all");
         if (specDetail == null) {
             return ResultMsg.SPEC_NOT_EXISTS;
         }
         BeanUtils.copyProperties(request, specDetail);
-        specDetail.setSpecProperties(PropertiesUtil.changeProperties(specDetail.getSpecProperties(), request.getSpecProperties()));
-        specDetail.setSizeProperties(PropertiesUtil.changeProperties(specDetail.getSizeProperties(), request.getSizeProperties()));
         specDetail.setProperties(PropertiesUtil.changeProperties(specDetail.getProperties(), request.getProperties()));
         int i = goodsSpecMapper.updateByPrimaryKeySelective(specDetail);
         if (i > 0) {
-            jedisCache.hset(SPEC_KEY, request.getId().toString(), goodsSpecMapper.selectByPrimaryKey(request.getId()));
+            jedisCache.delWithPattern(SPEC_KEY + "*");
         }
         return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 多级菜单：
+     * 递归算法解析成树形结构
+     *
+     * @param topId 根节点ID
+     * @return
+     */
+    public GoodsSpecWithBLOBs recursiveGoodsSpecType(long topId, String type) {
+        GoodsSpecWithBLOBs node = goodsSpecMapper.selectByPrimaryKey(topId, type);
+        if (node == null) {
+            return new GoodsSpecWithBLOBs();
+        }
+        List<Long> childTreeNodes = ValidatorUtil.checkNotEmptyList(goodsSpecMapper.selectAllSpecIds(type, node.getId(), null));
+        //遍历子节点
+        if (!childTreeNodes.isEmpty()) {
+            for (Long child : childTreeNodes) {
+                GoodsSpecWithBLOBs n = recursiveGoodsSpecType(child, type); //递归
+                node.getSubList().add(n);
+            }
+        }
+        return node;
     }
 
     /**
@@ -97,11 +117,23 @@ public class GoodsExtensionService implements GoodsExtensionApi {
      * @param specId
      */
     @Override
-    public GoodsSpecWithBLOBs getGoodsSpecDetail(Long specId) {
+    public GoodsSpecWithBLOBs getGoodsSpecDetail(Long specId, String type) {
         GoodsSpecWithBLOBs hget = jedisCache.hget(SPEC_KEY, specId.toString(), GoodsSpecWithBLOBs.class);
         if (hget == null) {
-            hget = goodsSpecMapper.selectByPrimaryKey(specId);
+            hget = recursiveGoodsSpecType(specId, "all");
             jedisCache.hset(SPEC_KEY, specId.toString(), hget);
+        }
+        if (hget != null && hget.getSubList() != null && !hget.getSubList().isEmpty()) {
+            //type
+            if ("exist".equals(type)) {
+                ListIterator<GoodsSpecWithBLOBs> iterator = hget.getSubList().listIterator();
+                while (iterator.hasNext()) {
+                    GoodsSpecWithBLOBs bloBs = iterator.next();
+                    if (bloBs.getDeleteFlag() == 1) {
+                        iterator.remove();
+                    }
+                }
+            }
         }
         return hget;
     }
@@ -124,10 +156,10 @@ public class GoodsExtensionService implements GoodsExtensionApi {
             pageNum = 0;
             pageSize = 0;
         }
-        List<Long> ids = ValidatorUtil.checkNotEmptyList(goodsSpecMapper.selectAllSpecIds(type));
+        List<Long> ids = ValidatorUtil.checkNotEmptyList(goodsSpecMapper.selectAllSpecIds(type, null, 1));
         if (!ids.isEmpty()) {
             for (Long id : ids) {
-                GoodsSpecWithBLOBs specDetail = getGoodsSpecDetail(id);
+                GoodsSpecWithBLOBs specDetail = recursiveGoodsSpecType(id, type);
                 returnList.add(specDetail);
             }
         }

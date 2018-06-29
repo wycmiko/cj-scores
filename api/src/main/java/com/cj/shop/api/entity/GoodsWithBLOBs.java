@@ -19,6 +19,8 @@ public class GoodsWithBLOBs extends PropertyEntity implements Serializable {
     private Long brandId;
 
     private Long shopId;
+    private Long unitId;
+    private Long supplyId;
 
     private String goodsTitle;
 
@@ -51,6 +53,7 @@ public class GoodsWithBLOBs extends PropertyEntity implements Serializable {
     private Integer firstTypeId;
 
     private Integer secondTypeId;
+    private Integer thirdTypeId;
 
     private Integer goodStatus;
 

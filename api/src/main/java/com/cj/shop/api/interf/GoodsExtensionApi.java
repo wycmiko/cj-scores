@@ -27,7 +27,7 @@ public interface GoodsExtensionApi {
     /**
      * 查询规格详情
      */
-    GoodsSpecWithBLOBs getGoodsSpecDetail(Long specId);
+    GoodsSpecWithBLOBs getGoodsSpecDetail(Long specId, String type);
 
     /**
      * 查询全部规格

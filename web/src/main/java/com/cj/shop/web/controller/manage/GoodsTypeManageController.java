@@ -38,13 +38,16 @@ public class GoodsTypeManageController {
      * @return
      */
     @GetMapping("/getTypeList")
-    public Result getTypeList() {
+    public Result getTypeList(String type) {
         //token校验
         Result result = null;
         try {
+            if (CommandValidator.isEmpty(type)) {
+            return CommandValidator.paramEmptyResult();
+        }
             log.info("getTypeList");
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            List<GoodsType> typeById = goodsTypeService.getAllGoodsType(1);
+            List<GoodsType> typeById = goodsTypeService.getAllGoodsType(type);
             result.setData(typeById);
             log.info("getTypeList end");
         } catch (Exception e) {
@@ -62,16 +65,16 @@ public class GoodsTypeManageController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result getGoodsTypeDetail(@PathVariable Long id) {
+    public Result getGoodsTypeDetail(@PathVariable Long id, String type) {
         //token校验
         Result result = null;
         try {
             log.info("getGoodsTypeDetail begin id={}", id);
-            if (CommandValidator.isEmpty(id)) {
+            if (CommandValidator.isEmpty(id, type)) {
                 return CommandValidator.paramEmptyResult();
             }
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            GoodsType typeById = goodsTypeService.getGoodsTypeById(id);
+            GoodsType typeById = goodsTypeService.getGoodsTypeById(id, type);
             result.setData(typeById == null ? new JSONObject() : typeById);
             log.info("getGoodsTypeDetail end");
         } catch (Exception e) {
@@ -139,15 +142,15 @@ public class GoodsTypeManageController {
      * @return
      */
     @DeleteMapping("/{id}")
-    public Result deleteType(@PathVariable Long id) {
+    public Result deleteType(@PathVariable Long id, Integer type) {
         //token校验
         Result result = null;
         try {
             log.info("deleteType begin");
-            if (CommandValidator.isEmpty(id)) {
+            if (CommandValidator.isEmpty(id, type)) {
                 return CommandValidator.paramEmptyResult();
             }
-            String s = goodsTypeService.deleteGoodsType(id);
+            String s = goodsTypeService.deleteGoodsType(id, type);
             result = ResultUtil.getVaildResult(s, result);
             log.info("deleteType end");
         } catch (Exception e) {

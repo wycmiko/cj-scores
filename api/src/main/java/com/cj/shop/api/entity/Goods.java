@@ -18,6 +18,7 @@ public class Goods extends PropertyEntity implements Serializable {
     private Long brandId;
 
     private Long shopId;
+    private Long unitId;
     private Long supplyId;
 
     private String goodsTitle;

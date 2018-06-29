@@ -252,7 +252,7 @@ public class GoodsManageController {
         Result result = null;
         try {
             log.info("addSpec begin");
-            if (CommandValidator.isEmpty(request.getSizeProperties(), request.getSpecProperties())) {
+            if (CommandValidator.isEmpty(request.getSpecName())) {
                 return CommandValidator.paramEmptyResult();
             }
             result = ResultUtil.getVaildResult(goodsExtensionService.insertGoodsSpec(request), result);
@@ -296,7 +296,7 @@ public class GoodsManageController {
      * @return
      */
     @GetMapping("/spec/{id}")
-    public Result getSpecDetail(@PathVariable Long id) {
+    public Result getSpecDetail(@PathVariable Long id, String type) {
         //token校验
         Result result = null;
         try {
@@ -305,7 +305,7 @@ public class GoodsManageController {
                 return CommandValidator.paramEmptyResult();
             }
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsExtensionService.getGoodsSpecDetail(id));
+            result.setData(goodsExtensionService.getGoodsSpecDetail(id, type));
             log.info("getSpecDetail end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -420,6 +420,7 @@ public class GoodsManageController {
 
     /**
      * 修改商品标签
+     *
      * @return
      */
     @PutMapping("/updateTag")
@@ -445,6 +446,7 @@ public class GoodsManageController {
 
     /**
      * 添加单位
+     *
      * @return
      */
     @PostMapping("/addUnit")
@@ -469,6 +471,7 @@ public class GoodsManageController {
 
     /**
      * 修改单位
+     *
      * @return
      */
     @PutMapping("/updateUnit")
@@ -493,6 +496,7 @@ public class GoodsManageController {
 
     /**
      * 查询全部单位
+     *
      * @return
      */
     @GetMapping("/unitList")
@@ -517,6 +521,7 @@ public class GoodsManageController {
 
     /**
      * 查询单位详情
+     *
      * @return
      */
     @GetMapping("/unit/{id}")

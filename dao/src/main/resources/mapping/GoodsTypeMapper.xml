@@ -20,18 +20,23 @@
     <sql id="Blob_Column_List">
     properties
   </sql>
-    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long">
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
         ,
         <include refid="Blob_Column_List"/>
         from s_goods_type
         where id = #{id,jdbcType=BIGINT}
+        <if test='type == "exist"'>
+            and delete_flag=0
+        </if>
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from s_goods_type
+
+    <delete id="deleteByPrimaryKey">
+    update s_goods_type
+    set delete_flag=#{type}
     where id = #{id,jdbcType=BIGINT} or parent_id=#{id}
-  </delete>
+    </delete>
 
     <select id="selectAllTopsByParam" resultMap="ResultMapWithBLOBs">
         select
@@ -41,8 +46,8 @@
         from s_goods_type
         <where>
             1=1
-            <if test="adminFlag == null">
-                and show_flag=1
+            <if test='type == "exist"'>
+                and delete_flag=0
             </if>
             <if test="parentNullFlag != null">
                 and parent_id is null
@@ -60,8 +65,8 @@
         from s_goods_type
         <where>
             1=1
-            <if test="adminFlag == null">
-                and show_flag=1
+            <if test='type == "exist"'>
+                and delete_flag=0
             </if>
             <if test="parentNullFlag != null">
                 and parent_id is null

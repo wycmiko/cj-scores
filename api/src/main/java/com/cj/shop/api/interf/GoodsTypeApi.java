@@ -24,12 +24,12 @@ public interface GoodsTypeApi {
      * 查询全部商品分类
      * 三级对应关系
      */
-    List<GoodsType> getAllGoodsType(Integer type);
+    List<GoodsType> getAllGoodsType(String type);
 
-    GoodsType getGoodsTypeById(Long typeId);
+    GoodsType getGoodsTypeById(Long typeId, String type);
 
     /**
      * 删除指定分类
      */
-    String deleteGoodsType(Long typeId);
+    String deleteGoodsType(Long typeId, Integer type);
 }

@@ -6,31 +6,26 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 public class GoodsSpecWithBLOBs extends PropertyEntity implements Serializable {
     private Long id;
+    @JsonProperty("parent_id")
+    private Long parentId;
+    @JsonProperty("spec_name")
+    private String specName;
     @JsonProperty("delete_flag")
     private Integer deleteFlag;
-
     @JsonProperty("update_time")
     private String updateTime;
-
     @JsonProperty("create_time")
     private String createTime;
-
     @JsonProperty("sort_flag")
     private Integer sortFlag;
-    /**
-     * json- 规格
-     */
-    @JsonProperty("spec_properties")
-    private String specProperties;
-    /**
-     * json- 尺寸
-     */
-    @JsonProperty("size_properties")
-    private String sizeProperties;
-
+    //子菜单列表
+    @JsonProperty("sub_list")
+    private List<GoodsSpecWithBLOBs> subList = new ArrayList<>();
 }

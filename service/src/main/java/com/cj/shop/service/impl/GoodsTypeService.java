@@ -40,7 +40,7 @@ public class GoodsTypeService implements GoodsTypeApi {
     @Override
     public String addGoodsType(GoodsTypeRequest request) {
         if (request.getParentId() != null) {
-            GoodsType goodsTypeById = goodsTypeMapper.selectByPrimaryKey(request.getParentId());
+            GoodsType goodsTypeById = goodsTypeMapper.selectByPrimaryKey(request.getParentId(), "all");
             if (goodsTypeById == null) {
                 return ResultMsg.PARTYPE_NOT_EXISTS;
             }
@@ -62,7 +62,7 @@ public class GoodsTypeService implements GoodsTypeApi {
      */
     @Override
     public String updateGoodsType(GoodsTypeRequest request) {
-        GoodsType typeById = getGoodsTypeById(request.getId());
+        GoodsType typeById = getGoodsTypeById(request.getId(), "all");
         if (typeById == null) {
             return ResultMsg.TYPE_NOT_EXISTS;
         }
@@ -86,17 +86,17 @@ public class GoodsTypeService implements GoodsTypeApi {
      * ]}
      */
     @Override
-    public List<GoodsType> getAllGoodsType(Integer types) {
-        String key = JEDIS_PREFIX_GOODS_TYPE + "type:list:";
+    public List<GoodsType> getAllGoodsType(String types) {
         //查出顶级父类ID列表
         List<GoodsType> returnList = new ArrayList<>();
         List<Long> ids = ValidatorUtil.checkNotEmptyList(goodsTypeMapper.selectIds(1, null, types));
         if (!ids.isEmpty()) {
             for (Long id : ids) {
+                String key = JEDIS_PREFIX_GOODS_TYPE + "detail:" + id + types;
                 GoodsType hget = jedisCache.hget(key, id.toString(), GoodsType.class);
                 if (hget == null) {
                     hget = recursiveGoodsType(id, types);
-                    jedisCache.hset(key,id.toString(), hget);
+                    jedisCache.hset(key, id.toString(), hget);
                 }
                 returnList.add(hget);
             }
@@ -105,11 +105,11 @@ public class GoodsTypeService implements GoodsTypeApi {
     }
 
     @Override
-    public GoodsType getGoodsTypeById(Long typeId) {
-        String key = JEDIS_PREFIX_GOODS_TYPE + "detail:" + typeId;
+    public GoodsType getGoodsTypeById(Long typeId, String type) {
+        String key = JEDIS_PREFIX_GOODS_TYPE + "detail:" + typeId + type;
         GoodsType goodsType = jedisCache.get(key, GoodsType.class);
         if (goodsType == null) {
-            goodsType = recursiveGoodsType(typeId, 1);
+            goodsType = recursiveGoodsType(typeId, type);
             jedisCache.setByDefaultTime(key, goodsType);
         }
         return goodsType;
@@ -122,16 +122,18 @@ public class GoodsTypeService implements GoodsTypeApi {
      * @param topId 根节点ID
      * @return
      */
-    public GoodsType recursiveGoodsType(long topId, Integer types) {
-        GoodsType node = goodsTypeMapper.selectByPrimaryKey(topId);
+    public GoodsType recursiveGoodsType(long topId, String types) {
+        GoodsType node = goodsTypeMapper.selectByPrimaryKey(topId, types);
         if (node == null) {
             return new GoodsType();
         }
-        List<GoodsType> childTreeNodes = goodsTypeMapper.selectAllTopsByParam(null, node.getId(), types);
+        List<GoodsType> childTreeNodes = ValidatorUtil.checkNotEmptyList(goodsTypeMapper.selectAllTopsByParam(null, node.getId(), types));
         //遍历子节点
-        for (GoodsType child : childTreeNodes) {
-            GoodsType n = recursiveGoodsType(child.getId(), types); //递归
-            node.getSubList().add(n);
+        if (!childTreeNodes.isEmpty()) {
+            for (GoodsType child : childTreeNodes) {
+                GoodsType n = recursiveGoodsType(child.getId(), types); //递归
+                node.getSubList().add(n);
+            }
         }
         return node;
     }
@@ -142,12 +144,12 @@ public class GoodsTypeService implements GoodsTypeApi {
      * @param typeId
      */
     @Override
-    public String deleteGoodsType(Long typeId) {
-        GoodsType detailById = getGoodsTypeById(typeId);
+    public String deleteGoodsType(Long typeId, Integer type) {
+        GoodsType detailById = getGoodsTypeById(typeId, "all");
         if (detailById == null) {
             return ResultMsg.TYPE_NOT_EXISTS;
         }
-        int i = goodsTypeMapper.deleteByPrimaryKey(typeId);
+        int i = goodsTypeMapper.deleteByPrimaryKey(typeId, type);
         if (i > 0) {
             delCache();
         }
