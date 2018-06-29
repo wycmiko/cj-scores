@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cj.shop.dao.mapper.GoodsStockMapper" >
+  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.GoodsStock" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="goods_sn" property="goodsSn" jdbcType="VARCHAR" />
+    <result column="s_goods_sn" property="sGoodsSn" jdbcType="VARCHAR" />
+    <result column="spec_name" property="specName" jdbcType="VARCHAR" />
+    <result column="stock_num" property="stockNum" jdbcType="INTEGER" />
+    <result column="warn_stock_num" property="warnStockNum" jdbcType="INTEGER" />
+    <result column="warn_stock" property="warnStock" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="sort_flag" property="sortFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.cj.shop.api.entity.GoodsStock" extends="BaseResultMap" >
+    <result column="properties" property="properties" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_sn, s_goods_sn, spec_name, stock_num, warn_stock_num, warn_stock, delete_flag, 
+    DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
+  </sql>
+  <sql id="Blob_Column_List" >
+    properties
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from s_goods_stock
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByGoodsSn" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from s_goods_stock
+    where goods_sn = #{goodsSn}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from s_goods_stock
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsStock" >
+    insert into s_goods_stock
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="goodsSn != null" >
+        goods_sn,
+      </if>
+      <if test="sGoodsSn != null" >
+        s_goods_sn,
+      </if>
+      <if test="specName != null" >
+        spec_name,
+      </if>
+      <if test="stockNum != null" >
+        stock_num,
+      </if>
+      <if test="warnStockNum != null" >
+        warn_stock_num,
+      </if>
+      <if test="warnStock != null" >
+        warn_stock,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="sortFlag != null" >
+        sort_flag,
+      </if>
+      <if test="properties != null" >
+        properties,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="goodsSn != null" >
+        #{goodsSn,jdbcType=VARCHAR},
+      </if>
+      <if test="sGoodsSn != null" >
+        #{sGoodsSn,jdbcType=VARCHAR},
+      </if>
+      <if test="specName != null" >
+        #{specName,jdbcType=VARCHAR},
+      </if>
+      <if test="stockNum != null" >
+        #{stockNum,jdbcType=INTEGER},
+      </if>
+      <if test="warnStockNum != null" >
+        #{warnStockNum,jdbcType=INTEGER},
+      </if>
+      <if test="warnStock != null" >
+        #{warnStock,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=INTEGER},
+      </if>
+      <if test="sortFlag != null" >
+        #{sortFlag,jdbcType=INTEGER},
+      </if>
+      <if test="properties != null" >
+        #{properties,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.GoodsStock" >
+    update s_goods_stock
+    <set >
+      <if test="goodsSn != null" >
+        goods_sn = #{goodsSn,jdbcType=VARCHAR},
+      </if>
+      <if test="sGoodsSn != null" >
+        s_goods_sn = #{sGoodsSn,jdbcType=VARCHAR},
+      </if>
+      <if test="specName != null" >
+        spec_name = #{specName,jdbcType=VARCHAR},
+      </if>
+      <if test="stockNum != null" >
+        stock_num = #{stockNum,jdbcType=INTEGER},
+      </if>
+      <if test="warnStockNum != null" >
+        warn_stock_num = #{warnStockNum,jdbcType=INTEGER},
+      </if>
+      <if test="warnStock != null" >
+        warn_stock = #{warnStock,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      </if>
+      <if test="sortFlag != null" >
+        sort_flag = #{sortFlag,jdbcType=INTEGER},
+      </if>
+      <if test="properties != null" >
+        properties = #{properties,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

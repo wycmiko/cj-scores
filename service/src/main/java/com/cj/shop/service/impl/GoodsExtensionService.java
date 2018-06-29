@@ -79,6 +79,18 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         if (specDetail == null) {
             return ResultMsg.SPEC_NOT_EXISTS;
         }
+        /**
+         *
+         */
+        if (request.getDeleteFlag() != null) {
+            //级联删除
+            List<GoodsSpecWithBLOBs> subList = specDetail.getSubList();
+            for (GoodsSpecWithBLOBs bs : subList) {
+                bs.setDeleteFlag(request.getDeleteFlag());
+                goodsSpecMapper.updateByPrimaryKeySelective(bs);
+            }
+        }
+
         BeanUtils.copyProperties(request, specDetail);
         specDetail.setProperties(PropertiesUtil.changeProperties(specDetail.getProperties(), request.getProperties()));
         int i = goodsSpecMapper.updateByPrimaryKeySelective(specDetail);
@@ -159,7 +171,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         List<Long> ids = ValidatorUtil.checkNotEmptyList(goodsSpecMapper.selectAllSpecIds(type, null, 1));
         if (!ids.isEmpty()) {
             for (Long id : ids) {
-                GoodsSpecWithBLOBs specDetail = recursiveGoodsSpecType(id, type);
+                GoodsSpecWithBLOBs specDetail = getGoodsSpecDetail(id, type);
                 returnList.add(specDetail);
             }
         }

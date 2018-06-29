@@ -149,6 +149,17 @@ public class GoodsTypeService implements GoodsTypeApi {
         if (detailById == null) {
             return ResultMsg.TYPE_NOT_EXISTS;
         }
+        List<GoodsType> subList = detailById.getSubList();
+        if (!subList.isEmpty()) {
+            for (GoodsType gt : subList) {
+                List<GoodsType> subList1 = gt.getSubList();
+                if (!subList1.isEmpty()) {
+                    for (GoodsType gt2 : subList1) {
+                        goodsTypeMapper.deleteByPrimaryKey(gt2.getId(), type);
+                    }
+                }
+            }
+        }
         int i = goodsTypeMapper.deleteByPrimaryKey(typeId, type);
         if (i > 0) {
             delCache();

@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class Goods extends PropertyEntity implements Serializable {
     private Long id;
 
-    private Long goodsSn;
+    private String goodsSn;
 
     private String goodsName;
 
