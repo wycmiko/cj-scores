@@ -30,15 +30,17 @@ public class GoodsRequest extends BaseRequest implements Serializable {
     private Long unitId;
     @JsonProperty("supply_id")
     private Long supplyId;
-
     @JsonProperty("goods_title")
     private String goodsTitle;
 
-    @JsonProperty("market_price")
-    private Double marketPrice;
-
-    @JsonProperty("shop_price")
-    private Double shopPrice;
+    @JsonProperty("min_cost_price")
+    private Double minCostPrice;
+    @JsonProperty("max_cost_price")
+    private Double maxCostPrice;
+    @JsonProperty("min_sell_price")
+    private Double minSellPrice;
+    @JsonProperty("max_sell_price")
+    private Double maxSellPrice;
 
     @JsonProperty("sale_count")
     private Integer saleCount;

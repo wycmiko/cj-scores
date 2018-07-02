@@ -7,6 +7,9 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
+/**
+ * 商品实体Bean
+ */
 @Getter
 @Setter
 public class GoodsWithBLOBs extends PropertyEntity implements Serializable {
@@ -30,11 +33,14 @@ public class GoodsWithBLOBs extends PropertyEntity implements Serializable {
     @JsonProperty("goods_title")
     private String goodsTitle;
 
-    @JsonProperty("market_price")
-    private Double marketPrice;
-
-    @JsonProperty("shop_price")
-    private Double shopPrice;
+    @JsonProperty("min_cost_price")
+    private Double minCostPrice;
+    @JsonProperty("max_cost_price")
+    private Double maxCostPrice;
+    @JsonProperty("min_sell_price")
+    private Double minSellPrice;
+    @JsonProperty("max_sell_price")
+    private Double maxSellPrice;
 
     @JsonProperty("sale_count")
     private Integer saleCount;
