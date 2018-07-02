@@ -50,4 +50,9 @@ public class GoodsStock extends PropertyEntity implements Serializable {
     private String createTime;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
+    /**
+     * 预警百分比
+     */
+    @JsonProperty("warn_ratio")
+    private Double warnRatio;
 }

@@ -65,6 +65,16 @@ public class NumberUtil {
         return smallSn;
     }
 
+    /**
+     * 四舍五入获取总数百分比对应的整数
+     * @param totalNums
+     * @param ratio
+     * @return
+     */
+    public static long getFloorNumber(int totalNums, double ratio) {
+        return Math.round(totalNums*ratio);
+    }
+
 
     public static void main(String[] args) {
         log.info(getOrderIdByUUId());

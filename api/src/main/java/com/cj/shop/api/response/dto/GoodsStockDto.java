@@ -57,4 +57,6 @@ public class GoodsStockDto implements Serializable {
      * 重量
      */
     private String weight;
+    @JsonProperty("warn_ratio")
+    private Double warnRatio;
 }

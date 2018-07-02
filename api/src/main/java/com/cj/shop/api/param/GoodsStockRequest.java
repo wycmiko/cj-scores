@@ -23,8 +23,11 @@ public class GoodsStockRequest extends BaseRequest implements Serializable {
     private Long specId;
     @JsonProperty("stock_num")
     private Integer stockNum;
-    @JsonProperty("warn_stock_num")
-    private Integer warnStockNum;
+    /**
+     * 预警百分比
+     */
+    @JsonProperty("warn_ratio")
+    private Double warnRatio;
     @JsonProperty("delete_flag")
     private Integer deleteFlag;
     @JsonProperty("sort_flag")

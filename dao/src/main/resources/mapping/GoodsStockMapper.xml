@@ -9,6 +9,7 @@
         <result column="stock_num" property="stockNum" jdbcType="INTEGER"/>
         <result column="cost_price" property="costPrice" jdbcType="DECIMAL"/>
         <result column="sell_price" property="sellPrice" jdbcType="DECIMAL"/>
+        <result column="warn_ratio" property="warnRatio" jdbcType="DECIMAL"/>
         <result column="weight" property="weight" jdbcType="VARCHAR"/>
         <result column="warn_stock_num" property="warnStockNum" jdbcType="INTEGER"/>
         <result column="warn_stock" property="warnStock" jdbcType="INTEGER"/>
@@ -21,7 +22,7 @@
         <result column="properties" property="properties" jdbcType="LONGVARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, goods_sn, s_goods_sn, spec_id, stock_num, cost_price, sell_price, weight,warn_stock_num, warn_stock, delete_flag,
+    id, goods_sn, s_goods_sn, spec_id, stock_num, cost_price, sell_price, warn_ratio, weight,warn_stock_num, warn_stock, delete_flag,
     DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
   </sql>
     <sql id="Blob_Column_List">
@@ -81,6 +82,7 @@
         t1.cost_price as costPrice,
         t1.sell_price as sellPrice,
         t1.weight,
+        t1.warn_ratio as warnRatio,
         t3.parent_id as parentId,
         t3.spec_name as specName,
         t1.stock_num as stockNum,
@@ -97,13 +99,24 @@
         <where>
             1=1
             <if test="id !=null">
-             and  t1.id = #{id}
+                and t1.id = #{id}
             </if>
         </where>
     </select>
 
     <select id="getTotalStockNum" parameterType="String">
         select sum(stock_num)
+        from s_goods_stock
+        where goods_sn = #{goodSn}
+        group by goods_sn
+    </select>
+
+    <select id="getPriceLimit" parameterType="String" resultType="com.cj.shop.api.response.PriceLimit">
+        select
+         min(cost_price) as minCostPrice,
+         max(cost_price) as maxCostPrice,
+         min(sell_price) as minSellPrice,
+         max(sell_price) as maxSellPrice
         from s_goods_stock
         where goods_sn = #{goodSn}
         group by goods_sn
@@ -141,6 +154,9 @@
             <if test="weight != null">
                 weight,
             </if>
+            <if test="warnRatio != null">
+                warn_ratio,
+            </if>
             <if test="deleteFlag != null">
                 delete_flag,
             </if>
@@ -175,6 +191,9 @@
             </if>
             <if test="weight != null">
                 #{weight},
+            </if>
+            <if test="warnRatio != null">
+                #{warnRatio},
             </if>
             <if test="deleteFlag != null">
                 #{deleteFlag,jdbcType=INTEGER},
@@ -216,6 +235,9 @@
             </if>
             <if test="weight != null">
                 weight = #{weight},
+            </if>
+            <if test="warnRatio != null">
+                warn_ratio = #{warnRatio},
             </if>
             <if test="deleteFlag != null">
                 delete_flag = #{deleteFlag,jdbcType=INTEGER},

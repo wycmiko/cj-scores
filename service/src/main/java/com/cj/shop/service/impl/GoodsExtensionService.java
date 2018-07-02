@@ -363,15 +363,19 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         }
         //校验商品是否存在
 
+
+        double ratio = stockRequest.getWarnRatio().doubleValue();
+        long num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
         //生成小商品编号
         String sn = NumberUtil.getSmallGoodsNum(stockRequest.getGoodsSn(), stockRequest.getSpecId());
-        GoodsStock goodsUnit = new GoodsStock();
-        BeanUtils.copyProperties(stockRequest, goodsUnit);
-        goodsUnit.setSGoodsSn(sn);
-        goodsUnit.setProperties(PropertiesUtil.addProperties(stockRequest.getProperties()));
-        int i = goodsStockMapper.insertSelective(goodsUnit);
+        GoodsStock goodsStock = new GoodsStock();
+        BeanUtils.copyProperties(stockRequest, goodsStock);
+        goodsStock.setSGoodsSn(sn);
+        goodsStock.setWarnStockNum((int) num);
+        goodsStock.setProperties(PropertiesUtil.addProperties(stockRequest.getProperties()));
+        int i = goodsStockMapper.insertSelective(goodsStock);
         if (i > 0) {
-            jedisCache.hset(STOCK_KEY, goodsUnit.getId().toString(), goodsStockMapper.selectByGoodsType(goodsUnit.getId()));
+            jedisCache.hset(STOCK_KEY, goodsStock.getId().toString(), goodsStockMapper.selectByGoodsType(goodsStock.getId()));
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -390,12 +394,15 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                 return ResultMsg.SPEC_NOT_EXISTS;
             }
         }
+        double ratio = stockRequest.getWarnRatio().doubleValue();
+        long num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
         GoodsStock goodsStock = goodsStockMapper.selectByPrimaryKey(stockRequest.getId());
         if (goodsStock == null) {
             return ResultMsg.STOCK_NOT_EXISTS;
         }
         BeanUtils.copyProperties(stockRequest, goodsStock);
         goodsStock.setProperties(PropertiesUtil.changeProperties(goodsStock.getProperties(), stockRequest.getProperties()));
+        goodsStock.setWarnStockNum((int) num);
         int i = goodsStockMapper.updateByPrimaryKeySelective(goodsStock);
         if (i > 0) {
             jedisCache.hset(STOCK_KEY, stockRequest.getId().toString(), goodsStockMapper.selectByGoodsType(stockRequest.getId()));
