@@ -1,18 +1,20 @@
 package com.cj.shop.service.impl;
 
 import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
+import com.cj.shop.api.entity.GoodsStock;
 import com.cj.shop.api.entity.GoodsTag;
 import com.cj.shop.api.entity.GoodsUnit;
 import com.cj.shop.api.interf.GoodsExtensionApi;
-import com.cj.shop.api.param.GoodsSpecRequest;
-import com.cj.shop.api.param.GoodsTagRequest;
-import com.cj.shop.api.param.GoodsUnitRequest;
+import com.cj.shop.api.param.*;
 import com.cj.shop.api.response.PagedList;
+import com.cj.shop.api.response.dto.GoodsStockDto;
 import com.cj.shop.dao.mapper.GoodsSpecMapper;
+import com.cj.shop.dao.mapper.GoodsStockMapper;
 import com.cj.shop.dao.mapper.GoodsTagMapper;
 import com.cj.shop.dao.mapper.GoodsUnitMapper;
 import com.cj.shop.service.cfg.JedisCache;
 import com.cj.shop.service.consts.ResultMsg;
+import com.cj.shop.service.util.NumberUtil;
 import com.cj.shop.service.util.PropertiesUtil;
 import com.cj.shop.service.util.ResultMsgUtil;
 import com.cj.shop.service.util.ValidatorUtil;
@@ -43,12 +45,15 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     private GoodsTagMapper goodsTagMapper;
     @Autowired
     private GoodsUnitMapper goodsUnitMapper;
+    @Autowired
+    private GoodsStockMapper goodsStockMapper;
 
     @Autowired
     private JedisCache jedisCache;
     private static final String SPEC_KEY = "cj_shop:mall:goods:spec:";
     private static final String TAG_KEY = "cj_shop:mall:goods:tag:";
     private static final String UNIT_KEY = "cj_shop:mall:goods:unit:";
+    private static final String STOCK_KEY = "cj_shop:mall:goods:stock:";
 
     /**
      * 添加商品规格
@@ -291,6 +296,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
             return ResultMsg.UNIT_NOT_EXISTS;
         }
         BeanUtils.copyProperties(request, goodsUnitDetail);
+        goodsUnitDetail.setProperties(PropertiesUtil.changeProperties(goodsUnitDetail.getProperties(), request.getProperties()));
         int i = goodsUnitMapper.updateByPrimaryKeySelective(goodsUnitDetail);
         if (i > 0) {
             jedisCache.hset(UNIT_KEY, request.getId().toString(), goodsUnitMapper.selectByPrimaryKey(request.getId()));
@@ -340,5 +346,112 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         }
         PagedList<GoodsUnit> pagedList = new PagedList<>(returnList, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
         return pagedList;
+    }
+
+    /**
+     * 添加商品库存
+     *
+     * @param stockRequest
+     * @return
+     */
+    @Override
+    public String insertStock(GoodsStockRequest stockRequest) {
+        //检验规格是否存在
+        GoodsSpecWithBLOBs exist = goodsSpecMapper.selectByPrimaryKey(stockRequest.getSpecId(), "exist");
+        if (exist == null) {
+            return ResultMsg.SPEC_NOT_EXISTS;
+        }
+        //校验商品是否存在
+
+        //生成小商品编号
+        String sn = NumberUtil.getSmallGoodsNum(stockRequest.getGoodsSn(), stockRequest.getSpecId());
+        GoodsStock goodsUnit = new GoodsStock();
+        BeanUtils.copyProperties(stockRequest, goodsUnit);
+        goodsUnit.setSGoodsSn(sn);
+        goodsUnit.setProperties(PropertiesUtil.addProperties(stockRequest.getProperties()));
+        int i = goodsStockMapper.insertSelective(goodsUnit);
+        if (i > 0) {
+            jedisCache.hset(STOCK_KEY, goodsUnit.getId().toString(), goodsStockMapper.selectByGoodsType(goodsUnit.getId()));
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 修改商品库存
+     *
+     * @param stockRequest
+     */
+    @Override
+    public String updateStock(GoodsStockRequest stockRequest) {
+        //检验规格是否存在
+        if (stockRequest.getSpecId() != null) {
+            GoodsSpecWithBLOBs exist = goodsSpecMapper.selectByPrimaryKey(stockRequest.getSpecId(), "exist");
+            if (exist == null) {
+                return ResultMsg.SPEC_NOT_EXISTS;
+            }
+        }
+        GoodsStock goodsStock = goodsStockMapper.selectByPrimaryKey(stockRequest.getId());
+        if (goodsStock == null) {
+            return ResultMsg.STOCK_NOT_EXISTS;
+        }
+        BeanUtils.copyProperties(stockRequest, goodsStock);
+        goodsStock.setProperties(PropertiesUtil.changeProperties(goodsStock.getProperties(), stockRequest.getProperties()));
+        int i = goodsStockMapper.updateByPrimaryKeySelective(goodsStock);
+        if (i > 0) {
+            jedisCache.hset(STOCK_KEY, stockRequest.getId().toString(), goodsStockMapper.selectByGoodsType(stockRequest.getId()));
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 查询全部商品库存
+     *
+     * @param request
+     */
+    @Override
+    public PagedList<GoodsStockDto> findAllGoodsStock(StockSelectRequest request) {
+        Page<Object> objects = null;
+        List<GoodsStockDto> list = new ArrayList<>();
+        if (request.getPageNum() != null && request.getPageSize() != null) {
+            objects = PageHelper.startPage(request.getPageNum(), request.getPageSize());
+        } else {
+            request.setPageNum(0);
+            request.setPageSize(0);
+        }
+        List<Long> longList = ValidatorUtil.checkNotEmptyList(goodsStockMapper.selectByGoodsTypeIds(request));
+        if (!longList.isEmpty()) {
+            for (Long id : longList) {
+                GoodsStockDto dto = getStockById(id);
+                list.add(dto);
+            }
+        }
+        PagedList<GoodsStockDto> pagedList = new PagedList<>(list, objects == null ? 0 : objects.getTotal(), request.getPageNum(), request.getPageSize());
+        return pagedList;
+    }
+
+    /**
+     * 查询库存详细
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public GoodsStockDto getStockById(Long id) {
+        GoodsStockDto hget = jedisCache.hget(STOCK_KEY, id.toString(), GoodsStockDto.class);
+        if (hget == null) {
+            hget = goodsStockMapper.selectByGoodsType(id);
+            if (hget != null) {
+                if (hget.getWarnStockNum() < hget.getStockNum()) {
+                    //库存充足
+                    hget.setWarnStock(2);
+                } else if (hget.getWarnStockNum() >= hget.getStockNum()) {
+                    hget.setWarnStock(1);
+                } else if (hget.getStockNum() == 0) {
+                    hget.setWarnStock(0);
+                }
+            }
+            jedisCache.hset(STOCK_KEY, id.toString(), hget);
+        }
+        return hget;
     }
 }

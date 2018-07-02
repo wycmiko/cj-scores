@@ -1,143 +1,199 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cj.shop.dao.mapper.GoodsStockMapper" >
-  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.GoodsStock" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="goods_sn" property="goodsSn" jdbcType="VARCHAR" />
-    <result column="s_goods_sn" property="sGoodsSn" jdbcType="VARCHAR" />
-    <result column="spec_name" property="specName" jdbcType="VARCHAR" />
-    <result column="stock_num" property="stockNum" jdbcType="INTEGER" />
-    <result column="warn_stock_num" property="warnStockNum" jdbcType="INTEGER" />
-    <result column="warn_stock" property="warnStock" jdbcType="INTEGER" />
-    <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
-    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
-    <result column="sort_flag" property="sortFlag" jdbcType="INTEGER" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.cj.shop.api.entity.GoodsStock" extends="BaseResultMap" >
-    <result column="properties" property="properties" jdbcType="LONGVARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    id, goods_sn, s_goods_sn, spec_name, stock_num, warn_stock_num, warn_stock, delete_flag, 
+<mapper namespace="com.cj.shop.dao.mapper.GoodsStockMapper">
+    <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.GoodsStock">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="goods_sn" property="goodsSn" jdbcType="VARCHAR"/>
+        <result column="s_goods_sn" property="sGoodsSn" jdbcType="VARCHAR"/>
+        <result column="spec_id" property="specId" jdbcType="BIGINT"/>
+        <result column="stock_num" property="stockNum" jdbcType="INTEGER"/>
+        <result column="warn_stock_num" property="warnStockNum" jdbcType="INTEGER"/>
+        <result column="warn_stock" property="warnStock" jdbcType="INTEGER"/>
+        <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="sort_flag" property="sortFlag" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.cj.shop.api.entity.GoodsStock" extends="BaseResultMap">
+        <result column="properties" property="properties" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, goods_sn, s_goods_sn, spec_id, stock_num, warn_stock_num, warn_stock, delete_flag,
     DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
   </sql>
-  <sql id="Blob_Column_List" >
+    <sql id="Blob_Column_List">
     properties
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from s_goods_stock
-    where id = #{id,jdbcType=BIGINT}
-  </select>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from s_goods_stock
+        where id = #{id,jdbcType=BIGINT}
+    </select>
 
-  <select id="selectByGoodsSn" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
-    select
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from s_goods_stock
-    where goods_sn = #{goodsSn}
-  </select>
+    <select id="selectByGoodsTypeIds" resultType="Long"
+            parameterType="com.cj.shop.api.param.StockSelectRequest">
+        select
+        t1.id as stockId
+        from s_goods_stock t1
+        left join s_goods t2 on t1.goods_sn = t2.goods_sn
+        left join s_goods_spec t3 on t1.spec_id = t3.id
+        <where>
+            1=1
+            <if test="goodSn != null">
+                and t1.goods_sn = #{goodSn}
+            </if>
+            <if test="sGoodSn != null">
+                and t1.s_goods_sn=#{sGoodSn}
+            </if>
+            <if test="specName != null">
+                and t3.spec_name like concat('%','${specName}','%')
+            </if>
+            <if test='type == "exist"'>
+                and t1.delete_flag = 0
+            </if>
+            <if test="specName != null">
+                and t3.spec_name like concat('%','${specName}','%')
+            </if>
+        </where>
+        <if test="sortType == 1">
+            order by t1.stock_num asc, t1.sort_flag desc
+        </if>
+        <if test="sortType == 2">
+            order by t1.stock_num desc, t1.sort_flag desc
+        </if>
+    </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+
+    <select id="selectByGoodsType" resultType="com.cj.shop.api.response.dto.GoodsStockDto"
+            parameterType="Long">
+        select
+        t1.id as stockId,
+        t1.goods_sn as goodsSn,
+        t1.s_goods_sn as sGoodsSn,
+        t2.goods_name as goodsName,
+        t1.spec_id as specId,
+        t3.parent_id as parentId,
+        t3.spec_name as specName,
+        t1.stock_num as stockNum,
+        t1.warn_stock_num as warnStockNum,
+        t1.warn_stock as warnStock,
+        t1.delete_flag as deleteFlag,
+        DATE_FORMAT(t1.update_time,'%Y-%m-%d %H:%i:%s') as updateTime,
+        DATE_FORMAT(t1.create_time,'%Y-%m-%d %H:%i:%s') as createTime,
+        t1.sort_flag as sortFlag,
+        t1.properties
+        from s_goods_stock t1
+        left join s_goods t2 on t1.goods_sn = t2.goods_sn
+        left join s_goods_spec t3 on t1.spec_id = t3.id
+        <where>
+            1=1
+            <if test="id !=null">
+             and  t1.id = #{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="getTotalStockNum" parameterType="String">
+        select sum(stock_num)
+        from s_goods_stock
+        where goods_sn = #{goodSn}
+        group by goods_sn
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from s_goods_stock
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsStock" >
-    insert into s_goods_stock
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="goodsSn != null" >
-        goods_sn,
-      </if>
-      <if test="sGoodsSn != null" >
-        s_goods_sn,
-      </if>
-      <if test="specName != null" >
-        spec_name,
-      </if>
-      <if test="stockNum != null" >
-        stock_num,
-      </if>
-      <if test="warnStockNum != null" >
-        warn_stock_num,
-      </if>
-      <if test="warnStock != null" >
-        warn_stock,
-      </if>
-      <if test="deleteFlag != null" >
-        delete_flag,
-      </if>
-      <if test="sortFlag != null" >
-        sort_flag,
-      </if>
-      <if test="properties != null" >
-        properties,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="goodsSn != null" >
-        #{goodsSn,jdbcType=VARCHAR},
-      </if>
-      <if test="sGoodsSn != null" >
-        #{sGoodsSn,jdbcType=VARCHAR},
-      </if>
-      <if test="specName != null" >
-        #{specName,jdbcType=VARCHAR},
-      </if>
-      <if test="stockNum != null" >
-        #{stockNum,jdbcType=INTEGER},
-      </if>
-      <if test="warnStockNum != null" >
-        #{warnStockNum,jdbcType=INTEGER},
-      </if>
-      <if test="warnStock != null" >
-        #{warnStock,jdbcType=INTEGER},
-      </if>
-      <if test="deleteFlag != null" >
-        #{deleteFlag,jdbcType=INTEGER},
-      </if>
-      <if test="sortFlag != null" >
-        #{sortFlag,jdbcType=INTEGER},
-      </if>
-      <if test="properties != null" >
-        #{properties,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.GoodsStock" >
-    update s_goods_stock
-    <set >
-      <if test="goodsSn != null" >
-        goods_sn = #{goodsSn,jdbcType=VARCHAR},
-      </if>
-      <if test="sGoodsSn != null" >
-        s_goods_sn = #{sGoodsSn,jdbcType=VARCHAR},
-      </if>
-      <if test="specName != null" >
-        spec_name = #{specName,jdbcType=VARCHAR},
-      </if>
-      <if test="stockNum != null" >
-        stock_num = #{stockNum,jdbcType=INTEGER},
-      </if>
-      <if test="warnStockNum != null" >
-        warn_stock_num = #{warnStockNum,jdbcType=INTEGER},
-      </if>
-      <if test="warnStock != null" >
-        warn_stock = #{warnStock,jdbcType=INTEGER},
-      </if>
-      <if test="deleteFlag != null" >
-        delete_flag = #{deleteFlag,jdbcType=INTEGER},
-      </if>
-      <if test="sortFlag != null" >
-        sort_flag = #{sortFlag,jdbcType=INTEGER},
-      </if>
-      <if test="properties != null" >
-        properties = #{properties,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+    <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsStock" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into s_goods_stock
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsSn != null">
+                goods_sn,
+            </if>
+            <if test="sGoodsSn != null">
+                s_goods_sn,
+            </if>
+            <if test="specId != null">
+                spec_id,
+            </if>
+            <if test="stockNum != null">
+                stock_num,
+            </if>
+            <if test="warnStockNum != null">
+                warn_stock_num,
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag,
+            </if>
+            <if test="sortFlag != null">
+                sort_flag,
+            </if>
+            <if test="properties != null">
+                properties,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsSn != null">
+                #{goodsSn,jdbcType=VARCHAR},
+            </if>
+            <if test="sGoodsSn != null">
+                #{sGoodsSn,jdbcType=VARCHAR},
+            </if>
+            <if test="specId != null">
+                #{specId,jdbcType=BIGINT},
+            </if>
+            <if test="stockNum != null">
+                #{stockNum,jdbcType=INTEGER},
+            </if>
+            <if test="warnStockNum != null">
+                #{warnStockNum,jdbcType=INTEGER},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="sortFlag != null">
+                #{sortFlag,jdbcType=INTEGER},
+            </if>
+            <if test="properties != null">
+                #{properties,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.GoodsStock">
+        update s_goods_stock
+        <set>
+            <if test="goodsSn != null">
+                goods_sn = #{goodsSn,jdbcType=VARCHAR},
+            </if>
+            <if test="sGoodsSn != null">
+                s_goods_sn = #{sGoodsSn,jdbcType=VARCHAR},
+            </if>
+            <if test="specId != null">
+                spec_id = #{specId,jdbcType=BIGINT},
+            </if>
+            <if test="stockNum != null">
+                stock_num = #{stockNum,jdbcType=INTEGER},
+            </if>
+            <if test="warnStockNum != null">
+                warn_stock_num = #{warnStockNum,jdbcType=INTEGER},
+            </if>
+            <if test="warnStock != null">
+                warn_stock = #{warnStock,jdbcType=INTEGER},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="sortFlag != null">
+                sort_flag = #{sortFlag,jdbcType=INTEGER},
+            </if>
+            <if test="properties != null">
+                properties = #{properties,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

@@ -1,6 +1,5 @@
-package com.cj.shop.api.entity;
+package com.cj.shop.api.param;
 
-import com.cj.shop.common.model.PropertyEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class GoodsStock extends PropertyEntity implements Serializable {
+public class GoodsStockRequest extends BaseRequest implements Serializable {
     private Long id;
     @JsonProperty("goods_sn")
     private String goodsSn;
@@ -26,14 +25,8 @@ public class GoodsStock extends PropertyEntity implements Serializable {
     private Integer stockNum;
     @JsonProperty("warn_stock_num")
     private Integer warnStockNum;
-    @JsonProperty("warn_stock")
-    private Integer warnStock;
     @JsonProperty("delete_flag")
     private Integer deleteFlag;
-    @JsonProperty("update_time")
-    private String updateTime;
-    @JsonProperty("create_time")
-    private String createTime;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
 }

@@ -545,4 +545,106 @@ public class GoodsManageController {
     }
 
 
+    /**
+     * 添加商品库存
+     *
+     * @return
+     */
+    @PostMapping("/addStock")
+    public Result addStock(@RequestBody GoodsStockRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("addStock begin");
+            if (CommandValidator.isEmpty(request.getGoodsSn(), request.getSpecId(), request.getStockNum())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.insertStock(request));
+            log.info("addStock end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("addStock error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 修改商品库存
+     *
+     * @return
+     */
+    @PutMapping("/updateStock")
+    public Result updateStock(@RequestBody GoodsStockRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("updateStock begin");
+            if (CommandValidator.isEmpty(request.getId())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.updateStock(request));
+            log.info("updateStock end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("updateStock error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 复合查询
+     * 商品库存
+     *
+     * @return
+     */
+    @PostMapping("/getAllStock")
+    public Result getAllStock(@RequestBody StockSelectRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("getAllStock begin");
+            if (CommandValidator.isEmpty(request.getType())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.findAllGoodsStock(request));
+            log.info("getAllStock end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getAllStock error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 根据ID查询库存详情
+     *
+     * @return
+     */
+    @GetMapping("/stock/{id}")
+    public Result stockDetail(@PathVariable Long id) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("stockDetail begin");
+            if (CommandValidator.isEmpty(id)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.getStockById(id));
+            log.info("stockDetail end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("stockDetail error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
 }

@@ -3,10 +3,9 @@ package com.cj.shop.api.interf;
 import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
 import com.cj.shop.api.entity.GoodsTag;
 import com.cj.shop.api.entity.GoodsUnit;
-import com.cj.shop.api.param.GoodsSpecRequest;
-import com.cj.shop.api.param.GoodsTagRequest;
-import com.cj.shop.api.param.GoodsUnitRequest;
+import com.cj.shop.api.param.*;
 import com.cj.shop.api.response.PagedList;
+import com.cj.shop.api.response.dto.GoodsStockDto;
 
 /**
  * 商品扩展api接口
@@ -89,4 +88,29 @@ public interface GoodsExtensionApi {
      * @return
      */
     PagedList<GoodsUnit> findAllUnits(Integer pageNum, Integer pageSize, String type);
+
+
+    /**
+     * 添加商品库存
+     * @param stockRequest
+     * @return
+     */
+    String insertStock(GoodsStockRequest stockRequest);
+
+    /**
+     * 修改商品库存
+     */
+    String updateStock(GoodsStockRequest stockRequest);
+
+    /**
+     * 查询全部商品库存
+     */
+    PagedList<GoodsStockDto> findAllGoodsStock(StockSelectRequest request);
+
+    /**
+     * 查询库存详细
+     * @param id
+     * @return
+     */
+    GoodsStockDto getStockById(Long id);
 }

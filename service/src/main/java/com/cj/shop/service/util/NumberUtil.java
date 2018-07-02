@@ -51,13 +51,24 @@ public class NumberUtil {
             //有可能是负数
             hashCodeV = -hashCodeV;
         }
-        String orderNum = String.valueOf(hashCodeV).substring(0,5) + goodId;
+        String orderNum = String.valueOf(hashCodeV).substring(0, 5) + goodId;
         return orderNum;
+    }
+
+    /**
+     * 获取小商品编号
+     *
+     * @return
+     */
+    public static String getSmallGoodsNum(String goodsSn, Long specId) {
+        String smallSn = goodsSn + "-" + specId;
+        return smallSn;
     }
 
 
     public static void main(String[] args) {
         log.info(getOrderIdByUUId());
         log.info(getGoodsNum(12L));
+        log.info(getSmallGoodsNum("9509912",1L));
     }
 }

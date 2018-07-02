@@ -3,8 +3,13 @@ package com.cj.shop.api.interf;
 import com.cj.shop.api.entity.GoodsBrand;
 import com.cj.shop.api.entity.GoodsSupply;
 import com.cj.shop.api.param.GoodsBrandRequest;
+import com.cj.shop.api.param.GoodsStockRequest;
 import com.cj.shop.api.param.GoodsSupplyRequest;
+import com.cj.shop.api.param.StockSelectRequest;
 import com.cj.shop.api.response.PagedList;
+import com.cj.shop.api.response.dto.GoodsStockDto;
+
+import java.util.List;
 
 /**
  * 商品相关服务 API
@@ -75,4 +80,5 @@ public interface GoodsApi {
      * @return
      */
     PagedList<GoodsBrand> findAllBrands(String brandName, Integer pageNum, Integer pageSize, String type);
+
 }
