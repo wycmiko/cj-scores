@@ -29,4 +29,18 @@ public class GoodsStockRequest extends BaseRequest implements Serializable {
     private Integer deleteFlag;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
+    /**
+     * 成本价
+     */
+    @JsonProperty("cost_price")
+    private Double costPrice;
+    /**
+     * 零售价
+     */
+    @JsonProperty("sell_price")
+    private Double sellPrice;
+    /**
+     * 重量
+     */
+    private String weight;
 }

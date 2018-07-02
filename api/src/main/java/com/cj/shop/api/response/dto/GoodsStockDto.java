@@ -43,4 +43,18 @@ public class GoodsStockDto implements Serializable {
     @JsonProperty("sort_flag")
     private Integer sortFlag;
     private String properties;
+    /**
+     * 成本价
+     */
+    @JsonProperty("cost_price")
+    private Double costPrice;
+    /**
+     * 零售价
+     */
+    @JsonProperty("sell_price")
+    private Double sellPrice;
+    /**
+     * 重量
+     */
+    private String weight;
 }

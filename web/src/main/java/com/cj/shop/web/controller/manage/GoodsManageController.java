@@ -556,7 +556,8 @@ public class GoodsManageController {
         Result result = null;
         try {
             log.info("addStock begin");
-            if (CommandValidator.isEmpty(request.getGoodsSn(), request.getSpecId(), request.getStockNum())) {
+            if (CommandValidator.isEmpty(request.getGoodsSn(), request.getSpecId(), request.getStockNum(),
+                    request.getCostPrice(), request.getSellPrice())) {
                 return CommandValidator.paramEmptyResult();
             }
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);

@@ -7,8 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface GoodsMapper {
     int deleteByPrimaryKey(Long id);
 
-    int insert(GoodsWithBLOBs record);
-
     int insertSelective(GoodsWithBLOBs record);
 
     GoodsWithBLOBs selectByPrimaryKey(Long id);

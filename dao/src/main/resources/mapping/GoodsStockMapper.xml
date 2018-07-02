@@ -7,6 +7,9 @@
         <result column="s_goods_sn" property="sGoodsSn" jdbcType="VARCHAR"/>
         <result column="spec_id" property="specId" jdbcType="BIGINT"/>
         <result column="stock_num" property="stockNum" jdbcType="INTEGER"/>
+        <result column="cost_price" property="costPrice" jdbcType="DECIMAL"/>
+        <result column="sell_price" property="sellPrice" jdbcType="DECIMAL"/>
+        <result column="weight" property="weight" jdbcType="VARCHAR"/>
         <result column="warn_stock_num" property="warnStockNum" jdbcType="INTEGER"/>
         <result column="warn_stock" property="warnStock" jdbcType="INTEGER"/>
         <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER"/>
@@ -18,7 +21,7 @@
         <result column="properties" property="properties" jdbcType="LONGVARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, goods_sn, s_goods_sn, spec_id, stock_num, warn_stock_num, warn_stock, delete_flag,
+    id, goods_sn, s_goods_sn, spec_id, stock_num, cost_price, sell_price, weight,warn_stock_num, warn_stock, delete_flag,
     DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
   </sql>
     <sql id="Blob_Column_List">
@@ -75,6 +78,9 @@
         t1.s_goods_sn as sGoodsSn,
         t2.goods_name as goodsName,
         t1.spec_id as specId,
+        t1.cost_price as costPrice,
+        t1.sell_price as sellPrice,
+        t1.weight,
         t3.parent_id as parentId,
         t3.spec_name as specName,
         t1.stock_num as stockNum,
@@ -126,6 +132,15 @@
             <if test="warnStockNum != null">
                 warn_stock_num,
             </if>
+            <if test="costPrice != null">
+                cost_price,
+            </if>
+            <if test="sellPrice != null">
+                sell_price,
+            </if>
+            <if test="weight != null">
+                weight,
+            </if>
             <if test="deleteFlag != null">
                 delete_flag,
             </if>
@@ -151,6 +166,15 @@
             </if>
             <if test="warnStockNum != null">
                 #{warnStockNum,jdbcType=INTEGER},
+            </if>
+            <if test="costPrice != null">
+                #{costPrice},
+            </if>
+            <if test="sellPrice != null">
+                #{sellPrice},
+            </if>
+            <if test="weight != null">
+                #{weight},
             </if>
             <if test="deleteFlag != null">
                 #{deleteFlag,jdbcType=INTEGER},
@@ -183,6 +207,15 @@
             </if>
             <if test="warnStock != null">
                 warn_stock = #{warnStock,jdbcType=INTEGER},
+            </if>
+            <if test="costPrice != null">
+                cost_price = #{costPrice},
+            </if>
+            <if test="sellPrice != null">
+                sell_price = #{sellPrice},
+            </if>
+            <if test="weight != null">
+                weight = #{weight},
             </if>
             <if test="deleteFlag != null">
                 delete_flag = #{deleteFlag,jdbcType=INTEGER},

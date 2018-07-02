@@ -26,6 +26,20 @@ public class GoodsStock extends PropertyEntity implements Serializable {
     private Integer stockNum;
     @JsonProperty("warn_stock_num")
     private Integer warnStockNum;
+    /**
+     * 成本价
+     */
+    @JsonProperty("cost_price")
+    private Double costPrice;
+    /**
+     * 零售价
+     */
+    @JsonProperty("sell_price")
+    private Double sellPrice;
+    /**
+     * 重量
+     */
+    private String weight;
     @JsonProperty("warn_stock")
     private Integer warnStock;
     @JsonProperty("delete_flag")

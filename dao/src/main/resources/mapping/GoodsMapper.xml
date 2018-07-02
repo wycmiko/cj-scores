@@ -62,7 +62,7 @@
     delete from s_goods
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsWithBLOBs" >
+  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsWithBLOBs"  useGeneratedKeys="true" keyProperty="id">
     insert into s_goods
     <trim prefix="(" suffix="
     )" suffixOverrides="," >
