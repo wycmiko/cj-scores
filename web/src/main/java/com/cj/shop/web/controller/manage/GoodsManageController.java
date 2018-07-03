@@ -2,6 +2,7 @@ package com.cj.shop.web.controller.manage;
 
 import com.cj.shop.api.entity.GoodsSupply;
 import com.cj.shop.api.param.*;
+import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.service.impl.GoodsExtensionService;
 import com.cj.shop.service.impl.GoodsService;
@@ -603,7 +604,7 @@ public class GoodsManageController {
      * @return
      */
     @PostMapping("/getAllStock")
-    public Result getAllStock(@RequestBody StockSelectRequest request) {
+    public Result getAllStock(@RequestBody StockSelect request) {
         //token校验
         Result result = null;
         try {
@@ -642,6 +643,57 @@ public class GoodsManageController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("stockDetail error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 添加商品
+     *
+     * @return
+     */
+    @PostMapping("/addGoods")
+    public Result addGoods(@RequestBody GoodsRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("addGoods begin");
+            if (CommandValidator.isEmpty(request.getBrandId(), request.getSupplyId(), request.getUnitId(),
+                    request.getFirstTypeId(), request.getGoodsName())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsService.insertGood(request));
+            log.info("addGoods end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("addGoods error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 查询商品明细
+     *
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Result goodsDetail(@PathVariable Long id) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("goodsDetail begin");
+            if (CommandValidator.isEmpty(id)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsService.getGoodsDetail(id));
+            log.info("goodsDetail end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("goodsDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

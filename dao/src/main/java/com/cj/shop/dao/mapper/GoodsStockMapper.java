@@ -1,7 +1,7 @@
 package com.cj.shop.dao.mapper;
 
 import com.cj.shop.api.entity.GoodsStock;
-import com.cj.shop.api.param.StockSelectRequest;
+import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PriceLimit;
 import com.cj.shop.api.response.dto.GoodsStockDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -13,11 +13,13 @@ import java.util.List;
 public interface GoodsStockMapper {
     int deleteByPrimaryKey(Long id);
 
+    int deleteByGoodsSn(@Param("goodsSn") String goodsSn);
+
     int insertSelective(GoodsStock record);
 
     GoodsStock selectByPrimaryKey(Long id);
 
-    List<Long> selectByGoodsTypeIds(StockSelectRequest request);
+    List<Long> selectByGoodsTypeIds(StockSelect request);
 
     GoodsStockDto selectByGoodsType(@Param("id") Long id);
 
@@ -26,7 +28,7 @@ public interface GoodsStockMapper {
     /**
      * 统计某商品总的库存量
      */
-    Long getTotalStockNum(@Param("goodSn")String goodsSn);
+    Integer getTotalStockNum(@Param("goodSn")String goodsSn);
 
     /**
      * 统计某商品的价格阈值

@@ -1,4 +1,4 @@
-package com.cj.shop.api.param;
+package com.cj.shop.api.param.select;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class StockSelectRequest implements Serializable {
+public class StockSelect implements Serializable {
     /**
      * 按照商品编号筛选
      */

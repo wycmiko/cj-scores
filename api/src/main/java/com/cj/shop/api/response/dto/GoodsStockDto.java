@@ -26,6 +26,8 @@ public class GoodsStockDto implements Serializable {
     private Long specId;
     @JsonProperty("parent_id")
     private Long parentId;
+    @JsonProperty("parent_name")
+    private String parentName;
     @JsonProperty("spec_name")
     private String specName;
     @JsonProperty("stock_num")

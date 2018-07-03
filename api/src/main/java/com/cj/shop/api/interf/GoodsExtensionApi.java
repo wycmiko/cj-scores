@@ -4,6 +4,7 @@ import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
 import com.cj.shop.api.entity.GoodsTag;
 import com.cj.shop.api.entity.GoodsUnit;
 import com.cj.shop.api.param.*;
+import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsStockDto;
 
@@ -105,7 +106,7 @@ public interface GoodsExtensionApi {
     /**
      * 查询全部商品库存
      */
-    PagedList<GoodsStockDto> findAllGoodsStock(StockSelectRequest request);
+    PagedList<GoodsStockDto> findAllGoodsStock(StockSelect request);
 
     /**
      * 查询库存详细

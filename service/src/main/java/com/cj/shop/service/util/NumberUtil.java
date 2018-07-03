@@ -15,7 +15,8 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class NumberUtil {
 
-    public static final LongAdder AUTOINCRENUM = new LongAdder();
+    public static final LongAdder ORDER_AUTOINCRENUM = new LongAdder();
+    public static final LongAdder GOODS_AUTOINCRENUM = new LongAdder();
     private static ReentrantLock lock = new ReentrantLock();
 
     /**
@@ -32,8 +33,8 @@ public class NumberUtil {
                 hashCodeV = -hashCodeV;
             }
             String orderNum = DateUtils.getShortString() + String.valueOf(hashCodeV);
-            AUTOINCRENUM.increment();
-            String format = String.format("%09d", AUTOINCRENUM.longValue());
+            ORDER_AUTOINCRENUM.increment();
+            String format = String.format("%09d", ORDER_AUTOINCRENUM.longValue());
             return orderNum + format;
         } finally {
 //            lock.unlock();
@@ -45,13 +46,14 @@ public class NumberUtil {
      *
      * @return
      */
-    public static String getGoodsNum(Long goodId) {
+    public static String getGoodsNum() {
         int hashCodeV = UUID.randomUUID().toString().hashCode();
         if (hashCodeV < 0) {
             //有可能是负数
             hashCodeV = -hashCodeV;
         }
-        String orderNum = String.valueOf(hashCodeV).substring(0, 5) + goodId;
+        GOODS_AUTOINCRENUM.increment();
+        String orderNum = String.valueOf(hashCodeV).substring(0, 6) + GOODS_AUTOINCRENUM.longValue();
         return orderNum;
     }
 
@@ -67,18 +69,19 @@ public class NumberUtil {
 
     /**
      * 四舍五入获取总数百分比对应的整数
+     *
      * @param totalNums
      * @param ratio
      * @return
      */
     public static long getFloorNumber(int totalNums, double ratio) {
-        return Math.round(totalNums*ratio);
+        return Math.round(totalNums * ratio);
     }
 
 
     public static void main(String[] args) {
         log.info(getOrderIdByUUId());
-        log.info(getGoodsNum(12L));
-        log.info(getSmallGoodsNum("9509912",1L));
+        log.info(getGoodsNum());
+        log.info(getSmallGoodsNum("9509912", 1L));
     }
 }

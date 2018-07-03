@@ -22,7 +22,7 @@ public class GoodsWithBLOBs extends PropertyEntity implements Serializable {
 
     @JsonProperty("brand_id")
     private Long brandId;
-
+    private Long pv;
     @JsonProperty("shop_id")
     private Long shopId;
     @JsonProperty("unit_id")
@@ -32,6 +32,8 @@ public class GoodsWithBLOBs extends PropertyEntity implements Serializable {
 
     @JsonProperty("goods_title")
     private String goodsTitle;
+    @JsonProperty("sale_time")
+    private String saleTime;
 
     @JsonProperty("min_cost_price")
     private Double minCostPrice;
@@ -69,8 +71,6 @@ public class GoodsWithBLOBs extends PropertyEntity implements Serializable {
     @JsonProperty("recommand_flag")
     private Integer recommandFlag;
 
-    @JsonProperty("best_flag")
-    private Integer bestFlag;
 
     @JsonProperty("recom_desc")
     private String recomDesc;

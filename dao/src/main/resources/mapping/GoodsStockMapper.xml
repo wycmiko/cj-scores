@@ -28,6 +28,12 @@
     <sql id="Blob_Column_List">
     properties
   </sql>
+
+    <delete id="deleteByGoodsSn" parameterType="String">
+        delete from s_goods_stock
+        where goods_sn = #{goodsSn}
+    </delete>
+
     <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long">
         select
         <include refid="Base_Column_List"/>
@@ -38,7 +44,7 @@
     </select>
 
     <select id="selectByGoodsTypeIds" resultType="Long"
-            parameterType="com.cj.shop.api.param.StockSelectRequest">
+            parameterType="com.cj.shop.api.param.select.StockSelect">
         select
         t1.id as stockId
         from s_goods_stock t1
@@ -104,7 +110,7 @@
         </where>
     </select>
 
-    <select id="getTotalStockNum" parameterType="String">
+    <select id="getTotalStockNum" parameterType="String" resultType="Integer">
         select sum(stock_num)
         from s_goods_stock
         where goods_sn = #{goodSn}

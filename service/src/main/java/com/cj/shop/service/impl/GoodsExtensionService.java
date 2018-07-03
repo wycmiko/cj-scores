@@ -6,6 +6,7 @@ import com.cj.shop.api.entity.GoodsTag;
 import com.cj.shop.api.entity.GoodsUnit;
 import com.cj.shop.api.interf.GoodsExtensionApi;
 import com.cj.shop.api.param.*;
+import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsStockDto;
 import com.cj.shop.dao.mapper.GoodsSpecMapper;
@@ -348,6 +349,23 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         return pagedList;
     }
 
+
+    public int deleteStock(String goodsNumber) {
+        StockSelect stock = new StockSelect();
+        stock.setGoodSn(goodsNumber);
+        List<Long> ids = ValidatorUtil.checkNotEmptyList(goodsStockMapper.selectByGoodsTypeIds(stock));
+        int i = goodsStockMapper.deleteByGoodsSn(goodsNumber);
+        if (i > 0) {
+            if (!ids.isEmpty()) {
+                for (long id : ids) {
+                    //delete cache
+                    jedisCache.hdel(STOCK_KEY, String.valueOf(id));
+                }
+            }
+        }
+        return i;
+    }
+
     /**
      * 添加商品库存
      *
@@ -416,7 +434,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
      * @param request
      */
     @Override
-    public PagedList<GoodsStockDto> findAllGoodsStock(StockSelectRequest request) {
+    public PagedList<GoodsStockDto> findAllGoodsStock(StockSelect request) {
         Page<Object> objects = null;
         List<GoodsStockDto> list = new ArrayList<>();
         if (request.getPageNum() != null && request.getPageSize() != null) {
@@ -455,6 +473,13 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                     hget.setWarnStock(1);
                 } else if (hget.getStockNum() == 0) {
                     hget.setWarnStock(0);
+                }
+                Long parentId = hget.getParentId();
+                if (parentId != null) {
+                    GoodsSpecWithBLOBs detail = getGoodsSpecDetail(parentId, "all");
+                    if (detail != null) {
+                        hget.setParentName(detail.getSpecName());
+                    }
                 }
             }
             jedisCache.hset(STOCK_KEY, id.toString(), hget);

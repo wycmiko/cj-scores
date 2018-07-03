@@ -1,21 +1,36 @@
 package com.cj.shop.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.cj.shop.api.entity.GoodsBrand;
 import com.cj.shop.api.entity.GoodsSupply;
+import com.cj.shop.api.entity.GoodsTag;
+import com.cj.shop.api.entity.GoodsWithBLOBs;
 import com.cj.shop.api.interf.GoodsApi;
 import com.cj.shop.api.param.GoodsBrandRequest;
+import com.cj.shop.api.param.GoodsRequest;
+import com.cj.shop.api.param.GoodsStockRequest;
 import com.cj.shop.api.param.GoodsSupplyRequest;
+import com.cj.shop.api.param.select.GoodsSelect;
+import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
+import com.cj.shop.api.response.PriceLimit;
+import com.cj.shop.api.response.dto.GoodsDto;
+import com.cj.shop.api.response.dto.GoodsStockDto;
+import com.cj.shop.common.utils.DateUtils;
 import com.cj.shop.dao.mapper.GoodsBrandMapper;
+import com.cj.shop.dao.mapper.GoodsMapper;
+import com.cj.shop.dao.mapper.GoodsStockMapper;
 import com.cj.shop.dao.mapper.GoodsSupplyMapper;
 import com.cj.shop.service.cfg.JedisCache;
 import com.cj.shop.service.consts.ResultMsg;
+import com.cj.shop.service.util.NumberUtil;
 import com.cj.shop.service.util.PropertiesUtil;
 import com.cj.shop.service.util.ResultMsgUtil;
 import com.cj.shop.service.util.ValidatorUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 商品service
@@ -41,10 +57,21 @@ public class GoodsService implements GoodsApi {
     private GoodsSupplyMapper goodsSupplyMapper;
     @Autowired
     private GoodsBrandMapper goodsBrandMapper;
+    @Autowired
+    private GoodsExtensionService goodsExtensionService;
+    @Autowired
+    private GoodsTypeService goodsTypeService;
+    @Autowired
+    private GoodsStockMapper goodsStockMapper;
+    @Autowired
+    private GoodsMapper goodsMapper;
 
-    private static final String JEDIS_PREFIX_GOODS_TYPE = "cj_shop:mall:goods:";
-    private static final String JEDIS_PREFIX_GOODS_SUPPLY = JEDIS_PREFIX_GOODS_TYPE + "supply:";
-    private static final String JEDIS_PREFIX_GOODS_BRAND = JEDIS_PREFIX_GOODS_TYPE + "brand:";
+    //non-fair lock
+    private static final ReentrantLock lock = new ReentrantLock();
+
+    private static final String JEDIS_PREFIX_GOODS = "cj_shop:mall:goods:";
+    private static final String JEDIS_PREFIX_GOODS_SUPPLY = JEDIS_PREFIX_GOODS + "supply:";
+    private static final String JEDIS_PREFIX_GOODS_BRAND = JEDIS_PREFIX_GOODS + "brand:";
 
     /**
      * 添加供应商
@@ -225,4 +252,143 @@ public class GoodsService implements GoodsApi {
         PagedList<GoodsBrand> pagedList = new PagedList<>(list, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
         return pagedList;
     }
+
+    /**
+     * 添加商品
+     *
+     * @param request
+     */
+    @Override
+    public String insertGood(GoodsRequest request) {
+        int i;
+        try {
+            //EC校验
+            if (getBrandDetail(request.getBrandId()) == null) return ResultMsg.BRAND_NOT_EXISTS;
+            if (getSupplyDetail(request.getSupplyId()) == null) return ResultMsg.SUPPLY_NOT_EXISTS;
+            if (goodsExtensionService.getGoodsUnitDetail(request.getUnitId()) == null) return ResultMsg.UNIT_NOT_EXISTS;
+            List<GoodsStockRequest> specList = request.getSpecList();
+            if (specList == null || specList.isEmpty()) {
+                return ResultMsg.SPEC_LIST_EMPTY;
+            }
+            lock.lock();
+            final String goodsSn = NumberUtil.getGoodsNum();
+            //添加商品规格库存列表
+            for (GoodsStockRequest request1 : specList) {
+                //小商品编号
+                String smallNum = NumberUtil.getSmallGoodsNum(goodsSn, request1.getSpecId());
+                request1.setGoodsSn(goodsSn);
+                request1.setSGoodsSn(smallNum);
+                String s = goodsExtensionService.insertStock(request1);
+                if (!ResultMsg.HANDLER_SUCCESS.equals(s)) {
+                    //roll back
+                    insertFailRollBack(s, goodsSn);
+                    return s;
+                }
+            }
+            GoodsWithBLOBs bloBs = new GoodsWithBLOBs();
+            BeanUtils.copyProperties(request, bloBs);
+            //如果为上架商品
+            if (request.getSaleFlag() == 1) {
+                bloBs.setSaleTime(DateUtils.getCommonString());
+            }
+            PriceLimit priceLimit = goodsStockMapper.getPriceLimit(goodsSn);
+            bloBs.setGoodsSn(goodsSn);
+            bloBs.setMinCostPrice(priceLimit.getMinCostPrice());
+            bloBs.setMaxCostPrice(priceLimit.getMaxCostPrice());
+            bloBs.setMinSellPrice(priceLimit.getMinSellPrice());
+            bloBs.setMaxSellPrice(priceLimit.getMaxSellPrice());
+            Integer stockNum = goodsStockMapper.getTotalStockNum(goodsSn);
+            bloBs.setStockNum(stockNum);
+            bloBs.setWarnStock(0);
+            if (stockNum == 0) {
+                bloBs.setWarnStockFlag(3);
+            } else {
+                bloBs.setWarnStockFlag(1);
+            }
+            bloBs.setGoodDesc(PropertiesUtil.addProperties(request.getGoodDesc()));
+            bloBs.setKeyWords(PropertiesUtil.addProperties(request.getKeyWords()));
+            bloBs.setProperties(PropertiesUtil.addProperties(request.getProperties()));
+            i = goodsMapper.insertSelective(bloBs);
+            if (i > 0) {
+                //添加成功 加入缓存
+                jedisCache.hset(JEDIS_PREFIX_GOODS, bloBs.getId().toString(), getCompletGoods(bloBs.getId()));
+            } else {
+                //回滚
+                insertFailRollBack("添加失败", goodsSn);
+            }
+        } finally {
+            lock.unlock();
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 添加商品失败回滚
+     *
+     * @param msg 失败提示信息
+     * @param num
+     */
+    private void insertFailRollBack(String msg, String num) {
+        int i1 = goodsExtensionService.deleteStock(num);
+        //操作失败 回滚 打印
+        log.error("insert good stock fail {}, roll back rows={}", msg, i1);
+    }
+
+    /**
+     * 修改商品
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public String updateGood(GoodsRequest request) {
+        return null;
+    }
+
+    /**
+     * 复合条件查询全部商品
+     *
+     * @param select
+     */
+    @Override
+    public PagedList<GoodsDto> getAllGoods(GoodsSelect select) {
+        return null;
+    }
+
+    /**
+     * 查询单条商品明细
+     *
+     * @param goodsId
+     */
+    @Override
+    public GoodsDto getGoodsDetail(Long goodsId) {
+        GoodsDto hget = jedisCache.hget(JEDIS_PREFIX_GOODS, goodsId.toString(), GoodsDto.class);
+        if (hget == null) {
+            hget = getCompletGoods(goodsId);
+            jedisCache.hset(JEDIS_PREFIX_GOODS, goodsId.toString(), hget);
+        }
+        return hget;
+    }
+
+    private GoodsDto getCompletGoods(Long goodsId) {
+        GoodsDto dto = goodsMapper.selectByPrimaryKey(goodsId);
+        dto.setShopName("珑讯自营");
+        List<GoodsTag> goodsTagList = new ArrayList<>();
+        StockSelect select = new StockSelect();
+        select.setGoodSn(dto.getGoodsSn());
+        String tag_id_list = JSON.parseObject(dto.getKeyWords()).getString("tag_id_list");
+        if (!StringUtils.isBlank(tag_id_list)) {
+            List<Long> tagIds = JSON.parseArray(tag_id_list, Long.class);
+            if (tagIds != null)
+                for (Long id : tagIds) {
+                    GoodsTag goodsTagDetail = goodsExtensionService.getGoodsTagDetail(id);
+                    goodsTagList.add(goodsTagDetail);
+                }
+        }
+        PagedList<GoodsStockDto> allGoodsStock = goodsExtensionService.findAllGoodsStock(select);
+        dto.setSpecList(allGoodsStock.getList());
+        dto.setTagList(goodsTagList);
+        return dto;
+    }
+
 }

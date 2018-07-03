@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.concurrent.atomic.LongAdder;
-
 /**
  * @author yuchuanWeng(wycmiko @ foxmail.com)
  * @date 2018/6/25
@@ -19,12 +17,12 @@ import java.util.concurrent.atomic.LongAdder;
 public class NumberScheduled {
 
     /**
-     * 将每日自增长编号清0
+     * 将每日订单、商品自增长编号清0
      */
-    @Scheduled(cron = "0 0/20 0/1 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void settingOrderNumZero() {
-        LongAdder autoincrenum = NumberUtil.AUTOINCRENUM;
-        autoincrenum.sumThenReset();
-        log.info("reset the order num={}", autoincrenum.longValue());
+        long order = NumberUtil.ORDER_AUTOINCRENUM.sumThenReset();
+        long goods = NumberUtil.GOODS_AUTOINCRENUM.sumThenReset();
+        log.info("reset the order num={} goods num={}", order, goods);
     }
 }

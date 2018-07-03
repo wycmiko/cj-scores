@@ -1,379 +1,434 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cj.shop.dao.mapper.GoodsMapper" >
-  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.GoodsWithBLOBs" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="goods_sn" property="goodsSn" jdbcType="VARCHAR" />
-    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
-    <result column="brand_id" property="brandId" jdbcType="BIGINT" />
-    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
-    <result column="unit_id" property="unitId" jdbcType="BIGINT" />
-    <result column="supply_id" property="supplyId" jdbcType="BIGINT" />
-    <result column="goods_title" property="goodsTitle" jdbcType="VARCHAR" />
-    <result column="min_cost_price" property="minCostPrice" jdbcType="DECIMAL" />
-    <result column="max_cost_price" property="maxCostPrice" jdbcType="DECIMAL" />
-    <result column="min_sell_price" property="minSellPrice" jdbcType="DECIMAL" />
-    <result column="max_sell_price" property="maxSellPrice" jdbcType="DECIMAL" />
-    <result column="sale_count" property="saleCount" jdbcType="INTEGER" />
-    <result column="book_flag" property="bookFlag" jdbcType="TINYINT" />
-    <result column="stock_num" property="stockNum" jdbcType="INTEGER" />
-    <result column="warn_stock" property="warnStock" jdbcType="INTEGER" />
-    <result column="warn_stock_flag" property="warnStockFlag" jdbcType="INTEGER" />
-    <result column="sale_flag" property="saleFlag" jdbcType="INTEGER" />
-    <result column="hot_flag" property="hotFlag" jdbcType="INTEGER" />
-    <result column="new_flag" property="newFlag" jdbcType="INTEGER" />
-    <result column="recommand_flag" property="recommandFlag" jdbcType="INTEGER" />
-    <result column="best_flag" property="bestFlag" jdbcType="INTEGER" />
-    <result column="recom_desc" property="recomDesc" jdbcType="VARCHAR" />
-    <result column="first_type_id" property="firstTypeId" jdbcType="INTEGER" />
-    <result column="second_type_id" property="secondTypeId" jdbcType="INTEGER" />
-    <result column="third_type_id" property="thirdTypeId" jdbcType="INTEGER" />
-    <result column="good_status" property="goodStatus" jdbcType="INTEGER" />
-    <result column="preview_img" property="previewImg" jdbcType="VARCHAR" />
-    <result column="team_buy_flag" property="teamBuyFlag" jdbcType="INTEGER" />
-    <result column="second_goods_id" property="secondGoodsId" jdbcType="INTEGER" />
-    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
-    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
-    <result column="sort_flag" property="sortFlag" jdbcType="INTEGER" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.cj.shop.api.entity.GoodsWithBLOBs" extends="BaseResultMap" >
-    <result column="good_desc" property="goodDesc" jdbcType="LONGVARCHAR" />
-    <result column="key_words" property="keyWords" jdbcType="LONGVARCHAR" />
-    <result column="properties" property="properties" jdbcType="LONGVARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    id, goods_sn, goods_name, brand_id, shop_id, supply_id, unit_id,goods_title, min_cost_price, max_cost_price,
+<mapper namespace="com.cj.shop.dao.mapper.GoodsMapper">
+    <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.GoodsWithBLOBs">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="goods_sn" property="goodsSn" jdbcType="VARCHAR"/>
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="brand_id" property="brandId" jdbcType="BIGINT"/>
+        <result column="shop_id" property="shopId" jdbcType="BIGINT"/>
+        <result column="unit_id" property="unitId" jdbcType="BIGINT"/>
+        <result column="pv" property="pv" jdbcType="BIGINT"/>
+        <result column="supply_id" property="supplyId" jdbcType="BIGINT"/>
+        <result column="goods_title" property="goodsTitle" jdbcType="VARCHAR"/>
+        <result column="min_cost_price" property="minCostPrice" jdbcType="DECIMAL"/>
+        <result column="max_cost_price" property="maxCostPrice" jdbcType="DECIMAL"/>
+        <result column="min_sell_price" property="minSellPrice" jdbcType="DECIMAL"/>
+        <result column="max_sell_price" property="maxSellPrice" jdbcType="DECIMAL"/>
+        <result column="sale_count" property="saleCount" jdbcType="INTEGER"/>
+        <result column="book_flag" property="bookFlag" jdbcType="TINYINT"/>
+        <result column="stock_num" property="stockNum" jdbcType="INTEGER"/>
+        <result column="warn_stock" property="warnStock" jdbcType="INTEGER"/>
+        <result column="warn_stock_flag" property="warnStockFlag" jdbcType="INTEGER"/>
+        <result column="sale_flag" property="saleFlag" jdbcType="INTEGER"/>
+        <result column="hot_flag" property="hotFlag" jdbcType="INTEGER"/>
+        <result column="new_flag" property="newFlag" jdbcType="INTEGER"/>
+        <result column="recommand_flag" property="recommandFlag" jdbcType="INTEGER"/>
+        <result column="recom_desc" property="recomDesc" jdbcType="VARCHAR"/>
+        <result column="sale_time" property="saleTime" jdbcType="VARCHAR"/>
+        <result column="first_type_id" property="firstTypeId" jdbcType="INTEGER"/>
+        <result column="second_type_id" property="secondTypeId" jdbcType="INTEGER"/>
+        <result column="third_type_id" property="thirdTypeId" jdbcType="INTEGER"/>
+        <result column="good_status" property="goodStatus" jdbcType="INTEGER"/>
+        <result column="preview_img" property="previewImg" jdbcType="VARCHAR"/>
+        <result column="team_buy_flag" property="teamBuyFlag" jdbcType="INTEGER"/>
+        <result column="second_goods_id" property="secondGoodsId" jdbcType="INTEGER"/>
+        <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="sort_flag" property="sortFlag" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.cj.shop.api.entity.GoodsWithBLOBs" extends="BaseResultMap">
+        <result column="good_desc" property="goodDesc" jdbcType="LONGVARCHAR"/>
+        <result column="key_words" property="keyWords" jdbcType="LONGVARCHAR"/>
+        <result column="properties" property="properties" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, goods_sn, goods_name, brand_id, shop_id, supply_id, unit_id, pv,goods_title, min_cost_price, max_cost_price,
     min_sell_price,max_sell_price,
-    sale_count, book_flag, stock_num, warn_stock, warn_stock_flag, sale_flag, hot_flag, 
-    new_flag, recommand_flag, best_flag, recom_desc, first_type_id, second_type_id, third_type_id, good_status,
+    sale_count, book_flag, stock_num, warn_stock, warn_stock_flag, sale_flag, sale_time, hot_flag,
+    new_flag, recommand_flag,  recom_desc, first_type_id, second_type_id, third_type_id, good_status,
     preview_img, team_buy_flag, second_goods_id, delete_flag, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time,
     sort_flag
   </sql>
-  <sql id="Blob_Column_List" >
+    <sql id="Blob_Column_List">
     good_desc, key_words, properties
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from s_goods
-    where id = #{id,jdbcType=BIGINT}
+    <select id="selectByPrimaryKey" resultType="com.cj.shop.api.response.dto.GoodsDto" parameterType="java.lang.Long">
+      SELECT
+        t1.id,
+        t1.goods_sn as goodsSn,
+        t1.goods_name as goodsName,
+        t1.brand_id as brandId,
+        t2.brand_name as brandName,
+        t1.shop_id as shopId,
+        t1.supply_id as supplyId,
+        t3.supply_name as supplyName,
+        t1.unit_id as unitId,
+        t4.unit_name as unitName,
+        t1.pv,
+        t1.goods_title as goodsTitle,
+        t1.min_cost_price as minCostPrice,
+        t1.max_cost_price as maxCostPrice,
+        t1.min_sell_price as minSellPrice,
+        t1.max_sell_price as maxSellPrice,
+        t1.sale_count as saleCount,
+        t1.key_words as keyWords,
+        t1.book_flag as bookFlag,
+        t1.stock_num as stockNum,
+        t1.warn_stock as warnStock,
+        t1.warn_stock_flag as warnStockFlag,
+        t1.sale_flag as saleFlag,
+        t1.sale_time as saleTime,
+        t1.hot_flag as hotFlag,
+        t1.new_flag as newFlag,
+        t1.recommand_flag as recommandFlag,
+        t1.recom_desc as recomDesc,
+        t1.first_type_id as firstTypeId,
+        t1.second_type_id as secondTypeId,
+        t1.third_type_id as thirdTypeId,
+        t1.good_status as goodStatus,
+        t1.preview_img as previewImg,
+        t1.team_buy_flag as teamBuyFlag,
+        t1.second_goods_id as secondGoodsId,
+        t1.delete_flag as deleteFlag,
+        DATE_FORMAT(t1.update_time, '%Y-%m-%d %H:%i:%s' ) AS updateTime,
+        DATE_FORMAT(t1.create_time, '%Y-%m-%d %H:%i:%s' ) AS createTime,
+        t1.sort_flag as sortFlag
+    FROM
+        s_goods t1
+    LEFT JOIN
+        s_goods_brand t2 on t1.brand_id = t2.id
+    LEFT JOIN
+        s_goods_supply t3 on t1.supply_id = t3.id
+    LEFT JOIN
+        s_goods_unit t4 on t1.unit_id = t4.id
+    WHERE
+        t1.id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from s_goods
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsWithBLOBs"  useGeneratedKeys="true" keyProperty="id">
-    insert into s_goods
-    <trim prefix="(" suffix="
-    )" suffixOverrides="," >
-      <if test="goodsSn != null" >
-        goods_sn,
-      </if>
-      <if test="goodsName != null" >
-        goods_name,
-      </if>
-      <if test="brandId != null" >
-        brand_id,
-      </if>
-      <if test="shopId != null" >
-        shop_id,
-      </if>
-      <if test="supplyId != null" >
-        supply_id,
-      </if>
-      <if test="unitId != null" >
-        unit_id,
-      </if>
-      <if test="goodsTitle != null" >
-        goods_title,
-      </if>
-      <if test="minCostPrice != null" >
-        min_cost_price,
-      </if>
-      <if test="maxCostPrice != null" >
-        max_cost_price,
-      </if>
-      <if test="minSellPrice != null" >
-        min_sell_price,
-      </if>
-      <if test="maxSellPrice != null" >
-        max_sell_price,
-      </if>
-      <if test="saleCount != null" >
-        sale_count,
-      </if>
-      <if test="bookFlag != null" >
-        book_flag,
-      </if>
-      <if test="stockNum != null" >
-        stock_num,
-      </if>
-      <if test="warnStock != null" >
-        warn_stock,
-      </if>
-      <if test="warnStockFlag != null" >
-        warn_stock_flag,
-      </if>
-      <if test="saleFlag != null" >
-        sale_flag,
-      </if>
-      <if test="hotFlag != null" >
-        hot_flag,
-      </if>
-      <if test="newFlag != null" >
-        new_flag,
-      </if>
-      <if test="recommandFlag != null" >
-        recommand_flag,
-      </if>
-      <if test="bestFlag != null" >
-        best_flag,
-      </if>
-      <if test="recomDesc != null" >
-        recom_desc,
-      </if>
-      <if test="firstTypeId != null" >
-        first_type_id,
-      </if>
-      <if test="secondTypeId != null" >
-        second_type_id,
-      </if>
-      <if test="thirdTypeId != null" >
-        third_type_id,
-      </if>
-      <if test="goodStatus != null" >
-        good_status,
-      </if>
-      <if test="previewImg != null" >
-        preview_img,
-      </if>
-      <if test="teamBuyFlag != null" >
-        team_buy_flag,
-      </if>
-      <if test="secondGoodsId != null" >
-        second_goods_id,
-      </if>
-      <if test="sortFlag != null" >
-        sort_flag,
-      </if>
-      <if test="goodDesc != null" >
-        good_desc,
-      </if>
-      <if test="keyWords != null" >
-        key_words,
-      </if>
-      <if test="properties != null" >
-        properties,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="goodsSn != null" >
-        #{goodsSn,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsName != null" >
-        #{goodsName,jdbcType=VARCHAR},
-      </if>
-      <if test="brandId != null" >
-        #{brandId,jdbcType=BIGINT},
-      </if>
-      <if test="shopId != null" >
-        #{shopId,jdbcType=BIGINT},
-      </if>
-      <if test="supplyId != null" >
-        #{supplyId,jdbcType=BIGINT},
-      </if>
-      <if test="unitId != null" >
-        #{unitId,jdbcType=BIGINT},
-      </if>
-      <if test="goodsTitle != null" >
-        #{goodsTitle,jdbcType=VARCHAR},
-      </if>
-      <if test="minCostPrice != null" >
-        #{minCostPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="maxCostPrice != null" >
-        #{maxCostPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="minSellPrice != null" >
-        #{minSellPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="maxSellPrice != null" >
-        #{maxSellPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="saleCount != null" >
-        #{saleCount,jdbcType=INTEGER},
-      </if>
-      <if test="bookFlag != null" >
-        #{bookFlag,jdbcType=TINYINT},
-      </if>
-      <if test="stockNum != null" >
-        #{stockNum,jdbcType=INTEGER},
-      </if>
-      <if test="warnStock != null" >
-        #{warnStock,jdbcType=INTEGER},
-      </if>
-      <if test="warnStockFlag != null" >
-        #{warnStockFlag,jdbcType=INTEGER},
-      </if>
-      <if test="saleFlag != null" >
-        #{saleFlag,jdbcType=INTEGER},
-      </if>
-      <if test="hotFlag != null" >
-        #{hotFlag,jdbcType=INTEGER},
-      </if>
-      <if test="newFlag != null" >
-        #{newFlag,jdbcType=INTEGER},
-      </if>
-      <if test="recommandFlag != null" >
-        #{recommandFlag,jdbcType=INTEGER},
-      </if>
-      <if test="bestFlag != null" >
-        #{bestFlag,jdbcType=INTEGER},
-      </if>
-      <if test="recomDesc != null" >
-        #{recomDesc,jdbcType=VARCHAR},
-      </if>
-      <if test="firstTypeId != null" >
-        #{firstTypeId,jdbcType=INTEGER},
-      </if>
-      <if test="secondTypeId != null" >
-        #{secondTypeId,jdbcType=INTEGER},
-      </if>
-      <if test="goodStatus != null" >
-        #{goodStatus,jdbcType=INTEGER},
-      </if>
-      <if test="previewImg != null" >
-        #{previewImg,jdbcType=VARCHAR},
-      </if>
-      <if test="teamBuyFlag != null" >
-        #{teamBuyFlag,jdbcType=INTEGER},
-      </if>
-      <if test="secondGoodsId != null" >
-        #{secondGoodsId,jdbcType=INTEGER},
-      </if>
-      <if test="sortFlag != null" >
-        #{sortFlag,jdbcType=INTEGER},
-      </if>
-      <if test="goodDesc != null" >
-        #{goodDesc,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="keyWords != null" >
-        #{keyWords,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="properties != null" >
-        #{properties,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.GoodsWithBLOBs" >
+    <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsWithBLOBs" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into s_goods
+        <trim prefix="(" suffix="
+    )" suffixOverrides=",">
+            <if test="goodsSn != null">
+                goods_sn,
+            </if>
+            <if test="goodsName != null">
+                goods_name,
+            </if>
+            <if test="brandId != null">
+                brand_id,
+            </if>
+            <if test="shopId != null">
+                shop_id,
+            </if>
+            <if test="supplyId != null">
+                supply_id,
+            </if>
+            <if test="unitId != null">
+                unit_id,
+            </if>
+            <if test="goodsTitle != null">
+                goods_title,
+            </if>
+            <if test="minCostPrice != null">
+                min_cost_price,
+            </if>
+            <if test="maxCostPrice != null">
+                max_cost_price,
+            </if>
+            <if test="minSellPrice != null">
+                min_sell_price,
+            </if>
+            <if test="maxSellPrice != null">
+                max_sell_price,
+            </if>
+            <if test="saleCount != null">
+                sale_count,
+            </if>
+            <if test="bookFlag != null">
+                book_flag,
+            </if>
+            <if test="stockNum != null">
+                stock_num,
+            </if>
+            <if test="warnStock != null">
+                warn_stock,
+            </if>
+            <if test="warnStockFlag != null">
+                warn_stock_flag,
+            </if>
+            <if test="saleFlag != null">
+                sale_flag,
+            </if>
+            <if test="saleTime != null">
+                sale_time,
+            </if>
+            <if test="hotFlag != null">
+                hot_flag,
+            </if>
+            <if test="newFlag != null">
+                new_flag,
+            </if>
+            <if test="recommandFlag != null">
+                recommand_flag,
+            </if>
+            <if test="recomDesc != null">
+                recom_desc,
+            </if>
+            <if test="firstTypeId != null">
+                first_type_id,
+            </if>
+            <if test="secondTypeId != null">
+                second_type_id,
+            </if>
+            <if test="thirdTypeId != null">
+                third_type_id,
+            </if>
+            <if test="goodStatus != null">
+                good_status,
+            </if>
+            <if test="previewImg != null">
+                preview_img,
+            </if>
+            <if test="teamBuyFlag != null">
+                team_buy_flag,
+            </if>
+            <if test="secondGoodsId != null">
+                second_goods_id,
+            </if>
+            <if test="sortFlag != null">
+                sort_flag,
+            </if>
+            <if test="goodDesc != null">
+                good_desc,
+            </if>
+            <if test="keyWords != null">
+                key_words,
+            </if>
+            <if test="properties != null">
+                properties,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsSn != null">
+                #{goodsSn,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsName != null">
+                #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="brandId != null">
+                #{brandId,jdbcType=BIGINT},
+            </if>
+            <if test="shopId != null">
+                #{shopId,jdbcType=BIGINT},
+            </if>
+            <if test="supplyId != null">
+                #{supplyId,jdbcType=BIGINT},
+            </if>
+            <if test="unitId != null">
+                #{unitId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsTitle != null">
+                #{goodsTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="minCostPrice != null">
+                #{minCostPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxCostPrice != null">
+                #{maxCostPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minSellPrice != null">
+                #{minSellPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxSellPrice != null">
+                #{maxSellPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="saleCount != null">
+                #{saleCount,jdbcType=INTEGER},
+            </if>
+            <if test="bookFlag != null">
+                #{bookFlag,jdbcType=TINYINT},
+            </if>
+            <if test="stockNum != null">
+                #{stockNum,jdbcType=INTEGER},
+            </if>
+            <if test="warnStock != null">
+                #{warnStock,jdbcType=INTEGER},
+            </if>
+            <if test="warnStockFlag != null">
+                #{warnStockFlag,jdbcType=INTEGER},
+            </if>
+            <if test="saleFlag != null">
+                #{saleFlag,jdbcType=INTEGER},
+            </if>
+            <if test="saleTime != null">
+                #{saleTime,jdbcType=VARCHAR},
+            </if>
+            <if test="hotFlag != null">
+                #{hotFlag,jdbcType=INTEGER},
+            </if>
+            <if test="newFlag != null">
+                #{newFlag,jdbcType=INTEGER},
+            </if>
+            <if test="recommandFlag != null">
+                #{recommandFlag,jdbcType=INTEGER},
+            </if>
+            <if test="recomDesc != null">
+                #{recomDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="firstTypeId != null">
+                #{firstTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="secondTypeId != null">
+                #{secondTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="thirdTypeId != null">
+                #{thirdTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="goodStatus != null">
+                #{goodStatus,jdbcType=INTEGER},
+            </if>
+            <if test="previewImg != null">
+                #{previewImg,jdbcType=VARCHAR},
+            </if>
+            <if test="teamBuyFlag != null">
+                #{teamBuyFlag,jdbcType=INTEGER},
+            </if>
+            <if test="secondGoodsId != null">
+                #{secondGoodsId,jdbcType=INTEGER},
+            </if>
+            <if test="sortFlag != null">
+                #{sortFlag,jdbcType=INTEGER},
+            </if>
+            <if test="goodDesc != null">
+                #{goodDesc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="keyWords != null">
+                #{keyWords,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="properties != null">
+                #{properties,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.GoodsWithBLOBs">
+        update s_goods
+        <set>
+            <if test="goodsSn != null">
+                goods_sn = #{goodsSn,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsName != null">
+                goods_name = #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="brandId != null">
+                brand_id = #{brandId,jdbcType=BIGINT},
+            </if>
+            <if test="shopId != null">
+                shop_id = #{shopId,jdbcType=BIGINT},
+            </if>
+            <if test="supplyId != null">
+                supply_id = #{supplyId,jdbcType=BIGINT},
+            </if>
+            <if test="unitId != null">
+                unit_id = #{unitId},
+            </if>
+            <if test="goodsTitle != null">
+                goods_title = #{goodsTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="minCostPrice != null">
+                min_cost_price = #{minCostPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxCostPrice != null">
+                max_cost_price = #{maxCostPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minSellPrice != null">
+                min_sell_price = #{minSellPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxSellPrice != null">
+                max_sell_price = #{maxSellPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="saleCount != null">
+                sale_count = #{saleCount,jdbcType=INTEGER},
+            </if>
+            <if test="bookFlag != null">
+                book_flag = #{bookFlag,jdbcType=TINYINT},
+            </if>
+            <if test="stockNum != null">
+                stock_num = #{stockNum,jdbcType=INTEGER},
+            </if>
+            <if test="warnStock != null">
+                warn_stock = #{warnStock,jdbcType=INTEGER},
+            </if>
+            <if test="warnStockFlag != null">
+                warn_stock_flag = #{warnStockFlag,jdbcType=INTEGER},
+            </if>
+            <if test="saleFlag != null">
+                sale_flag = #{saleFlag,jdbcType=INTEGER},
+            </if>
+            <if test="saleTime != null">
+                sale_time = #{saleTime,jdbcType=VARCHAR},
+            </if>
+            <if test="hotFlag != null">
+                hot_flag = #{hotFlag,jdbcType=INTEGER},
+            </if>
+            <if test="newFlag != null">
+                new_flag = #{newFlag,jdbcType=INTEGER},
+            </if>
+            <if test="recommandFlag != null">
+                recommand_flag = #{recommandFlag,jdbcType=INTEGER},
+            </if>
+            <if test="recomDesc != null">
+                recom_desc = #{recomDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="firstTypeId != null">
+                first_type_id = #{firstTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="secondTypeId != null">
+                second_type_id = #{secondTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="thirdTypeId != null">
+                third_type_id = #{thirdTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="goodStatus != null">
+                good_status = #{goodStatus,jdbcType=INTEGER},
+            </if>
+            <if test="previewImg != null">
+                preview_img = #{previewImg,jdbcType=VARCHAR},
+            </if>
+            <if test="teamBuyFlag != null">
+                team_buy_flag = #{teamBuyFlag,jdbcType=INTEGER},
+            </if>
+            <if test="secondGoodsId != null">
+                second_goods_id = #{secondGoodsId,jdbcType=INTEGER},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=TINYINT},
+            </if>
+            <if test="sortFlag != null">
+                sort_flag = #{sortFlag,jdbcType=INTEGER},
+            </if>
+            <if test="goodDesc != null">
+                good_desc = #{goodDesc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="keyWords != null">
+                key_words = #{keyWords,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="properties != null">
+                properties = #{properties,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="increPv" parameterType="Long">
     update s_goods
-    <set >
-      <if test="goodsSn != null" >
-        goods_sn = #{goodsSn,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsName != null" >
-        goods_name = #{goodsName,jdbcType=VARCHAR},
-      </if>
-      <if test="brandId != null" >
-        brand_id = #{brandId,jdbcType=BIGINT},
-      </if>
-      <if test="shopId != null" >
-        shop_id = #{shopId,jdbcType=BIGINT},
-      </if>
-      <if test="supplyId != null" >
-        supply_id = #{supplyId,jdbcType=BIGINT},
-      </if>
-      <if test="unitId != null" >
-        unit_id = #{unitId},
-      </if>
-      <if test="goodsTitle != null" >
-        goods_title = #{goodsTitle,jdbcType=VARCHAR},
-      </if>
-      <if test="minCostPrice != null" >
-        min_cost_price = #{minCostPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="maxCostPrice != null" >
-        max_cost_price = #{maxCostPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="minSellPrice != null" >
-        min_sell_price = #{minSellPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="maxSellPrice != null" >
-        max_sell_price = #{maxSellPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="saleCount != null" >
-        sale_count = #{saleCount,jdbcType=INTEGER},
-      </if>
-      <if test="bookFlag != null" >
-        book_flag = #{bookFlag,jdbcType=TINYINT},
-      </if>
-      <if test="stockNum != null" >
-        stock_num = #{stockNum,jdbcType=INTEGER},
-      </if>
-      <if test="warnStock != null" >
-        warn_stock = #{warnStock,jdbcType=INTEGER},
-      </if>
-      <if test="warnStockFlag != null" >
-        warn_stock_flag = #{warnStockFlag,jdbcType=INTEGER},
-      </if>
-      <if test="saleFlag != null" >
-        sale_flag = #{saleFlag,jdbcType=INTEGER},
-      </if>
-      <if test="hotFlag != null" >
-        hot_flag = #{hotFlag,jdbcType=INTEGER},
-      </if>
-      <if test="newFlag != null" >
-        new_flag = #{newFlag,jdbcType=INTEGER},
-      </if>
-      <if test="recommandFlag != null" >
-        recommand_flag = #{recommandFlag,jdbcType=INTEGER},
-      </if>
-      <if test="bestFlag != null" >
-        best_flag = #{bestFlag,jdbcType=INTEGER},
-      </if>
-      <if test="recomDesc != null" >
-        recom_desc = #{recomDesc,jdbcType=VARCHAR},
-      </if>
-      <if test="firstTypeId != null" >
-        first_type_id = #{firstTypeId,jdbcType=INTEGER},
-      </if>
-      <if test="secondTypeId != null" >
-        second_type_id = #{secondTypeId,jdbcType=INTEGER},
-      </if>
-      <if test="thirdTypeId != null" >
-        third_type_id = #{thirdTypeId,jdbcType=INTEGER},
-      </if>
-      <if test="goodStatus != null" >
-        good_status = #{goodStatus,jdbcType=INTEGER},
-      </if>
-      <if test="previewImg != null" >
-        preview_img = #{previewImg,jdbcType=VARCHAR},
-      </if>
-      <if test="teamBuyFlag != null" >
-        team_buy_flag = #{teamBuyFlag,jdbcType=INTEGER},
-      </if>
-      <if test="secondGoodsId != null" >
-        second_goods_id = #{secondGoodsId,jdbcType=INTEGER},
-      </if>
-      <if test="deleteFlag != null" >
-        delete_flag = #{deleteFlag,jdbcType=TINYINT},
-      </if>
-      <if test="sortFlag != null" >
-        sort_flag = #{sortFlag,jdbcType=INTEGER},
-      </if>
-      <if test="goodDesc != null" >
-        good_desc = #{goodDesc,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="keyWords != null" >
-        key_words = #{keyWords,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="properties != null" >
-        properties = #{properties,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
+    set pv=pv+1
+    where id=#{id}
   </update>
 </mapper>
