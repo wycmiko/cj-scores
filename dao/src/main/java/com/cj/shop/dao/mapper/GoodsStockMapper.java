@@ -23,6 +23,9 @@ public interface GoodsStockMapper {
 
     GoodsStockDto selectByGoodsType(@Param("id") Long id);
 
+    GoodsStockDto selectBySgoodId(@Param("sid") String sid);
+    int deleteBySgoodId(@Param("sid") String sid);
+
     int updateByPrimaryKeySelective(GoodsStock record);
 
     /**

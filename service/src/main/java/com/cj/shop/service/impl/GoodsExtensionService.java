@@ -366,6 +366,11 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         return i;
     }
 
+
+    /**
+     * 根据商品小编号查询 规格商品是否存在
+     */
+
     /**
      * 添加商品库存
      *
@@ -380,8 +385,6 @@ public class GoodsExtensionService implements GoodsExtensionApi {
             return ResultMsg.SPEC_NOT_EXISTS;
         }
         //校验商品是否存在
-
-
         double ratio = stockRequest.getWarnRatio().doubleValue();
         long num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
         //生成小商品编号
@@ -393,7 +396,8 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         goodsStock.setProperties(PropertiesUtil.addProperties(stockRequest.getProperties()));
         int i = goodsStockMapper.insertSelective(goodsStock);
         if (i > 0) {
-            jedisCache.hset(STOCK_KEY, goodsStock.getId().toString(), goodsStockMapper.selectByGoodsType(goodsStock.getId()));
+            jedisCache.hdel(STOCK_KEY, stockRequest.getId().toString());
+            jedisCache.hset(STOCK_KEY, goodsStock.getId().toString(), getStockById(stockRequest.getId()));
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -423,7 +427,8 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         goodsStock.setWarnStockNum((int) num);
         int i = goodsStockMapper.updateByPrimaryKeySelective(goodsStock);
         if (i > 0) {
-            jedisCache.hset(STOCK_KEY, stockRequest.getId().toString(), goodsStockMapper.selectByGoodsType(stockRequest.getId()));
+            jedisCache.hdel(STOCK_KEY, stockRequest.getId().toString());
+            jedisCache.hset(STOCK_KEY, stockRequest.getId().toString(), getStockById(stockRequest.getId()));
         }
         return ResultMsgUtil.dmlResult(i);
     }

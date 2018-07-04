@@ -1,6 +1,7 @@
 package com.cj.shop.api.response.dto;
 
 import com.cj.shop.api.entity.GoodsTag;
+import com.cj.shop.common.model.PropertyEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class GoodsDto implements Serializable {
+public class GoodsDto extends PropertyEntity implements Serializable {
     private Long id;
     /**
      * 商品大编号

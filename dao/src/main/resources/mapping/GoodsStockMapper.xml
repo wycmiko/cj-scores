@@ -110,6 +110,46 @@
         </where>
     </select>
 
+    <select id="selectBySgoodId" resultType="com.cj.shop.api.response.dto.GoodsStockDto"
+            parameterType="String">
+        select
+        t1.id as stockId,
+        t1.goods_sn as goodsSn,
+        t1.s_goods_sn as sGoodsSn,
+        t2.goods_name as goodsName,
+        t1.spec_id as specId,
+        t1.cost_price as costPrice,
+        t1.sell_price as sellPrice,
+        t1.weight,
+        t1.warn_ratio as warnRatio,
+        t3.parent_id as parentId,
+        t3.spec_name as specName,
+        t1.stock_num as stockNum,
+        t1.warn_stock_num as warnStockNum,
+        t1.warn_stock as warnStock,
+        t1.delete_flag as deleteFlag,
+        DATE_FORMAT(t1.update_time,'%Y-%m-%d %H:%i:%s') as updateTime,
+        DATE_FORMAT(t1.create_time,'%Y-%m-%d %H:%i:%s') as createTime,
+        t1.sort_flag as sortFlag,
+        t1.properties
+        from s_goods_stock t1
+        left join s_goods t2 on t1.goods_sn = t2.goods_sn
+        left join s_goods_spec t3 on t1.spec_id = t3.id
+        <where>
+            1=1
+            <if test="sid !=null">
+                and t1.s_goods_sn = #{sid}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteBySgoodId" parameterType="String">
+        delete from s_goods_stock
+        <where>
+            s_goods_sn = #{sid}
+        </where>
+    </delete>
+
     <select id="getTotalStockNum" parameterType="String" resultType="Integer">
         select sum(stock_num)
         from s_goods_stock

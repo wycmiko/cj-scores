@@ -270,6 +270,9 @@ public class GoodsService implements GoodsApi {
             if (specList == null || specList.isEmpty()) {
                 return ResultMsg.SPEC_LIST_EMPTY;
             }
+            if (request.getGoodsName().length() >= 26) {
+                return ResultMsg.GOOD_NAME_TOO_LONG;
+            }
             lock.lock();
             final String goodsSn = NumberUtil.getGoodsNum();
             //添加商品规格库存列表
@@ -278,33 +281,20 @@ public class GoodsService implements GoodsApi {
                 String smallNum = NumberUtil.getSmallGoodsNum(goodsSn, request1.getSpecId());
                 request1.setGoodsSn(goodsSn);
                 request1.setSGoodsSn(smallNum);
-                String s = goodsExtensionService.insertStock(request1);
-                if (!ResultMsg.HANDLER_SUCCESS.equals(s)) {
-                    //roll back
-                    insertFailRollBack(s, goodsSn);
-                    return s;
+                //判断是否已经存在该类商品库存
+                GoodsStockDto goodsStockDto = goodsStockMapper.selectBySgoodId(smallNum);
+                if (goodsStockDto == null) {
+                    String s = goodsExtensionService.insertStock(request1);
+                    if (!ResultMsg.HANDLER_SUCCESS.equals(s)) {
+                        //roll back
+                        insertFailRollBack(s, goodsSn);
+                        return s;
+                    }
                 }
             }
             GoodsWithBLOBs bloBs = new GoodsWithBLOBs();
             BeanUtils.copyProperties(request, bloBs);
-            //如果为上架商品
-            if (request.getSaleFlag() == 1) {
-                bloBs.setSaleTime(DateUtils.getCommonString());
-            }
-            PriceLimit priceLimit = goodsStockMapper.getPriceLimit(goodsSn);
-            bloBs.setGoodsSn(goodsSn);
-            bloBs.setMinCostPrice(priceLimit.getMinCostPrice());
-            bloBs.setMaxCostPrice(priceLimit.getMaxCostPrice());
-            bloBs.setMinSellPrice(priceLimit.getMinSellPrice());
-            bloBs.setMaxSellPrice(priceLimit.getMaxSellPrice());
-            Integer stockNum = goodsStockMapper.getTotalStockNum(goodsSn);
-            bloBs.setStockNum(stockNum);
-            bloBs.setWarnStock(0);
-            if (stockNum == 0) {
-                bloBs.setWarnStockFlag(3);
-            } else {
-                bloBs.setWarnStockFlag(1);
-            }
+            bloBs = updateGoosProp(request, bloBs, goodsSn);
             bloBs.setGoodDesc(PropertiesUtil.addProperties(request.getGoodDesc()));
             bloBs.setKeyWords(PropertiesUtil.addProperties(request.getKeyWords()));
             bloBs.setProperties(PropertiesUtil.addProperties(request.getProperties()));
@@ -335,6 +325,37 @@ public class GoodsService implements GoodsApi {
     }
 
     /**
+     * 用于添加、修改时候更新商品属性
+     *
+     * @param request
+     * @param bloBs
+     * @param goodsSn
+     * @return
+     */
+    private GoodsWithBLOBs updateGoosProp(GoodsRequest request, GoodsWithBLOBs bloBs, String goodsSn) {
+        if (bloBs == null) bloBs = new GoodsWithBLOBs();
+        //如果为上架商品
+        if (request.getSaleFlag() == 1) {
+            bloBs.setSaleTime(DateUtils.getCommonString());
+        }
+        PriceLimit priceLimit = goodsStockMapper.getPriceLimit(goodsSn);
+        bloBs.setGoodsSn(goodsSn);
+        bloBs.setMinCostPrice(priceLimit.getMinCostPrice());
+        bloBs.setMaxCostPrice(priceLimit.getMaxCostPrice());
+        bloBs.setMinSellPrice(priceLimit.getMinSellPrice());
+        bloBs.setMaxSellPrice(priceLimit.getMaxSellPrice());
+        Integer stockNum = goodsStockMapper.getTotalStockNum(goodsSn);
+        bloBs.setStockNum(stockNum);
+        bloBs.setWarnStock(0);
+        if (stockNum == 0) {
+            bloBs.setWarnStockFlag(3);
+        } else {
+            bloBs.setWarnStockFlag(1);
+        }
+        return bloBs;
+    }
+
+    /**
      * 修改商品
      *
      * @param request
@@ -342,7 +363,51 @@ public class GoodsService implements GoodsApi {
      */
     @Override
     public String updateGood(GoodsRequest request) {
-        return null;
+        GoodsDto goodsDetail = getGoodsDetail(request.getId());
+        if (goodsDetail == null) return ResultMsg.GOOD_NOT_EXISTS;
+        if (request.getSpecList() != null && !request.getSpecList().isEmpty()) {
+            //添加商品规格库存列表
+            for (GoodsStockRequest request1 : request.getSpecList()) {
+                //小商品编号
+                String smallNum = NumberUtil.getSmallGoodsNum(goodsDetail.getGoodsSn(), request1.getSpecId());
+                request1.setGoodsSn(goodsDetail.getGoodsSn());
+                request1.setSGoodsSn(smallNum);
+                //判断是否已经存在该类商品库存
+                GoodsStockDto goodsStockDto = goodsStockMapper.selectBySgoodId(smallNum);
+                if (goodsStockDto == null) {
+                    String s = goodsExtensionService.insertStock(request1);
+                    if (!ResultMsg.HANDLER_SUCCESS.equals(s)) {
+                        log.info("update Goods-insert stock failure");
+                        //roll back
+                        insertFailRollBack(s, goodsDetail.getGoodsSn());
+                        return s;
+                    }
+                } else {
+                    //更新操作
+                    request1.setId(goodsStockDto.getStockId());
+                    String s = goodsExtensionService.updateStock(request1);
+                    if (!ResultMsg.HANDLER_SUCCESS.equals(s)) {
+                        log.info("update Goods-insert stock failure");
+                        //roll back
+                        insertFailRollBack(s, goodsDetail.getGoodsSn());
+                        return s;
+                    }
+
+                }
+            }
+        }
+        GoodsWithBLOBs goodsWithBLOBs = new GoodsWithBLOBs();
+        BeanUtils.copyProperties(request, goodsWithBLOBs);
+        goodsWithBLOBs = updateGoosProp(request, goodsWithBLOBs, goodsDetail.getGoodsSn());
+        goodsWithBLOBs.setProperties(PropertiesUtil.changeProperties(goodsDetail.getProperties(), request.getProperties()));
+        goodsWithBLOBs.setGoodDesc(PropertiesUtil.changeProperties(goodsDetail.getGoodDesc(), request.getGoodDesc()));
+        goodsWithBLOBs.setKeyWords(PropertiesUtil.changeProperties(goodsDetail.getKeyWords(), request.getKeyWords()));
+        int i = goodsMapper.updateByPrimaryKeySelective(goodsWithBLOBs);
+        if (i > 0) {
+            log.info("update goods success");
+            jedisCache.hset(JEDIS_PREFIX_GOODS, request.getId().toString(), goodsMapper.selectByPrimaryKey(request.getId()));
+        }
+        return ResultMsgUtil.dmlResult(i);
     }
 
     /**
@@ -352,7 +417,23 @@ public class GoodsService implements GoodsApi {
      */
     @Override
     public PagedList<GoodsDto> getAllGoods(GoodsSelect select) {
-        return null;
+        Page<Object> objects = null;
+        List<GoodsDto> list = new ArrayList<>();
+        if (select.getPageNum() != null && select.getPageSize() != null) {
+            objects = PageHelper.startPage(select.getPageNum(), select.getPageSize());
+        } else {
+            select.setPageNum(0);
+            select.setPageSize(0);
+        }
+        List<Long> longs = ValidatorUtil.checkNotEmptyList(goodsMapper.selectGoodsIds(select));
+        if (!longs.isEmpty()) {
+            for (Long id : longs) {
+                GoodsDto goodsDetail = getGoodsDetail(id);
+                list.add(goodsDetail);
+            }
+        }
+        PagedList<GoodsDto> pagedList = new PagedList<>(list, objects == null ? 0 : objects.getTotal(), select.getPageNum(), select.getPageSize());
+        return pagedList;
     }
 
     /**
@@ -372,22 +453,32 @@ public class GoodsService implements GoodsApi {
 
     private GoodsDto getCompletGoods(Long goodsId) {
         GoodsDto dto = goodsMapper.selectByPrimaryKey(goodsId);
-        dto.setShopName("珑讯自营");
-        List<GoodsTag> goodsTagList = new ArrayList<>();
-        StockSelect select = new StockSelect();
-        select.setGoodSn(dto.getGoodsSn());
-        String tag_id_list = JSON.parseObject(dto.getKeyWords()).getString("tag_id_list");
-        if (!StringUtils.isBlank(tag_id_list)) {
-            List<Long> tagIds = JSON.parseArray(tag_id_list, Long.class);
-            if (tagIds != null)
-                for (Long id : tagIds) {
-                    GoodsTag goodsTagDetail = goodsExtensionService.getGoodsTagDetail(id);
-                    goodsTagList.add(goodsTagDetail);
-                }
+        if (dto != null) {
+            //判断库存
+            Integer stockNum = goodsStockMapper.getTotalStockNum(dto.getGoodsSn());
+            dto.setStockNum(stockNum);
+            if (stockNum == 0) {
+                dto.setWarnStockFlag(3);
+            } else {
+                dto.setWarnStockFlag(1);
+            }
+            dto.setShopName("珑讯自营");
+            List<GoodsTag> goodsTagList = new ArrayList<>();
+            StockSelect select = new StockSelect();
+            select.setGoodSn(dto.getGoodsSn());
+            String tag_id_list = JSON.parseObject(dto.getKeyWords()).getString("tag_id_list");
+            if (!StringUtils.isBlank(tag_id_list)) {
+                List<Long> tagIds = JSON.parseArray(tag_id_list, Long.class);
+                if (tagIds != null)
+                    for (Long id : tagIds) {
+                        GoodsTag goodsTagDetail = goodsExtensionService.getGoodsTagDetail(id);
+                        goodsTagList.add(goodsTagDetail);
+                    }
+            }
+            PagedList<GoodsStockDto> allGoodsStock = goodsExtensionService.findAllGoodsStock(select);
+            dto.setSpecList(allGoodsStock.getList());
+            dto.setTagList(goodsTagList);
         }
-        PagedList<GoodsStockDto> allGoodsStock = goodsExtensionService.findAllGoodsStock(select);
-        dto.setSpecList(allGoodsStock.getList());
-        dto.setTagList(goodsTagList);
         return dto;
     }
 

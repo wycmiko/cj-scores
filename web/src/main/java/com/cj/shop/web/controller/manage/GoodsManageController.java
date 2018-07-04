@@ -2,6 +2,7 @@ package com.cj.shop.web.controller.manage;
 
 import com.cj.shop.api.entity.GoodsSupply;
 import com.cj.shop.api.param.*;
+import com.cj.shop.api.param.select.GoodsSelect;
 import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.service.impl.GoodsExtensionService;
@@ -694,6 +695,57 @@ public class GoodsManageController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("goodsDetail error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 复合查询全部商品
+     *
+     * @return
+     */
+    @PostMapping("/goodsList")
+    public Result goodsList(@RequestBody GoodsSelect select) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("goodsList begin");
+            if (CommandValidator.isEmpty(select.getType())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsService.getAllGoods(select));
+            log.info("goodsList end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("goodsList error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 查询商品明细
+     *
+     * @return
+     */
+    @PutMapping("/updateGood")
+    public Result updateGood(@RequestBody GoodsRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("updateGood begin");
+            if (CommandValidator.isEmpty(request.getId())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsService.updateGood(request));
+            log.info("updateGood end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("updateGood error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

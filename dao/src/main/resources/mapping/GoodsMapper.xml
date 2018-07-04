@@ -54,6 +54,64 @@
     <sql id="Blob_Column_List">
     good_desc, key_words, properties
   </sql>
+    <select id="selectGoodsIds" resultType="Long" parameterType="com.cj.shop.api.param.select.GoodsSelect">
+        SELECT
+        id
+        FROM
+        s_goods
+        <where>
+            1=1
+            <if test="brandId != null">
+                and brand_id = #{brandId}
+            </if>
+            <if test="firstTypeId != null">
+                and first_type_id = #{firstTypeId}
+            </if>
+            <if test="secondTypeId != null">
+                and second_type_id = #{secondTypeId}
+            </if>
+            <if test="thirdTypeId != null">
+                and third_type_id = #{thirdTypeId}
+            </if>
+            <if test="saleFlag != null">
+                and sale_flag = #{saleFlag}
+            </if>
+            <if test="goodsSn != null">
+                and goods_sn = #{goodsSn}
+            </if>
+            <if test='type == "exist"'>
+                and delete_flag = 0
+            </if>
+            <if test="goodsName != null">
+                and goods_name like concat('%','${goodsName}','%')
+            </if>
+        </where>
+        <if test="sortType == 1">
+            order by min_cost_price asc,sort_flag desc
+        </if>
+        <if test="sortType == 2">
+            order by min_cost_price desc,sort_flag desc
+        </if>
+        <if test="sortType == 3">
+            order by sale_count asc,sort_flag desc
+        </if>
+        <if test="sortType == 4">
+            order by sale_count asc,sort_flag desc
+        </if>
+        <if test="sortType == 5">
+            order by stock_num asc,sort_flag desc
+        </if>
+        <if test="sortType == 6">
+            order by stock_num asc,sort_flag desc
+        </if>
+        <if test="sortType == 7">
+            order by pv asc,sort_flag desc
+        </if>
+        <if test="sortType == 8">
+            order by pv asc,sort_flag desc
+        </if>
+    </select>
+
     <select id="selectByPrimaryKey" resultType="com.cj.shop.api.response.dto.GoodsDto" parameterType="java.lang.Long">
       SELECT
         t1.id,
@@ -84,6 +142,7 @@
         t1.new_flag as newFlag,
         t1.recommand_flag as recommandFlag,
         t1.recom_desc as recomDesc,
+        t1.good_desc as goodDesc,
         t1.first_type_id as firstTypeId,
         t1.second_type_id as secondTypeId,
         t1.third_type_id as thirdTypeId,
@@ -94,7 +153,8 @@
         t1.delete_flag as deleteFlag,
         DATE_FORMAT(t1.update_time, '%Y-%m-%d %H:%i:%s' ) AS updateTime,
         DATE_FORMAT(t1.create_time, '%Y-%m-%d %H:%i:%s' ) AS createTime,
-        t1.sort_flag as sortFlag
+        t1.sort_flag as sortFlag,
+        t1.properties
     FROM
         s_goods t1
     LEFT JOIN

@@ -17,15 +17,10 @@ import java.util.Map;
 @Setter
 public class GoodsRequest extends BaseRequest implements Serializable {
     private Long id;
-    @JsonProperty("goods_sn")
-    private String goodsSn;
-
     @JsonProperty("goods_name")
     private String goodsName;
-
     @JsonProperty("brand_id")
     private Long brandId;
-
     @JsonProperty("shop_id")
     private Long shopId;
     @JsonProperty("unit_id")

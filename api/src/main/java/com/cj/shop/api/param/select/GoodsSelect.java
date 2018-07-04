@@ -27,8 +27,8 @@ public class GoodsSelect implements Serializable {
     /**
      * 三级分类ID筛选
      */
-    @JsonProperty("thrid_type_id")
-    private Integer thridTypeId;
+    @JsonProperty("third_type_id")
+    private Integer thirdTypeId;
     /**
      * 是否上架筛选
      * 1=上架 0=下架
@@ -36,11 +36,10 @@ public class GoodsSelect implements Serializable {
     @JsonProperty("sale_flag")
     private Integer saleFlag;
 
-    /**
-     * 根据小编号查找
-     */
-    @JsonProperty("s_goods_sn")
-    private String sGoodsSn;
+
+    @JsonProperty("brand_id")
+    private Long brandId;
+
     /**
      * 根据商品编号查找
      */

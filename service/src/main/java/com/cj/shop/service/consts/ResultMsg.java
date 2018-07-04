@@ -13,6 +13,8 @@ public class ResultMsg {
     public static final String HANDLER_FAILURE = "操作失败";
 
     public static final String BRAND_NOT_EXISTS = "品牌不存在";
+    public static final String GOOD_NOT_EXISTS = "商品不存在";
+    public static final String GOOD_NAME_TOO_LONG = "商品名称过长";
     public static final String ADDRESS_NOT_EXISTS = "地址不存在";
     public static final String TAG_NOT_EXISTS = "标签不存在";
     public static final String UNIT_NOT_EXISTS = "计量单位不存在";
