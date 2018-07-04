@@ -17,19 +17,46 @@
   <sql id="Blob_Column_List" >
     properties
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
-    select 
+  <select id="selectByPrimaryKey" resultType="com.cj.shop.api.response.dto.GoodsVisitDto" parameterType="java.lang.Long" >
+    select
+    t1.id as visitId,
+    t1.uid,
+    t1.goods_id as goodsId,
+    t2.goods_name as goodsName,
+    t2.min_sell_price as minSellPrice,
+    t2.max_sell_price as maxSellPrice,
+    t1.visit_time as visitTime,
+    t2.preview_img as goodsImg,
+    t1.properties
+    from s_goods_visit t1
+    left join s_goods t2 on t1.goods_id = t2.id
+    where t1.id = #{id,jdbcType=BIGINT} and t2.delete_flag=0
+  </select>
+
+  <select id="selectVisitByUidGoodsId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from s_goods_visit
-    where id = #{id,jdbcType=BIGINT}
+    where uid = #{uid} and goods_id = #{goodsId}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from s_goods_visit
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsVisit" >
+  <delete id="deleteByUid" parameterType="java.lang.Long" >
+    delete from s_goods_visit
+    where uid = #{uid,jdbcType=BIGINT}
+  </delete>
+
+  <select id="getVisitIds" resultType="Long" parameterType="Long">
+    select t1.id from s_goods_visit t1
+    left join s_goods t2 on t1.goods_id = t2.id
+    where t1.uid = #{uid} and t2.delete_flag=0
+    order by t1.visit_time desc
+  </select>
+  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.GoodsVisit"  useGeneratedKeys="true" keyProperty="id">
     insert into s_goods_visit
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="uid != null" >
@@ -40,9 +67,6 @@
       </if>
       <if test="visitTime != null" >
         visit_time,
-      </if>
-      <if test="createTime != null" >
-        create_time,
       </if>
       <if test="properties != null" >
         properties,

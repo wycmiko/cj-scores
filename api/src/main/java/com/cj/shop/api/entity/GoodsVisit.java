@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+
+/**
+ * 访客记录DAO
+ */
 @Getter
 @Setter
 public class GoodsVisit extends PropertyEntity implements Serializable {
@@ -17,6 +21,4 @@ public class GoodsVisit extends PropertyEntity implements Serializable {
     private String visitTime;
 
     private String createTime;
-
-    private String properties;
 }

@@ -3,7 +3,10 @@ package com.cj.shop.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cj.shop.api.entity.UserAddress;
+import com.cj.shop.api.param.GoodsVisitRequest;
 import com.cj.shop.api.param.UserAddressRequest;
+import com.cj.shop.api.response.PagedList;
+import com.cj.shop.api.response.dto.GoodsVisitDto;
 import com.cj.shop.service.impl.UserService;
 import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
@@ -186,6 +189,106 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("deleteAddr error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 删除浏览记录
+     *
+     * @param token
+     * @return
+     */
+    @DeleteMapping("/deleteVisit")
+    public Result deleteVisit(String token, String type, Long visit_id) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("deleteVisit begin token={},type={},visitId={}", token, type, visit_id);
+            if (CommandValidator.isEmpty(type, token)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!"all".equals(type)) {
+                if (CommandValidator.isEmpty(visit_id)) {
+                    return CommandValidator.paramEmptyResult();
+                }
+            }
+            if (!tokenValidator.checkToken(token)) {
+                log.info("deleteVisit 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(token);
+            String s = userService.deleteVisit(type, uid, visit_id);
+            result = ResultUtil.getVaildResult(s, result);
+            log.info("deleteVisit end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("deleteVisit error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 修改、新增 访客记录
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/updateVisit")
+    public Result updateVisit(@RequestBody GoodsVisitRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(request.getToken(), request.getGoodsId())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(request.getToken())) {
+                log.info("updateVisit 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(request.getToken());
+            request.setUid(uid);
+            String s = userService.insertGoodsVisit(request);
+            result = ResultUtil.getVaildResult(s, result);
+            log.info("updateVisit end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("updateAddr error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 查询全部访客记录
+     *
+     * @param token
+     * @return
+     */
+    @GetMapping("/visitList")
+    public Result visitList(String token, Integer page_num, Integer page_size) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(token)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(token)) {
+                log.info("visitList 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(token);
+            PagedList<GoodsVisitDto> visit = userService.findAllVisit(uid, page_num, page_size);
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_FAILURE_MSG);
+            result.setData(visit);
+            log.info("visitList end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("updateAddr error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

@@ -2,7 +2,9 @@ package com.cj.shop.api.interf;
 
 import com.cj.shop.api.entity.UserAddress;
 import com.cj.shop.api.entity.UserCart;
+import com.cj.shop.api.param.GoodsVisitRequest;
 import com.cj.shop.api.response.PagedList;
+import com.cj.shop.api.response.dto.GoodsVisitDto;
 
 import java.util.List;
 import java.util.Map;
@@ -60,5 +62,25 @@ public interface UserApi {
      * 查询单条购物车详情
      */
     UserCart getCartGoodById(Long cartId, Long uid);
+
+
+    /**
+     * 添加访客记录
+     */
+    String insertGoodsVisit(GoodsVisitRequest request);
+
+    /**
+     * 查询商品访问记录列表
+     * 时间倒序
+     */
+    PagedList<GoodsVisitDto> findAllVisit(Long uid, Integer pageNum, Integer pageSize);
+
+
+    /**
+     * 清除商品访问记录
+     * type = all 清除全部
+     * 否则根据visitId清除单条
+     */
+    String deleteVisit(String type, Long uid, Long visitId);
 
 }

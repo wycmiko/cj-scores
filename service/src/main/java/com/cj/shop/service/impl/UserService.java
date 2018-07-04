@@ -1,9 +1,16 @@
 package com.cj.shop.service.impl;
 
+import com.cj.shop.api.entity.GoodsVisit;
 import com.cj.shop.api.entity.UserAddress;
 import com.cj.shop.api.entity.UserCart;
 import com.cj.shop.api.interf.UserApi;
+import com.cj.shop.api.param.GoodsVisitRequest;
 import com.cj.shop.api.response.PagedList;
+import com.cj.shop.api.response.dto.GoodsDto;
+import com.cj.shop.api.response.dto.GoodsVisitDto;
+import com.cj.shop.common.utils.DateUtils;
+import com.cj.shop.dao.mapper.GoodsMapper;
+import com.cj.shop.dao.mapper.GoodsVisitMapper;
 import com.cj.shop.dao.mapper.UserAddressMapper;
 import com.cj.shop.dao.mapper.UserCartMapper;
 import com.cj.shop.service.cfg.JedisCache;
@@ -13,6 +20,7 @@ import com.cj.shop.service.util.ResultMsgUtil;
 import com.cj.shop.service.util.ValidatorUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +42,15 @@ public class UserService implements UserApi {
     private UserAddressMapper userAddressMapper;
     @Autowired
     private UserCartMapper userCartMapper;
+    @Autowired
+    private GoodsVisitMapper goodsVisitMapper;
+    @Autowired
+    private GoodsMapper goodsMapper;
 
     @Autowired
     private JedisCache jedisCache;
-    private static final String JEDIS_PREFIX_USER = "cj_shop:mall:user:";
+    public static final String JEDIS_PREFIX_USER = "cj_shop:mall:user:";
+    public static final String JEDIS_PREFIX_VISIT = "cj_shop:mall:visit:";
 
     /**
      * 用户添加收货地址
@@ -228,5 +241,106 @@ public class UserService implements UserApi {
     @Override
     public UserCart getCartGoodById(Long cartId, Long uid) {
         return null;
+    }
+
+    /**
+     * 添加访客记录
+     *
+     * @param request
+     */
+    @Override
+    public String insertGoodsVisit(GoodsVisitRequest request) {
+        GoodsDto dto = goodsMapper.selectByPrimaryKey(request.getGoodsId());
+        if (dto == null) {
+            return ResultMsg.GOOD_NOT_EXISTS;
+        }
+        GoodsVisit visit = goodsVisitMapper.selectVisitByUidGoodsId(request.getUid(), request.getGoodsId());
+        int i = 0;
+        long id;
+        if (visit == null) {
+            GoodsVisit goodsVisit = new GoodsVisit();
+            BeanUtils.copyProperties(request, goodsVisit);
+            //新增
+            goodsVisit.setVisitTime(DateUtils.getCommonString());
+            i = goodsVisitMapper.insertSelective(goodsVisit);
+            id = goodsVisit.getId();
+        } else {
+            //修改
+            visit.setVisitTime(DateUtils.getCommonString());
+            i = goodsVisitMapper.updateByPrimaryKeySelective(visit);
+            id = visit.getId();
+        }
+        if (i > 0) {
+            //add cache
+            jedisCache.hdel(JEDIS_PREFIX_VISIT, String.valueOf(id));
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 查询商品访问记录列表
+     * 时间倒序
+     *
+     * @param uid
+     * @param pageNum
+     * @param pageSize
+     */
+    @Override
+    public PagedList<GoodsVisitDto> findAllVisit(Long uid, Integer pageNum, Integer pageSize) {
+        Page<Object> objects = null;
+        List<GoodsVisitDto> list = new ArrayList<>();
+        if (pageNum != null && pageSize != null) {
+            objects = PageHelper.startPage(pageNum, pageSize);
+        } else {
+            pageNum = 0;
+            pageSize = 0;
+        }
+        List<Long> longs = ValidatorUtil.checkNotEmptyList(goodsVisitMapper.getVisitIds(uid));
+        if (!longs.isEmpty()) {
+            for (Long id : longs) {
+                GoodsVisitDto dto = getVisitDetail(id);
+                list.add(dto);
+            }
+        }
+        PagedList<GoodsVisitDto> pagedList = new PagedList<>(list, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
+        return pagedList;
+    }
+
+    /**
+     * 清除商品访问记录
+     * type = all 清除全部
+     * 否则根据visitId清除单条
+     *
+     * @param type
+     * @param uid
+     * @param visitId
+     */
+    @Override
+    public String deleteVisit(String type, Long uid, Long visitId) {
+        int i = 0;
+        if ("all".equals(type)) {
+            //删除全部浏览记录
+            List<Long> ids = ValidatorUtil.checkNotEmptyList(goodsVisitMapper.getVisitIds(uid));
+            i = goodsVisitMapper.deleteByUid(uid);
+            if (!ids.isEmpty()) {
+                for (Long id : ids) {
+                    jedisCache.hdel(JEDIS_PREFIX_VISIT, id.toString());
+                }
+            }
+        } else {
+            i = goodsVisitMapper.deleteByPrimaryKey(visitId);
+            jedisCache.hdel(JEDIS_PREFIX_VISIT, visitId.toString());
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+
+    public GoodsVisitDto getVisitDetail(Long visitId) {
+        GoodsVisitDto hget = jedisCache.hget(JEDIS_PREFIX_VISIT, visitId.toString(), GoodsVisitDto.class);
+        if (hget == null) {
+            hget = goodsVisitMapper.selectByPrimaryKey(visitId);
+            jedisCache.hset(JEDIS_PREFIX_VISIT, visitId.toString(), hget);
+        }
+        return hget;
     }
 }

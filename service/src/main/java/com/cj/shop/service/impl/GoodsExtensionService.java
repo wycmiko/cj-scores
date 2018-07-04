@@ -396,8 +396,8 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         goodsStock.setProperties(PropertiesUtil.addProperties(stockRequest.getProperties()));
         int i = goodsStockMapper.insertSelective(goodsStock);
         if (i > 0) {
-            jedisCache.hdel(STOCK_KEY, stockRequest.getId().toString());
-            jedisCache.hset(STOCK_KEY, goodsStock.getId().toString(), getStockById(stockRequest.getId()));
+            jedisCache.hdel(STOCK_KEY, goodsStock.getId().toString());
+            jedisCache.hset(STOCK_KEY, goodsStock.getId().toString(), getStockById(goodsStock.getId()));
         }
         return ResultMsgUtil.dmlResult(i);
     }
