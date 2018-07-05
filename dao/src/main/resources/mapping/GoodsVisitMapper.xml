@@ -25,7 +25,7 @@
     t2.goods_name as goodsName,
     t2.min_sell_price as minSellPrice,
     t2.max_sell_price as maxSellPrice,
-    t1.visit_time as visitTime,
+    DATE_FORMAT(t1.visit_time,'%Y-%m-%d %H:%i:%s') as visitTime,
     t2.preview_img as goodsImg,
     t1.properties
     from s_goods_visit t1

@@ -6,6 +6,7 @@
     <result column="uid" property="uid" jdbcType="BIGINT" />
     <result column="goods_id" property="goodsId" jdbcType="BIGINT" />
     <result column="goods_num" property="goodsNum" jdbcType="INTEGER" />
+    <result column="s_goods_num" property="sGoodsNum" jdbcType="VARCHAR" />
     <result column="batch_no" property="batchNo" jdbcType="INTEGER" />
     <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="VARCHAR" />
@@ -15,7 +16,8 @@
     <result column="properties" property="properties" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, uid, goods_id, goods_num, batch_no, update_time, create_time, sort_flag
+    id, uid, goods_id, goods_num, s_goods_num, batch_no, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time,
+    DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
   </sql>
   <sql id="Blob_Column_List" >
     properties
@@ -44,14 +46,11 @@
       <if test="goodsNum != null" >
         goods_num,
       </if>
+      <if test="sGoodsNum != null" >
+        s_goods_num,
+      </if>
       <if test="batchNo != null" >
         batch_no,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="createTime != null" >
-        create_time,
       </if>
       <if test="sortFlag != null" >
         sort_flag,
@@ -70,14 +69,11 @@
       <if test="goodsNum != null" >
         #{goodsNum,jdbcType=INTEGER},
       </if>
+      <if test="sGoodsNum != null" >
+        #{sGoodsNum,jdbcType=VARCHAR},
+      </if>
       <if test="batchNo != null" >
         #{batchNo,jdbcType=INTEGER},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=VARCHAR},
       </if>
       <if test="sortFlag != null" >
         #{sortFlag,jdbcType=INTEGER},
@@ -96,14 +92,14 @@
       <if test="goodsNum != null" >
         goods_num = #{goodsNum,jdbcType=INTEGER},
       </if>
+      <if test="sGoodsNum != null" >
+        s_goods_num = #{sGoodsNum,jdbcType=VARCHAR},
+      </if>
       <if test="batchNo != null" >
         batch_no = #{batchNo,jdbcType=INTEGER},
       </if>
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=VARCHAR},
       </if>
       <if test="sortFlag != null" >
         sort_flag = #{sortFlag,jdbcType=INTEGER},

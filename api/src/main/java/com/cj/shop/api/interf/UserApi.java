@@ -1,12 +1,12 @@
 package com.cj.shop.api.interf;
 
 import com.cj.shop.api.entity.UserAddress;
-import com.cj.shop.api.entity.UserCart;
 import com.cj.shop.api.param.GoodsVisitRequest;
+import com.cj.shop.api.param.UserCartRequest;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsVisitDto;
+import com.cj.shop.api.response.dto.UserCartDto;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,12 +41,12 @@ public interface UserApi {
     /**
      *  加入购物车
      */
-    String addCart(UserCart userCart);
+    String addCart(UserCartRequest request);
 
     /**
      * 修改购物车商品
      */
-    String updateCart(UserCart userCart, Map<String, Object> properties);
+    String updateCart(UserCartRequest request);
 
     /**
      * 删除购物车商品
@@ -56,12 +56,12 @@ public interface UserApi {
     /**
      * 查询我的购物车
      */
-    List<UserCart> getGoodsFromCart(Long uid, Integer pageNum, Integer pageSize);
+    PagedList<UserCartDto> getGoodsFromCart(Long uid, Integer pageNum, Integer pageSize);
 
     /**
      * 查询单条购物车详情
      */
-    UserCart getCartGoodById(Long cartId, Long uid);
+    UserCartDto getCartGoodById(Long cartId, Long uid);
 
 
     /**

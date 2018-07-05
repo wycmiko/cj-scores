@@ -7,12 +7,14 @@ import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsDto;
 import com.cj.shop.common.utils.DateUtils;
+import com.cj.shop.service.impl.AsyncService;
 import com.cj.shop.service.impl.GoodsExtensionService;
 import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
 import com.cj.shop.web.utils.ResultUtil;
 import com.cj.shop.web.validator.CommandValidator;
+import com.cj.shop.web.validator.TokenValidator;
 import com.github.crab2died.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
+import java.util.concurrent.Future;
 
 /**
  * @author yuchuanWeng(wycmiko @ foxmail.com)
@@ -31,9 +34,12 @@ import java.net.URLDecoder;
 @Slf4j
 @RequestMapping({"/v1/mall/manage/goods/", "/v1/mall/json/goods/"})
 public class GoodsManageController {
-
+    @Autowired
+    private TokenValidator tokenValidator;
     @Autowired
     private GoodsService goodsService;
+    @Autowired
+    private AsyncService asyncService;
     @Autowired
     private GoodsExtensionService goodsExtensionService;
 
@@ -680,7 +686,7 @@ public class GoodsManageController {
     }
 
     /**
-     * 查询商品明细
+     * 后台-运营查询商品明细
      *
      * @return
      */
@@ -694,11 +700,49 @@ public class GoodsManageController {
                 return CommandValidator.paramEmptyResult();
             }
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsService.getGoodsDetail(id));
+            GoodsDto goodsDetailForIndex = goodsService.getGoodsDetailForIndex(id);
+            result.setData(goodsDetailForIndex);
             log.info("goodsDetail end");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("goodsDetail error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 前台-用户查询商品明细
+     *
+     * @return
+     */
+    @GetMapping("/detail")
+    public Result indexGoodsDetail(String token, Long goods_id) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("detail begin");
+            if (CommandValidator.isEmpty(token, goods_id)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(token)) {
+                log.info("visitList 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(token);
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsService.getGoodsDetail(goods_id));
+            GoodsVisitRequest request = new GoodsVisitRequest();
+            request.setUid(uid);
+            request.setGoodsId(goods_id);
+            Future<String> future = asyncService.userVisit(request);
+            if (future.isDone()) {
+                log.info("Async userVisit Done rollback={}", future.get());
+            }
+            log.info("detail end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("detail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;
@@ -731,7 +775,7 @@ public class GoodsManageController {
 
 
     /**
-     * 查询商品明细
+     * 修改商品
      *
      * @return
      */

@@ -7,6 +7,7 @@ import com.cj.shop.api.param.GoodsVisitRequest;
 import com.cj.shop.api.param.UserAddressRequest;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsVisitDto;
+import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.service.impl.UserService;
 import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
@@ -32,9 +33,11 @@ public class UserController {
     private TokenValidator tokenValidator;
     @Autowired
     private UserService userService;
+    @Autowired
+    private GoodsService goodsService;
 
     /**
-     * 查询详情
+     * 查询地址详情
      *
      * @param id
      * @return
@@ -283,7 +286,7 @@ public class UserController {
             }
             long uid = tokenValidator.getUidByToken(token);
             PagedList<GoodsVisitDto> visit = userService.findAllVisit(uid, page_num, page_size);
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_FAILURE_MSG);
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
             result.setData(visit);
             log.info("visitList end");
         } catch (Exception e) {

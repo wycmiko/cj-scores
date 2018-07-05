@@ -2,12 +2,13 @@ package com.cj.shop.service.impl;
 
 import com.cj.shop.api.entity.GoodsVisit;
 import com.cj.shop.api.entity.UserAddress;
-import com.cj.shop.api.entity.UserCart;
 import com.cj.shop.api.interf.UserApi;
 import com.cj.shop.api.param.GoodsVisitRequest;
+import com.cj.shop.api.param.UserCartRequest;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsDto;
 import com.cj.shop.api.response.dto.GoodsVisitDto;
+import com.cj.shop.api.response.dto.UserCartDto;
 import com.cj.shop.common.utils.DateUtils;
 import com.cj.shop.dao.mapper.GoodsMapper;
 import com.cj.shop.dao.mapper.GoodsVisitMapper;
@@ -24,7 +25,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,33 +179,23 @@ public class UserService implements UserApi {
      * 1、判断商品是否存在
      * 2、判断商品是否存在 以及规格是否相同 相同则数量+1 不同则加入一条记录
      * 3、保存加入时商品价格
+     * 4、判断加入时的数量是否小于等于剩余库存 如是则允许加入
      *
-     * @param userCart
+     * @param request
      */
     @Override
-    public String addCart(UserCart userCart) {
+    public String addCart(UserCartRequest request) {
         //json-property default {}
-        if (StringUtils.isEmpty(userCart.getProperties())) {
-            userCart.setProperties("{}");
-        }
-        int i = userCartMapper.insertSelective(userCart);
-        if (i > 0) {
-            //添加成功 加入缓存
-            Long id = userCart.getId();
-            String key = JEDIS_PREFIX_USER + "cart:detail:" + id;
-            jedisCache.setByDefaultTime(key, userCart);
-            jedisCache.hset(JEDIS_PREFIX_USER + "cart:list:" + userCart.getUid() + ":", id.toString(), userCart);
-        }
-        return ResultMsgUtil.dmlResult(i);
+        return null;
     }
 
     /**
      * 修改购物车商品
      *
-     * @param userCart
+     * @param request
      */
     @Override
-    public String updateCart(UserCart userCart, Map<String, Object> properties) {
+    public String updateCart(UserCartRequest request) {
         return null;
     }
 
@@ -228,7 +218,7 @@ public class UserService implements UserApi {
      * @param pageSize
      */
     @Override
-    public List<UserCart> getGoodsFromCart(Long uid, Integer pageNum, Integer pageSize) {
+    public PagedList<UserCartDto> getGoodsFromCart(Long uid, Integer pageNum, Integer pageSize) {
         return null;
     }
 
@@ -239,7 +229,7 @@ public class UserService implements UserApi {
      * @param uid
      */
     @Override
-    public UserCart getCartGoodById(Long cartId, Long uid) {
+    public UserCartDto getCartGoodById(Long cartId, Long uid) {
         return null;
     }
 

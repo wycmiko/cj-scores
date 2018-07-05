@@ -407,6 +407,14 @@ public class GoodsService implements GoodsApi {
         return ResultMsgUtil.dmlResult(i);
     }
 
+    public String increPv(Long goodsId) {
+        int i = goodsMapper.increPv(goodsId);
+        if (i > 0) {
+            jedisCache.hset(JEDIS_PREFIX_GOODS, goodsId.toString(), goodsMapper.selectByPrimaryKey(goodsId));
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
     /**
      * 复合条件查询全部商品
      *
@@ -448,6 +456,14 @@ public class GoodsService implements GoodsApi {
         return hget;
     }
 
+    public GoodsDto getGoodsDetailForIndex(Long goodsId) {
+        GoodsDto hget = getGoodsDetail(goodsId);
+        if (hget.getDeleteFlag() == 1) {
+            return null;
+        }
+        return hget;
+    }
+
     private GoodsDto getCompletGoods(Long goodsId) {
         GoodsDto dto = goodsMapper.selectByPrimaryKey(goodsId);
         if (dto != null) {
@@ -459,7 +475,7 @@ public class GoodsService implements GoodsApi {
             } else {
                 dto.setWarnStockFlag(1);
             }
-            if (dto.getSaleFlag()== 1 ){
+            if (dto.getSaleFlag() == 1) {
                 dto.setSaleFlagDesc("上架销售中");
             } else {
                 dto.setSaleFlagDesc("已下架");
