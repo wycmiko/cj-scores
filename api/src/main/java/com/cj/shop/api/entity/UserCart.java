@@ -14,7 +14,7 @@ public class UserCart extends PropertyEntity implements Serializable {
     private Long uid;
 
     private Long goodsId;
-    private String sGoodsNum;
+    private String sGoodsSn;
     private Integer goodsNum;
 
     private Integer batchNo;

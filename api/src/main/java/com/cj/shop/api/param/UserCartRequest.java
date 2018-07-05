@@ -14,8 +14,8 @@ public class UserCartRequest extends BaseRequest implements Serializable {
     private String token;
     @JsonProperty("goods_id")
     private Long goodsId;
-    @JsonProperty("s_goods_num")
-    private String sGoodsNum;
+    @JsonProperty("s_goods_sn")
+    private String sGoodsSn;
     @JsonProperty("goods_num")
     private Integer goodsNum;
     @JsonProperty("batch_no")

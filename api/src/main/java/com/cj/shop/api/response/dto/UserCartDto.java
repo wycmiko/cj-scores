@@ -31,8 +31,8 @@ public class UserCartDto extends BaseRequest implements Serializable {
     /**
      * 小商品编号
      */
-    @JsonProperty("s_goods_num")
-    private String sGoodsNum;
+    @JsonProperty("s_goods_sn")
+    private String sGoodsSn;
     /**
      * 品牌名
      */
@@ -65,4 +65,9 @@ public class UserCartDto extends BaseRequest implements Serializable {
     private Integer batchNo;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
+
+    @JsonProperty("create_time")
+    private String createTime;
+    @JsonProperty("update_time")
+    private String updateTime;
 }
