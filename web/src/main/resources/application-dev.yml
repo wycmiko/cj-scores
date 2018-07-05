@@ -62,7 +62,7 @@ spring:
 
 # file-system config
 seaweed:
-  ip: 172.28.3.45
+  ip: 172.28.3.9
   port: 9333
 
 # wechat config

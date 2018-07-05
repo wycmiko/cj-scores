@@ -1,10 +1,7 @@
 package com.cj.shop.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.cj.shop.api.entity.GoodsBrand;
-import com.cj.shop.api.entity.GoodsSupply;
-import com.cj.shop.api.entity.GoodsTag;
-import com.cj.shop.api.entity.GoodsWithBLOBs;
+import com.cj.shop.api.entity.*;
 import com.cj.shop.api.interf.GoodsApi;
 import com.cj.shop.api.param.GoodsBrandRequest;
 import com.cj.shop.api.param.GoodsRequest;
@@ -461,6 +458,24 @@ public class GoodsService implements GoodsApi {
                 dto.setWarnStockFlag(3);
             } else {
                 dto.setWarnStockFlag(1);
+            }
+            if (dto.getSaleFlag()== 1 ){
+                dto.setSaleFlagDesc("上架销售中");
+            } else {
+                dto.setSaleFlagDesc("已下架");
+            }
+            //分类添加
+            GoodsType first = goodsTypeService.getGoodsTypeById(dto.getFirstTypeId(), "all");
+            if (first != null) {
+                dto.setFirstTypeName(first.getTypeName());
+            }
+            GoodsType second = goodsTypeService.getGoodsTypeById(dto.getSecondTypeId(), "all");
+            if (second != null) {
+                dto.setSecondTypeName(second.getTypeName());
+            }
+            GoodsType thrid = goodsTypeService.getGoodsTypeById(dto.getThirdTypeId(), "all");
+            if (thrid != null) {
+                dto.setThirdTypeName(thrid.getTypeName());
             }
             dto.setShopName("珑讯自营");
             List<GoodsTag> goodsTagList = new ArrayList<>();

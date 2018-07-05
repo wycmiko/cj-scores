@@ -5,17 +5,21 @@ import com.cj.shop.api.param.*;
 import com.cj.shop.api.param.select.GoodsSelect;
 import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
+import com.cj.shop.api.response.dto.GoodsDto;
+import com.cj.shop.common.utils.DateUtils;
 import com.cj.shop.service.impl.GoodsExtensionService;
 import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
 import com.cj.shop.web.utils.ResultUtil;
 import com.cj.shop.web.validator.CommandValidator;
+import com.github.crab2died.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 
 /**
@@ -746,6 +750,38 @@ public class GoodsManageController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("updateGood error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 导出商品列表为excel
+     *
+     * @return
+     */
+    @GetMapping("/exportGoods")
+    public Result exportGoods(String type, HttpServletResponse response) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("exportGoods begin type={}", type);
+            if (StringUtils.isBlank(type) || (!"xls".equals(type.toLowerCase()) && !"xlsx".equals(type.toLowerCase()) && !"pdf".equals(type.toLowerCase()))) {
+                return CommandValidator.paramEmptyResult();
+            }
+            String fileName = DateUtils.getShortString() + "GoodsList";
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "." + type + "\"");
+            response.setContentType("application/octet-stream;charset=UTF-8");
+            GoodsSelect select = new GoodsSelect();
+            select.setType("all");
+            PagedList<GoodsDto> allGoods = goodsService.getAllGoods(select);
+            ExcelUtils.getInstance().exportObjects2Excel(allGoods.getList(), GoodsDto.class, true, "商品列表", true, response.getOutputStream());
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(ResultConsts.RESPONSE_SUCCEED_MSG);
+            log.info("exportGoods end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("exportGoods error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

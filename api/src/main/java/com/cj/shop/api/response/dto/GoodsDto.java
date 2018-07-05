@@ -3,6 +3,7 @@ package com.cj.shop.api.response.dto;
 import com.cj.shop.api.entity.GoodsTag;
 import com.cj.shop.common.model.PropertyEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.crab2died.annotation.ExcelField;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,15 +18,18 @@ import java.util.List;
 @Getter
 @Setter
 public class GoodsDto extends PropertyEntity implements Serializable {
+    @ExcelField(title = "主键ID",order = 1)
     private Long id;
     /**
      * 商品大编号
      */
+    @ExcelField(title = "商品大编号", order = 2)
     @JsonProperty("goods_sn")
     private String goodsSn;
     /**
      * 商品名
      */
+    @ExcelField(title = "商品名", order = 3)
     @JsonProperty("goods_name")
     private String goodsName;
     /**
@@ -36,22 +40,26 @@ public class GoodsDto extends PropertyEntity implements Serializable {
     /**
      * 品牌名
      */
+    @ExcelField(title = "品牌名", order = 4)
     @JsonProperty("brand_name")
     private String brandName;
     /**
      * 浏览量
      */
+    @ExcelField(title = "浏览量", order = 5)
     private Long pv;
     /**
      * 店铺ID以及店铺名
      */
     @JsonProperty("shop_id")
     private Long shopId;
+    @ExcelField(title = "店铺名", order = 6)
     @JsonProperty("shop_name")
     private String shopName;
     /**
      * 上架时间
      */
+    @ExcelField(title = "上架时间", order = 7)
     @JsonProperty("sale_time")
     private String saleTime;
     /**
@@ -59,6 +67,7 @@ public class GoodsDto extends PropertyEntity implements Serializable {
      */
     @JsonProperty("unit_id")
     private Long unitId;
+    @ExcelField(title = "单位名", order = 8)
     @JsonProperty("unit_name")
     private String unitName;
     /**
@@ -66,30 +75,37 @@ public class GoodsDto extends PropertyEntity implements Serializable {
      */
     @JsonProperty("supply_id")
     private Long supplyId;
+    @ExcelField(title = "供应商", order = 9)
     @JsonProperty("supply_name")
     private String supplyName;
     /**
      * 商品标题
      */
+    @ExcelField(title = "标题", order = 10)
     @JsonProperty("goods_title")
     private String goodsTitle;
     /**
      * 商品最低最高成本价
      */
+    @ExcelField(title = "规格最低成本价", order = 5)
     @JsonProperty("min_cost_price")
     private Double minCostPrice;
+    @ExcelField(title = "规格最高成本价", order = 5)
     @JsonProperty("max_cost_price")
     private Double maxCostPrice;
     /**
      * 商品最低最高零售价
      */
+    @ExcelField(title = "规格最低零售价", order = 6)
     @JsonProperty("min_sell_price")
     private Double minSellPrice;
+    @ExcelField(title = "规格最高零售价", order = 6)
     @JsonProperty("max_sell_price")
     private Double maxSellPrice;
     /**
      * 商品总销量
      */
+    @ExcelField(title = "销量", order = 7)
     @JsonProperty("sale_count")
     private Integer saleCount;
     /**
@@ -108,15 +124,21 @@ public class GoodsDto extends PropertyEntity implements Serializable {
     @JsonProperty("warn_stock")
     private Integer warnStock;
     /**
-     * 商品总预警标记
+     * 商品总预警标记 1=库存充足 2=库存紧张 3=已售完
      */
     @JsonProperty("warn_stock_flag")
     private Integer warnStockFlag;
     /**
-     * 1=库存充足 2=库存紧张 3=已售完
+     * 1=上架 0=下架
      */
     @JsonProperty("sale_flag")
     private Integer saleFlag;
+    /**
+     * 状态描述
+     */
+    @ExcelField(title = "状态", order = 7)
+    @JsonProperty("sale_flag_desc")
+    private String saleFlagDesc;
     /**
      * 热销标记 1=是 0=否
      */
@@ -133,12 +155,21 @@ public class GoodsDto extends PropertyEntity implements Serializable {
     private String recomDesc;
 
     @JsonProperty("first_type_id")
-    private Integer firstTypeId;
+    private Long firstTypeId;
+    @ExcelField(title = "一级分类名", order = 7)
+    @JsonProperty("first_type_name")
+    private String firstTypeName;
 
     @JsonProperty("second_type_id")
-    private Integer secondTypeId;
+    private Long secondTypeId;
+    @ExcelField(title = "二级分类名", order = 7)
+    @JsonProperty("second_type_name")
+    private String secondTypeName;
     @JsonProperty("third_type_id")
-    private Integer thirdTypeId;
+    private Long thirdTypeId;
+    @ExcelField(title = "三级分类名", order = 7)
+    @JsonProperty("third_type_name")
+    private String thirdTypeName;
 
     @JsonProperty("good_status")
     private Integer goodStatus;
