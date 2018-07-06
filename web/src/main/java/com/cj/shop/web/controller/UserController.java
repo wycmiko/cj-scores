@@ -3,10 +3,13 @@ package com.cj.shop.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cj.shop.api.entity.UserAddress;
+import com.cj.shop.api.param.CartDeleteRequest;
 import com.cj.shop.api.param.GoodsVisitRequest;
 import com.cj.shop.api.param.UserAddressRequest;
+import com.cj.shop.api.param.UserCartRequest;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsVisitDto;
+import com.cj.shop.api.response.dto.UserCartDto;
 import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.service.impl.UserService;
 import com.cj.shop.web.consts.ResultConsts;
@@ -19,6 +22,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author yuchuanWeng(wycmiko @ foxmail.com)
@@ -292,6 +297,101 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("updateAddr error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 加入/修改 购物车商品
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/addCart")
+    public Result addCart(@RequestBody UserCartRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(request.getToken(), request.getGoodsNum(), request.getSGoodsSn())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(request.getToken())) {
+                log.info("addCart 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(request.getToken());
+            request.setUid(uid);
+            String s = userService.addCart(request);
+            result = ResultUtil.getVaildResult(s, result);
+            log.info("addCart end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("addCart error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 删除购物车商品
+     *
+     * @return
+     */
+    @DeleteMapping("/deleteCartItem")
+    public Result deleteCartItem(@RequestBody CartDeleteRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(request.getToken(), request.getCartList()) || request.getCartList().isEmpty()) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(request.getToken())) {
+                log.info("deleteCartItem 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(request.getToken());
+            List<Long> cartList = request.getCartList();
+            String s = "";
+            for (Long id : cartList) {
+                s = userService.deleteFromCart(id, uid);
+            }
+            result = ResultUtil.getVaildResult(s, result);
+            log.info("deleteCartItem end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("deleteCartItem error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 查询全部购物车商品
+     *
+     * @return
+     */
+    @GetMapping("/getCartGoods")
+    public Result getCartGoods(String token, Integer page_num, Integer page_size) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(token)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(token)) {
+                log.info("getCartGoods 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(token);
+            PagedList<UserCartDto> goodsFromCart = userService.getGoodsFromCart(uid, page_num, page_size);
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsFromCart);
+            log.info("getCartGoods end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getCartGoods error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

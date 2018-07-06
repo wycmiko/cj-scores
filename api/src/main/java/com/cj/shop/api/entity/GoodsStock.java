@@ -20,12 +20,17 @@ public class GoodsStock extends PropertyEntity implements Serializable {
     private String goodsSn;
     @JsonProperty("s_goods_sn")
     private String sGoodsSn;
-    @JsonProperty("spec_id")
-    private Long specId;
+    @JsonProperty("spec_id_list")
+    private String specIdList;
     @JsonProperty("stock_num")
     private Integer stockNum;
     @JsonProperty("warn_stock_num")
     private Integer warnStockNum;
+    /**
+     * 销售状态 1=上架 0=下架 默认1
+     */
+    @JsonProperty("sale_flag")
+    private Integer saleFlag;
     /**
      * 成本价
      */

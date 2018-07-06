@@ -22,23 +22,42 @@
     <sql id="Blob_Column_List">
     properties
   </sql>
-    <select id="selectByPrimaryKey" resultType="ResultMapWithBLOBs" parameterType="java.lang.Long">
-    select
-    t1.id as cartId,
-    t1.uid,
-    t1.goods_id as goodsId,
-    t1.s_goods_sn as sGoodsSn,
-    t1.goods_num as goodsNum,
-    DATE_FORMAT(t1.create_time,'%Y-%m-%d %H:%i:%s') as createTime,
-    DATE_FORMAT(t1.update_time,'%Y-%m-%d %H:%i:%s') as updateTime,
-    t1.batch_no as batchNo
-    from s_user_cart t1
-    left join s_goods_stock t2 on t1.s_goods_sn = t2.s_goods_sn
-    where t1.id = #{id,jdbcType=BIGINT}
+    
+    <select id="selectUserCartThings" parameterType="Long" resultType="Long">
+        SELECT id
+        FROM s_user_cart
+        where uid=#{uid}
+        order by update_time desc,create_time desc
+    </select>
+
+    <select id="selectByUidGoodsId" resultMap="ResultMapWithBLOBs">
+        SELECT
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        FROM s_user_cart
+        where uid = #{uid} and s_goods_sn=#{sGoodsId}
+    </select>
+    <select id="selectByPrimaryKey" resultType="com.cj.shop.api.response.dto.UserCartDto"
+            parameterType="java.lang.Long">
+        select
+        t1.id as cartId,
+        t1.uid,
+        t1.goods_id as goodsId,
+        t1.s_goods_sn as sGoodsSn,
+        t2.warn_stock as warnStock,
+        t1.goods_num as goodsNum,
+        DATE_FORMAT(t1.create_time,'%Y-%m-%d %H:%i:%s') as createTime,
+        DATE_FORMAT(t1.update_time,'%Y-%m-%d %H:%i:%s') as updateTime,
+        t1.batch_no as batchNo,
+        t1.properties
+        from s_user_cart t1
+        left join s_goods_stock t2 on t1.s_goods_sn = t2.s_goods_sn
+        where t1.id = #{id,jdbcType=BIGINT} and t1.uid=#{uid}
   </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from s_user_cart
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT} and uid =#{uid}
   </delete>
     <insert id="insertSelective" parameterType="com.cj.shop.api.entity.UserCart" useGeneratedKeys="true"
             keyProperty="id">
@@ -117,4 +136,12 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
+
+    <update id="increGoodsNum">
+        update s_user_cart
+        set goods_num=goods_num+#{num}
+        where uid =#{uid} and s_goods_sn=#{sGoodsId}
+    </update>
+
+
 </mapper>

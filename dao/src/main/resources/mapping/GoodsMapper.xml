@@ -111,6 +111,12 @@
             order by pv asc,sort_flag desc
         </if>
     </select>
+    
+    <select id="selectIdByGoodsSn" resultType="Long">
+        select id
+        from s_goods
+        where goods_sn=#{goodsSn}
+    </select>
 
     <select id="selectByPrimaryKey" resultType="com.cj.shop.api.response.dto.GoodsDto" parameterType="java.lang.Long">
       SELECT
@@ -380,9 +386,6 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.GoodsWithBLOBs">
         update s_goods
         <set>
-            <if test="goodsSn != null">
-                goods_sn = #{goodsSn,jdbcType=VARCHAR},
-            </if>
             <if test="goodsName != null">
                 goods_name = #{goodsName,jdbcType=VARCHAR},
             </if>

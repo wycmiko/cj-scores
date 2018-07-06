@@ -14,6 +14,8 @@ public interface GoodsTagMapper {
 
     GoodsTag selectByPrimaryKey(Long id);
 
+    List<Long> selectIDByTagName(@Param("tagName") String tagName);
+
     List<Long> selectTagIds(@Param("type") String type);
 
     int updateByPrimaryKeySelective(GoodsTag record);

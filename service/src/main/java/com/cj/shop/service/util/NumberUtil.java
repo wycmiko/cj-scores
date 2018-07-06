@@ -3,6 +3,9 @@ package com.cj.shop.service.util;
 import com.cj.shop.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,6 +20,7 @@ public class NumberUtil {
 
     public static final LongAdder ORDER_AUTOINCRENUM = new LongAdder();
     public static final LongAdder GOODS_AUTOINCRENUM = new LongAdder();
+    public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.00");
     private static ReentrantLock lock = new ReentrantLock();
 
     /**
@@ -62,9 +66,17 @@ public class NumberUtil {
      *
      * @return
      */
-    public static String getSmallGoodsNum(String goodsSn, Long specId) {
-        String smallSn = goodsSn + "-" + specId;
-        return smallSn;
+    public static String getSmallGoodsNum(String goodsSn, List<Long> specId) {
+        StringBuilder sb = new StringBuilder();
+        if (specId != null &&
+                !specId.isEmpty()) {
+            sb.append(goodsSn).append("-");
+            for (Long id : specId) {
+                sb.append(id).append("-");
+            }
+            sb.deleteCharAt(sb.lastIndexOf("-"));
+        }
+        return sb.toString();
     }
 
     /**
@@ -82,6 +94,10 @@ public class NumberUtil {
     public static void main(String[] args) {
         log.info(getOrderIdByUUId());
         log.info(getGoodsNum());
-        log.info(getSmallGoodsNum("9509912", 1L));
+        List<Long> objects = new ArrayList<>();
+        objects.add(1L);
+        objects.add(2L);
+        objects.add(3L);
+        log.info(getSmallGoodsNum("9509912", objects));
     }
 }

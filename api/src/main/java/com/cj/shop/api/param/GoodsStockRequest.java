@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author yuchuanWeng(wycmiko @ foxmail.com)
@@ -19,8 +20,8 @@ public class GoodsStockRequest extends BaseRequest implements Serializable {
     private String goodsSn;
     @JsonProperty("s_goods_sn")
     private String sGoodsSn;
-    @JsonProperty("spec_id")
-    private Long specId;
+    @JsonProperty("spec_id_list")
+    private List<Long> specIdList;
     @JsonProperty("stock_num")
     private Integer stockNum;
     /**
@@ -32,6 +33,11 @@ public class GoodsStockRequest extends BaseRequest implements Serializable {
     private Integer deleteFlag;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
+    /**
+     * 销售状态 1=上架 0=下架 默认1
+     */
+    @JsonProperty("sale_flag")
+    private Integer saleFlag;
     /**
      * 成本价
      */

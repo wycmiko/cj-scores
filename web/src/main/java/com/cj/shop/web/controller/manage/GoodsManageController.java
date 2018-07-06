@@ -267,7 +267,8 @@ public class GoodsManageController {
             if (CommandValidator.isEmpty(request.getSpecName())) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = ResultUtil.getVaildResult(goodsExtensionService.insertGoodsSpec(request), result);
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(goodsExtensionService.insertGoodsSpec(request));
             log.info("addSpec end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -568,7 +569,7 @@ public class GoodsManageController {
         Result result = null;
         try {
             log.info("addStock begin");
-            if (CommandValidator.isEmpty(request.getGoodsSn(), request.getSpecId(), request.getStockNum(),
+            if (CommandValidator.isEmpty(request.getGoodsSn(), request.getSpecIdList(), request.getStockNum(),
                     request.getCostPrice(), request.getSellPrice(), request.getWarnRatio())) {
                 return CommandValidator.paramEmptyResult();
             }
@@ -671,7 +672,7 @@ public class GoodsManageController {
         try {
             log.info("addGoods begin");
             if (CommandValidator.isEmpty(request.getBrandId(), request.getSupplyId(), request.getUnitId(),
-                    request.getFirstTypeId(), request.getGoodsName())) {
+                    request.getFirstTypeId(), request.getGoodsName(), request.getStockList())) {
                 return CommandValidator.paramEmptyResult();
             }
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
@@ -761,6 +762,11 @@ public class GoodsManageController {
             log.info("goodsList begin");
             if (CommandValidator.isEmpty(select.getType())) {
                 return CommandValidator.paramEmptyResult();
+            }
+            String goodsName = select.getGoodsName();
+            if (!StringUtils.isBlank(goodsName)) {
+                //搜索A B -> AB
+                select.setGoodsName(goodsName.replaceAll(" ", ""));
             }
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
             result.setData(goodsService.getAllGoods(select));

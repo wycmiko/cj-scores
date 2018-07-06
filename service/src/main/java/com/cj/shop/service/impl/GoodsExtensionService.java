@@ -1,11 +1,15 @@
 package com.cj.shop.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
 import com.cj.shop.api.entity.GoodsStock;
 import com.cj.shop.api.entity.GoodsTag;
 import com.cj.shop.api.entity.GoodsUnit;
 import com.cj.shop.api.interf.GoodsExtensionApi;
-import com.cj.shop.api.param.*;
+import com.cj.shop.api.param.GoodsSpecRequest;
+import com.cj.shop.api.param.GoodsStockRequest;
+import com.cj.shop.api.param.GoodsTagRequest;
+import com.cj.shop.api.param.GoodsUnitRequest;
 import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsStockDto;
@@ -51,10 +55,10 @@ public class GoodsExtensionService implements GoodsExtensionApi {
 
     @Autowired
     private JedisCache jedisCache;
-    private static final String SPEC_KEY = "cj_shop:mall:goods:spec:";
-    private static final String TAG_KEY = "cj_shop:mall:goods:tag:";
-    private static final String UNIT_KEY = "cj_shop:mall:goods:unit:";
-    private static final String STOCK_KEY = "cj_shop:mall:goods:stock:";
+    public static final String SPEC_KEY = "cj_shop:mall:goods:spec:";
+    public static final String TAG_KEY = "cj_shop:mall:goods:tag:";
+    public static final String UNIT_KEY = "cj_shop:mall:goods:unit:";
+    public static final String STOCK_KEY = "cj_shop:mall:goods:stock:";
 
     /**
      * 添加商品规格
@@ -70,6 +74,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         int i = goodsSpecMapper.insertSelective(bloBs);
         if (i > 0) {
             jedisCache.delWithPattern(SPEC_KEY + "*");
+            return bloBs.getId().toString();
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -193,6 +198,11 @@ public class GoodsExtensionService implements GoodsExtensionApi {
      */
     @Override
     public String insertGoodsTag(GoodsTagRequest request) {
+        //判断是否有重名标签
+        List<Long> longs = goodsTagMapper.selectIDByTagName(request.getTagName());
+        if (longs != null || !longs.isEmpty()) {
+            return ResultMsg.TAG_ALREADY_EXISTS;
+        }
         GoodsTag tag = new GoodsTag();
         BeanUtils.copyProperties(request, tag);
         tag.setProperties(PropertiesUtil.addProperties(request.getProperties()));
@@ -379,18 +389,30 @@ public class GoodsExtensionService implements GoodsExtensionApi {
      */
     @Override
     public String insertStock(GoodsStockRequest stockRequest) {
-        //检验规格是否存在
-        GoodsSpecWithBLOBs exist = goodsSpecMapper.selectByPrimaryKey(stockRequest.getSpecId(), "exist");
-        if (exist == null) {
-            return ResultMsg.SPEC_NOT_EXISTS;
+        //避免重复添加
+        GoodsStockDto goodsStockDto = goodsStockMapper.selectBySgoodId(NumberUtil.getSmallGoodsNum(stockRequest.getGoodsSn(), stockRequest.getSpecIdList()));
+        if (goodsStockDto != null) {
+            return ResultMsg.STOCK_ALREADY_EXISTS;
         }
+        //检验规格是否存在
+        if (stockRequest.getSpecIdList() != null && !stockRequest.getSpecIdList().isEmpty()) {
+            for (Long specId : stockRequest.getSpecIdList()) {
+                GoodsSpecWithBLOBs exist = goodsSpecMapper.selectByPrimaryKey(specId, "exist");
+                if (exist == null) {
+                    return ResultMsg.SPEC_NOT_EXISTS;
+                }
+            }
+        }
+
+
         //校验商品是否存在
         double ratio = stockRequest.getWarnRatio().doubleValue();
         long num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
         //生成小商品编号
-        String sn = NumberUtil.getSmallGoodsNum(stockRequest.getGoodsSn(), stockRequest.getSpecId());
+        String sn = NumberUtil.getSmallGoodsNum(stockRequest.getGoodsSn(), stockRequest.getSpecIdList());
         GoodsStock goodsStock = new GoodsStock();
         BeanUtils.copyProperties(stockRequest, goodsStock);
+        goodsStock.setSpecIdList(JSON.toJSONString(stockRequest.getSpecIdList()));
         goodsStock.setSGoodsSn(sn);
         goodsStock.setWarnStockNum((int) num);
         goodsStock.setProperties(PropertiesUtil.addProperties(stockRequest.getProperties()));
@@ -410,14 +432,21 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     @Override
     public String updateStock(GoodsStockRequest stockRequest) {
         //检验规格是否存在
-        if (stockRequest.getSpecId() != null) {
-            GoodsSpecWithBLOBs exist = goodsSpecMapper.selectByPrimaryKey(stockRequest.getSpecId(), "exist");
-            if (exist == null) {
-                return ResultMsg.SPEC_NOT_EXISTS;
+        String jsonString = null;
+        if (stockRequest.getSpecIdList() != null && !stockRequest.getSpecIdList().isEmpty()) {
+            for (Long specId : stockRequest.getSpecIdList()) {
+                GoodsSpecWithBLOBs exist = goodsSpecMapper.selectByPrimaryKey(specId, "exist");
+                if (exist == null) {
+                    return ResultMsg.SPEC_NOT_EXISTS;
+                }
             }
+            jsonString = JSON.toJSONString(stockRequest.getSpecIdList());
         }
-        double ratio = stockRequest.getWarnRatio().doubleValue();
-        long num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
+        long num = 0;
+        if (stockRequest.getWarnRatio() != null) {
+            double ratio = stockRequest.getWarnRatio().doubleValue();
+            num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
+        }
         GoodsStock goodsStock = goodsStockMapper.selectByPrimaryKey(stockRequest.getId());
         if (goodsStock == null) {
             return ResultMsg.STOCK_NOT_EXISTS;
@@ -425,6 +454,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         BeanUtils.copyProperties(stockRequest, goodsStock);
         goodsStock.setProperties(PropertiesUtil.changeProperties(goodsStock.getProperties(), stockRequest.getProperties()));
         goodsStock.setWarnStockNum((int) num);
+        goodsStock.setSpecIdList(jsonString);
         int i = goodsStockMapper.updateByPrimaryKeySelective(goodsStock);
         if (i > 0) {
             jedisCache.hdel(STOCK_KEY, stockRequest.getId().toString());
@@ -479,13 +509,20 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                 } else if (hget.getStockNum() == 0) {
                     hget.setWarnStock(0);
                 }
-                Long parentId = hget.getParentId();
-                if (parentId != null) {
-                    GoodsSpecWithBLOBs detail = getGoodsSpecDetail(parentId, "all");
-                    if (detail != null) {
-                        hget.setParentName(detail.getSpecName());
+                List<Long> longList = JSON.parseArray(hget.getSpecIdList(), Long.class);
+                List<GoodsSpecWithBLOBs> list = new ArrayList<>();
+                if (longList != null && !longList.isEmpty()) {
+                    for (Long id1 : longList) {
+                        GoodsSpecWithBLOBs detail = getGoodsSpecDetail(id1, "all");
+                        if (detail != null) {
+                            GoodsSpecWithBLOBs detail1 = getGoodsSpecDetail(detail.getParentId(), "all");
+                            if (detail1 != null)
+                            detail.setParentName(detail1.getSpecName());
+                        }
+                        list.add(detail);
                     }
                 }
+                hget.setSpecList(list);
             }
             jedisCache.hset(STOCK_KEY, id.toString(), hget);
         }

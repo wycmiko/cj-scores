@@ -263,7 +263,7 @@ public class GoodsService implements GoodsApi {
             if (getBrandDetail(request.getBrandId()) == null) return ResultMsg.BRAND_NOT_EXISTS;
             if (getSupplyDetail(request.getSupplyId()) == null) return ResultMsg.SUPPLY_NOT_EXISTS;
             if (goodsExtensionService.getGoodsUnitDetail(request.getUnitId()) == null) return ResultMsg.UNIT_NOT_EXISTS;
-            List<GoodsStockRequest> specList = request.getSpecList();
+            List<GoodsStockRequest> specList = request.getStockList();
             if (specList == null || specList.isEmpty()) {
                 return ResultMsg.SPEC_LIST_EMPTY;
             }
@@ -275,7 +275,7 @@ public class GoodsService implements GoodsApi {
             //添加商品规格库存列表
             for (GoodsStockRequest request1 : specList) {
                 //小商品编号
-                String smallNum = NumberUtil.getSmallGoodsNum(goodsSn, request1.getSpecId());
+                String smallNum = NumberUtil.getSmallGoodsNum(goodsSn, request1.getSpecIdList());
                 request1.setGoodsSn(goodsSn);
                 request1.setSGoodsSn(smallNum);
                 //判断是否已经存在该类商品库存
@@ -298,7 +298,7 @@ public class GoodsService implements GoodsApi {
             i = goodsMapper.insertSelective(bloBs);
             if (i > 0) {
                 //添加成功 加入缓存
-                jedisCache.hset(JEDIS_PREFIX_GOODS, bloBs.getId().toString(), getCompletGoods(bloBs.getId()));
+                jedisCache.hdel(JEDIS_PREFIX_GOODS, bloBs.getId().toString());
             } else {
                 //回滚
                 insertFailRollBack("添加失败", goodsSn);
@@ -362,13 +362,14 @@ public class GoodsService implements GoodsApi {
     public String updateGood(GoodsRequest request) {
         GoodsDto goodsDetail = getGoodsDetail(request.getId());
         if (goodsDetail == null) return ResultMsg.GOOD_NOT_EXISTS;
-        if (request.getSpecList() != null && !request.getSpecList().isEmpty()) {
+        if (request.getStockList() != null && !request.getStockList().isEmpty()) {
             //添加商品规格库存列表
-            for (GoodsStockRequest request1 : request.getSpecList()) {
+            for (GoodsStockRequest request1 : request.getStockList()) {
                 //小商品编号
-                String smallNum = NumberUtil.getSmallGoodsNum(goodsDetail.getGoodsSn(), request1.getSpecId());
+                String smallNum = NumberUtil.getSmallGoodsNum(goodsDetail.getGoodsSn(), request1.getSpecIdList());
                 request1.setGoodsSn(goodsDetail.getGoodsSn());
                 request1.setSGoodsSn(smallNum);
+                request1.setSaleFlag(request.getSaleFlag());
                 //判断是否已经存在该类商品库存
                 GoodsStockDto goodsStockDto = goodsStockMapper.selectBySgoodId(smallNum);
                 if (goodsStockDto == null) {
@@ -393,6 +394,22 @@ public class GoodsService implements GoodsApi {
                 }
             }
         }
+        //如果大商品下架 关联小商品也下架
+        if (request.getSaleFlag() != null) {
+            StockSelect select = new StockSelect();
+            select.setType("all");
+            select.setGoodSn(goodsDetail.getGoodsSn());
+            List<GoodsStockDto> list = goodsExtensionService.findAllGoodsStock(select).getList();
+            if (list != null && !list.isEmpty()) {
+                for (GoodsStockDto dto : list) {
+                    GoodsStockRequest request1 = new GoodsStockRequest();
+                    request1.setId(dto.getStockId());
+                    request1.setSaleFlag(request.getSaleFlag());
+                    goodsExtensionService.updateStock(request1);
+                }
+                log.info("update stock goods cascade");
+            }
+        }
         GoodsWithBLOBs goodsWithBLOBs = new GoodsWithBLOBs();
         BeanUtils.copyProperties(request, goodsWithBLOBs);
         goodsWithBLOBs = updateGoosProp(request, goodsWithBLOBs, goodsDetail.getGoodsSn());
@@ -402,7 +419,7 @@ public class GoodsService implements GoodsApi {
         int i = goodsMapper.updateByPrimaryKeySelective(goodsWithBLOBs);
         if (i > 0) {
             log.info("update goods success");
-            jedisCache.hset(JEDIS_PREFIX_GOODS, request.getId().toString(), goodsMapper.selectByPrimaryKey(request.getId()));
+            jedisCache.hdel(JEDIS_PREFIX_GOODS, request.getId().toString());
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -467,8 +484,9 @@ public class GoodsService implements GoodsApi {
     private GoodsDto getCompletGoods(Long goodsId) {
         GoodsDto dto = goodsMapper.selectByPrimaryKey(goodsId);
         if (dto != null) {
-            //判断库存
             Integer stockNum = goodsStockMapper.getTotalStockNum(dto.getGoodsSn());
+            //判断库存
+            stockNum = stockNum == null ? 0 : stockNum;
             dto.setStockNum(stockNum);
             if (stockNum == 0) {
                 dto.setWarnStockFlag(3);
@@ -495,8 +513,6 @@ public class GoodsService implements GoodsApi {
             }
             dto.setShopName("珑讯自营");
             List<GoodsTag> goodsTagList = new ArrayList<>();
-            StockSelect select = new StockSelect();
-            select.setGoodSn(dto.getGoodsSn());
             String tag_id_list = JSON.parseObject(dto.getKeyWords()).getString("tag_id_list");
             if (!StringUtils.isBlank(tag_id_list)) {
                 List<Long> tagIds = JSON.parseArray(tag_id_list, Long.class);
@@ -506,8 +522,10 @@ public class GoodsService implements GoodsApi {
                         goodsTagList.add(goodsTagDetail);
                     }
             }
+            StockSelect select = new StockSelect();
+            select.setGoodSn(dto.getGoodsSn());
             PagedList<GoodsStockDto> allGoodsStock = goodsExtensionService.findAllGoodsStock(select);
-            dto.setSpecList(allGoodsStock.getList());
+            dto.setStockList(allGoodsStock.getList());
             dto.setTagList(goodsTagList);
         }
         return dto;

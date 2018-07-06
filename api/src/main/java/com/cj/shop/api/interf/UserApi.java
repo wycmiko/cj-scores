@@ -44,11 +44,6 @@ public interface UserApi {
     String addCart(UserCartRequest request);
 
     /**
-     * 修改购物车商品
-     */
-    String updateCart(UserCartRequest request);
-
-    /**
      * 删除购物车商品
      */
     String deleteFromCart(Long cartId, Long uid);

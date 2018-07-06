@@ -105,6 +105,6 @@ public class GoodsRequest extends BaseRequest implements Serializable {
     @JsonProperty("key_words")
     private Map<String,Object> keyWords;
 
-    @JsonProperty("spec_list")
-    private List<GoodsStockRequest> specList;
+    @JsonProperty("stock_list")
+    private List<GoodsStockRequest> stockList;
 }

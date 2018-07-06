@@ -1,11 +1,13 @@
 package com.cj.shop.api.response.dto;
 
+import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author yuchuanWeng(wycmiko @ foxmail.com)
@@ -24,14 +26,10 @@ public class GoodsStockDto implements Serializable {
     private String sGoodsSn;
     @JsonProperty("goods_name")
     private String goodsName;
-    @JsonProperty("spec_id")
-    private Long specId;
-    @JsonProperty("parent_id")
-    private Long parentId;
-    @JsonProperty("parent_name")
-    private String parentName;
-    @JsonProperty("spec_name")
-    private String specName;
+    @JsonProperty("spec_id_list")
+    private String specIdList;
+    @JsonProperty("spec_list")
+    private List<GoodsSpecWithBLOBs> specList;
     @JsonProperty("stock_num")
     private Integer stockNum;
     @JsonProperty("warn_stock_num")
@@ -46,6 +44,11 @@ public class GoodsStockDto implements Serializable {
     private String updateTime;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
+    /**
+     * 销售状态 1=上架 0=下架 默认1
+     */
+    @JsonProperty("sale_flag")
+    private Integer saleFlag;
     private String properties;
     /**
      * 成本价

@@ -2,11 +2,14 @@ package com.cj.shop.service.impl;
 
 import com.cj.shop.api.entity.GoodsVisit;
 import com.cj.shop.api.entity.UserAddress;
+import com.cj.shop.api.entity.UserCart;
 import com.cj.shop.api.interf.UserApi;
 import com.cj.shop.api.param.GoodsVisitRequest;
 import com.cj.shop.api.param.UserCartRequest;
+import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsDto;
+import com.cj.shop.api.response.dto.GoodsStockDto;
 import com.cj.shop.api.response.dto.GoodsVisitDto;
 import com.cj.shop.api.response.dto.UserCartDto;
 import com.cj.shop.common.utils.DateUtils;
@@ -16,6 +19,7 @@ import com.cj.shop.dao.mapper.UserAddressMapper;
 import com.cj.shop.dao.mapper.UserCartMapper;
 import com.cj.shop.service.cfg.JedisCache;
 import com.cj.shop.service.consts.ResultMsg;
+import com.cj.shop.service.util.NumberUtil;
 import com.cj.shop.service.util.PropertiesUtil;
 import com.cj.shop.service.util.ResultMsgUtil;
 import com.cj.shop.service.util.ValidatorUtil;
@@ -45,11 +49,16 @@ public class UserService implements UserApi {
     @Autowired
     private GoodsVisitMapper goodsVisitMapper;
     @Autowired
+    private GoodsExtensionService goodsExtensionService;
+    @Autowired
     private GoodsMapper goodsMapper;
+    @Autowired
+    private GoodsService goodsService;
 
     @Autowired
     private JedisCache jedisCache;
     public static final String JEDIS_PREFIX_USER = "cj_shop:mall:user:";
+    public static final String JEDIS_PREFIX_CART = "cj_shop:mall:cart:";
     public static final String JEDIS_PREFIX_VISIT = "cj_shop:mall:visit:";
 
     /**
@@ -185,18 +194,45 @@ public class UserService implements UserApi {
      */
     @Override
     public String addCart(UserCartRequest request) {
-        //json-property default {}
-        return null;
-    }
+        //查询商品是否存在
+        StockSelect select = new StockSelect();
+        select.setSGoodSn(request.getSGoodsSn());
+        List<GoodsStockDto> list = goodsExtensionService.findAllGoodsStock(select).getList();
+        if (list == null || list.isEmpty()) {
+            return ResultMsg.GOOD_NOT_EXISTS;
+        }
+        GoodsStockDto stockDto = list.get(0);
+        Long aLong = goodsMapper.selectIdByGoodsSn(stockDto.getGoodsSn());
+        //判断是否有这类商品
+        Integer goodsNum = request.getGoodsNum();
+        //判断库存剩余量
+        if (request.getGoodsNum() > stockDto.getStockNum()) {
+            return ResultMsg.TOO_MANY_STOCKS;
+        }
+        UserCart userCart1 = userCartMapper.selectByUidGoodsId(request.getUid(), request.getSGoodsSn());
+        int i;
+        UserCart userCart = new UserCart();
+        BeanUtils.copyProperties(request, userCart);
+        userCart.setGoodsId(aLong);
+        userCart.setProperties(PropertiesUtil.addProperties(request.getProperties()));
+        if (userCart1 != null) {
+            //直接增加相应数量
+            i = userCartMapper.increGoodsNum(request.getUid(), request.getSGoodsSn(), goodsNum);
+            if (i > 0) {
+                UserCart cart = userCartMapper.selectByUidGoodsId(request.getUid(), request.getSGoodsSn());
+                //delete cache
+                jedisCache.hdel(JEDIS_PREFIX_CART, cart.getId().toString());
+            }
+        } else {
+            //加入新商品
+            i = userCartMapper.insertSelective(userCart);
+            if (i > 0) {
+                //delete cache
+                jedisCache.hdel(JEDIS_PREFIX_CART, userCart.getId().toString());
+            }
+        }
 
-    /**
-     * 修改购物车商品
-     *
-     * @param request
-     */
-    @Override
-    public String updateCart(UserCartRequest request) {
-        return null;
+        return ResultMsgUtil.dmlResult(i);
     }
 
     /**
@@ -207,7 +243,12 @@ public class UserService implements UserApi {
      */
     @Override
     public String deleteFromCart(Long cartId, Long uid) {
-        return null;
+        int i = userCartMapper.deleteByPrimaryKey(cartId, uid);
+        if (i > 0) {
+            //add cache
+            jedisCache.hdel(JEDIS_PREFIX_CART, cartId.toString());
+        }
+        return ResultMsgUtil.dmlResult(i);
     }
 
     /**
@@ -219,7 +260,23 @@ public class UserService implements UserApi {
      */
     @Override
     public PagedList<UserCartDto> getGoodsFromCart(Long uid, Integer pageNum, Integer pageSize) {
-        return null;
+        Page<Object> objects = null;
+        List<UserCartDto> list = new ArrayList<>();
+        if (pageNum != null && pageSize != null) {
+            objects = PageHelper.startPage(pageNum, pageSize);
+        } else {
+            pageNum = 0;
+            pageSize = 0;
+        }
+        List<Long> longs = ValidatorUtil.checkNotEmptyList(userCartMapper.selectUserCartThings(uid));
+        if (!longs.isEmpty()) {
+            for (Long id : longs) {
+                UserCartDto cartGoodById = getCartGoodById(id, uid);
+                list.add(cartGoodById);
+            }
+        }
+        PagedList<UserCartDto> pagedList = new PagedList<>(list, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
+        return pagedList;
     }
 
     /**
@@ -230,7 +287,31 @@ public class UserService implements UserApi {
      */
     @Override
     public UserCartDto getCartGoodById(Long cartId, Long uid) {
-        return null;
+        UserCartDto hget = jedisCache.hget(JEDIS_PREFIX_CART, cartId.toString(), UserCartDto.class);
+        if (hget == null) {
+            hget = userCartMapper.selectByPrimaryKey(cartId, uid);
+            if (hget == null) {
+                return new UserCartDto();
+            }
+            GoodsDto detail = goodsService.getGoodsDetail(hget.getGoodsId());
+            StockSelect request = new StockSelect();
+            request.setSGoodSn(hget.getSGoodsSn());
+            request.setType("exist");
+            List<GoodsStockDto> stockDtos = goodsExtensionService.findAllGoodsStock(request).getList();
+            if (stockDtos != null && !stockDtos.isEmpty()) {
+                GoodsStockDto goodsStockDto = stockDtos.get(0);
+                hget.setSaleFlag(goodsStockDto.getSaleFlag());
+                hget.setGoodsPrice(goodsStockDto.getSellPrice());
+            }
+            //封装每一项的总价
+            hget.setItemTotalPrice(Double.parseDouble(NumberUtil.DECIMAL_FORMAT.format(hget.getGoodsNum() * hget.getGoodsPrice())));
+            hget.setGoodsId(detail.getId());
+            hget.setBrandName(detail.getBrandName());
+            hget.setGoodsName(detail.getGoodsName());
+            hget.setGoodsImg(detail.getPreviewImg());
+            jedisCache.hset(JEDIS_PREFIX_CART, cartId.toString(), hget);
+        }
+        return hget;
     }
 
     /**

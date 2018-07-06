@@ -58,6 +58,13 @@ public class UserCartDto extends BaseRequest implements Serializable {
      */
     @JsonProperty("goods_price")
     private Double goodsPrice;
+    @JsonProperty("item_total_price")
+    private Double itemTotalPrice;
+    /**
+     * 库存预警标记
+     */
+    @JsonProperty("warn_stock")
+    private Integer warnStock;
     /**
      * 批次号
      */
@@ -65,6 +72,11 @@ public class UserCartDto extends BaseRequest implements Serializable {
     private Integer batchNo;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
+    /**
+     * 销售状态 1=上架 0=下架 默认1
+     */
+    @JsonProperty("sale_flag")
+    private Integer saleFlag;
 
     @JsonProperty("create_time")
     private String createTime;

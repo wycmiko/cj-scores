@@ -18,6 +18,12 @@
   <sql id="Blob_Column_List" >
     properties
   </sql>
+
+  <select id="selectIDByTagName" resultType="Long">
+    select id
+    from s_goods_tag
+    where tag_name=#{tagName}
+  </select>
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />

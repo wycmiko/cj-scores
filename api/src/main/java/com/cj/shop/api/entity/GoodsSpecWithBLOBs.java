@@ -15,6 +15,8 @@ public class GoodsSpecWithBLOBs extends PropertyEntity implements Serializable {
     private Long id;
     @JsonProperty("parent_id")
     private Long parentId;
+    @JsonProperty("parent_name")
+    private String parentName;
     @JsonProperty("spec_name")
     private String specName;
     @JsonProperty("delete_flag")
