@@ -6,7 +6,7 @@ spring:
     name: match-api
   datasource:
           name: test
-          url: jdbc:mysql://${MYSQL}:${MYSQL_PORT}/cj_match?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&useSSL=false
+          url: jdbc:mysql://${MYSQL}:${MYSQL_PORT}/cj_match?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
           username: ${MYSQL_USER}
           password: ${MYSQL_PWD}
           # 使用druid数据源

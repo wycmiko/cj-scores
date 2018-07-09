@@ -6,7 +6,7 @@ spring:
     name: mall-api
   datasource:
           name: prod
-          url: jdbc:mysql://${MYSQL}:${MYSQL_PORT}/cj_match?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
+          url: jdbc:mysql://${MYSQL}:${MYSQL_PORT}/cj_match?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
           username: ${MYSQL_USER}
           password: ${MYSQL_PWD}
           # 使用druid数据源
