@@ -1,10 +1,7 @@
 package com.cj.shop.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
-import com.cj.shop.api.entity.GoodsStock;
-import com.cj.shop.api.entity.GoodsTag;
-import com.cj.shop.api.entity.GoodsUnit;
+import com.cj.shop.api.entity.*;
 import com.cj.shop.api.interf.GoodsExtensionApi;
 import com.cj.shop.api.param.GoodsSpecRequest;
 import com.cj.shop.api.param.GoodsStockRequest;
@@ -13,10 +10,7 @@ import com.cj.shop.api.param.GoodsUnitRequest;
 import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsStockDto;
-import com.cj.shop.dao.mapper.GoodsSpecMapper;
-import com.cj.shop.dao.mapper.GoodsStockMapper;
-import com.cj.shop.dao.mapper.GoodsTagMapper;
-import com.cj.shop.dao.mapper.GoodsUnitMapper;
+import com.cj.shop.dao.mapper.*;
 import com.cj.shop.service.cfg.JedisCache;
 import com.cj.shop.service.consts.ResultMsg;
 import com.cj.shop.service.util.NumberUtil;
@@ -25,6 +19,7 @@ import com.cj.shop.service.util.ResultMsgUtil;
 import com.cj.shop.service.util.ValidatorUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,9 +47,12 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     private GoodsUnitMapper goodsUnitMapper;
     @Autowired
     private GoodsStockMapper goodsStockMapper;
+    @Autowired
+    private ExpressCashMapper expressCashMapper;
 
     @Autowired
     private JedisCache jedisCache;
+    public static final String EXPRESS_CASH_KEY = "cj_shop:mall:express:cash:";
     public static final String SPEC_KEY = "cj_shop:mall:goods:spec:";
     public static final String TAG_KEY = "cj_shop:mall:goods:tag:";
     public static final String UNIT_KEY = "cj_shop:mall:goods:unit:";
@@ -199,8 +197,8 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     @Override
     public String insertGoodsTag(GoodsTagRequest request) {
         //判断是否有重名标签
-        List<Long> longs = goodsTagMapper.selectIDByTagName(request.getTagName());
-        if (longs != null || !longs.isEmpty()) {
+        List<Long> longs = ValidatorUtil.checkNotEmptyList(goodsTagMapper.selectIDByTagName(request.getTagName()));
+        if (!longs.isEmpty()) {
             return ResultMsg.TAG_ALREADY_EXISTS;
         }
         GoodsTag tag = new GoodsTag();
@@ -223,6 +221,13 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         GoodsTag tagDetail = getGoodsTagDetail(request.getId());
         if (tagDetail == null) {
             return ResultMsg.TAG_NOT_EXISTS;
+        }
+        //判断是否有重名标签
+        if (!StringUtils.isBlank(request.getTagName())) {
+            List<Long> longs = ValidatorUtil.checkNotEmptyList(goodsTagMapper.selectIDByTagName(request.getTagName()));
+            if (!longs.isEmpty()) {
+                return ResultMsg.TAG_ALREADY_EXISTS;
+            }
         }
         BeanUtils.copyProperties(request, tagDetail);
         tagDetail.setProperties(PropertiesUtil.changeProperties(tagDetail.getProperties(), request.getProperties()));
@@ -403,8 +408,6 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                 }
             }
         }
-
-
         //校验商品是否存在
         double ratio = stockRequest.getWarnRatio().doubleValue();
         long num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
@@ -431,6 +434,10 @@ public class GoodsExtensionService implements GoodsExtensionApi {
      */
     @Override
     public String updateStock(GoodsStockRequest stockRequest) {
+        GoodsStock goodsStock = goodsStockMapper.selectByPrimaryKey(stockRequest.getId());
+        if (goodsStock == null) {
+            return ResultMsg.STOCK_NOT_EXISTS;
+        }
         //检验规格是否存在
         String jsonString = null;
         if (stockRequest.getSpecIdList() != null && !stockRequest.getSpecIdList().isEmpty()) {
@@ -447,10 +454,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
             double ratio = stockRequest.getWarnRatio().doubleValue();
             num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
         }
-        GoodsStock goodsStock = goodsStockMapper.selectByPrimaryKey(stockRequest.getId());
-        if (goodsStock == null) {
-            return ResultMsg.STOCK_NOT_EXISTS;
-        }
+
         BeanUtils.copyProperties(stockRequest, goodsStock);
         goodsStock.setProperties(PropertiesUtil.changeProperties(goodsStock.getProperties(), stockRequest.getProperties()));
         goodsStock.setWarnStockNum((int) num);
@@ -517,7 +521,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                         if (detail != null) {
                             GoodsSpecWithBLOBs detail1 = getGoodsSpecDetail(detail.getParentId(), "all");
                             if (detail1 != null)
-                            detail.setParentName(detail1.getSpecName());
+                                detail.setParentName(detail1.getSpecName());
                         }
                         list.add(detail);
                     }
@@ -525,6 +529,28 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                 hget.setSpecList(list);
             }
             jedisCache.hset(STOCK_KEY, id.toString(), hget);
+        }
+        return hget;
+    }
+
+
+    public String addGloableExpressCash(ExpressCash expressCash) {
+        if (expressCash.getDeliveryCash() <= 0) {
+            return ResultMsg.MUST_POSITIVE_NUM;
+        }
+        expressCash.setId(1L);
+        int i = expressCashMapper.insertExpressCash(expressCash);
+        if (i > 0) {
+            jedisCache.hset(EXPRESS_CASH_KEY, "1", expressCashMapper.selectByPrimaryKey(1L));
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    public ExpressCash getExpressCash() {
+        ExpressCash hget = jedisCache.hget(EXPRESS_CASH_KEY, "1", ExpressCash.class);
+        if (hget == null) {
+            hget = expressCashMapper.selectByPrimaryKey(1L);
+            jedisCache.hset(EXPRESS_CASH_KEY, "1", hget);
         }
         return hget;
     }

@@ -227,6 +227,9 @@ public class GoodsService implements GoodsApi {
     @Override
     public PagedList<GoodsBrand> findAllBrands(String brandName, Integer pageNum, Integer pageSize, String type) {
         Integer flag = null;
+        if (!StringUtils.isBlank(brandName)) {
+            brandName= brandName.replaceAll(" ","");
+        }
         if (!"all".equals(type.toLowerCase())) {
             flag = 1;
         }
@@ -426,9 +429,9 @@ public class GoodsService implements GoodsApi {
 
     public String increPv(Long goodsId) {
         int i = goodsMapper.increPv(goodsId);
-        if (i > 0) {
-            jedisCache.hset(JEDIS_PREFIX_GOODS, goodsId.toString(), goodsMapper.selectByPrimaryKey(goodsId));
-        }
+//        if (i > 0) {
+//            jedisCache.hdel(JEDIS_PREFIX_GOODS, goodsId.toString());
+//        }
         return ResultMsgUtil.dmlResult(i);
     }
 
@@ -475,7 +478,7 @@ public class GoodsService implements GoodsApi {
 
     public GoodsDto getGoodsDetailForIndex(Long goodsId) {
         GoodsDto hget = getGoodsDetail(goodsId);
-        if (hget.getDeleteFlag() == 1) {
+        if (hget == null || hget.getDeleteFlag() == 1) {
             return null;
         }
         return hget;

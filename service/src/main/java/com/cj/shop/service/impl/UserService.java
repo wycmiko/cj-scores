@@ -297,18 +297,22 @@ public class UserService implements UserApi {
             StockSelect request = new StockSelect();
             request.setSGoodSn(hget.getSGoodsSn());
             request.setType("exist");
+            //小编号查询指定库存商品
             List<GoodsStockDto> stockDtos = goodsExtensionService.findAllGoodsStock(request).getList();
             if (stockDtos != null && !stockDtos.isEmpty()) {
                 GoodsStockDto goodsStockDto = stockDtos.get(0);
                 hget.setSaleFlag(goodsStockDto.getSaleFlag());
                 hget.setGoodsPrice(goodsStockDto.getSellPrice());
+                hget.setSpecList(goodsStockDto.getSpecList());
             }
             //封装每一项的总价
             hget.setItemTotalPrice(Double.parseDouble(NumberUtil.DECIMAL_FORMAT.format(hget.getGoodsNum() * hget.getGoodsPrice())));
             hget.setGoodsId(detail.getId());
             hget.setBrandName(detail.getBrandName());
+            hget.setSupplyName(detail.getSupplyName());
             hget.setGoodsName(detail.getGoodsName());
             hget.setGoodsImg(detail.getPreviewImg());
+            hget.setShopName("珑讯自营");
             jedisCache.hset(JEDIS_PREFIX_CART, cartId.toString(), hget);
         }
         return hget;

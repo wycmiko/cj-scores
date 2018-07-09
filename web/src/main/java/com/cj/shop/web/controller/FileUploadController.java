@@ -55,7 +55,6 @@ public class FileUploadController {
         Result result = null;
         FileUpload fileUpload = null;
         try {
-
             log.info("FileUploadController.uploadFile begin");
             if (CommandValidator.isEmpty(token)) {
                 return CommandValidator.paramEmptyResult();

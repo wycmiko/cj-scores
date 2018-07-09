@@ -31,4 +31,6 @@ public class ResultMsg {
     public static final String TYPE_NOT_EXISTS = "类型不存在";
     public static final String PARTYPE_NOT_EXISTS = "父类类型不存在";
     public static final String SPEC_LIST_EMPTY = "规格列表不能为空";
+
+    public static final String MUST_POSITIVE_NUM = "金额必须为正数";
 }

@@ -1,5 +1,6 @@
 package com.cj.shop.web.controller.manage;
 
+import com.cj.shop.api.entity.ExpressCash;
 import com.cj.shop.api.entity.GoodsSupply;
 import com.cj.shop.api.param.*;
 import com.cj.shop.api.param.select.GoodsSelect;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.concurrent.Future;
 
 /**
@@ -420,8 +422,7 @@ public class GoodsManageController {
                 return CommandValidator.paramEmptyResult();
             }
             log.info("addTag begin");
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsExtensionService.insertGoodsTag(request));
+            result = ResultUtil.getVaildResult(goodsExtensionService.insertGoodsTag(request), result);
             log.info("addTag end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -445,8 +446,7 @@ public class GoodsManageController {
             if (CommandValidator.isEmpty(request.getTagName())) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsExtensionService.updateGoodsTag(request));
+            result = ResultUtil.getVaildResult(goodsExtensionService.insertGoodsTag(request), result);
             log.info("updateTag end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -471,8 +471,7 @@ public class GoodsManageController {
             if (CommandValidator.isEmpty(request.getUnitName())) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsExtensionService.insertGoodsUnit(request));
+            result = ResultUtil.getVaildResult(goodsExtensionService.insertGoodsUnit(request), result);
             log.info("addUnit end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -496,8 +495,7 @@ public class GoodsManageController {
             if (CommandValidator.isEmpty(request.getId())) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsExtensionService.updateGoodsUnit(request));
+            result = ResultUtil.getVaildResult(goodsExtensionService.updateGoodsUnit(request), result);
             log.info("updateUnit end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -573,8 +571,7 @@ public class GoodsManageController {
                     request.getCostPrice(), request.getSellPrice(), request.getWarnRatio())) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsExtensionService.insertStock(request));
+            result = ResultUtil.getVaildResult(goodsExtensionService.insertStock(request), result);
             log.info("addStock end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -598,8 +595,7 @@ public class GoodsManageController {
             if (CommandValidator.isEmpty(request.getId())) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsExtensionService.updateStock(request));
+            result = ResultUtil.getVaildResult(goodsExtensionService.updateStock(request), result);
             log.info("updateStock end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -675,8 +671,15 @@ public class GoodsManageController {
                     request.getFirstTypeId(), request.getGoodsName(), request.getStockList())) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsService.insertGood(request));
+            List<GoodsStockRequest> stockList = request.getStockList();
+            if (stockList != null && !stockList.isEmpty()) {
+                for (GoodsStockRequest request1: stockList) {
+                    if (request1.getCostPrice() < 0 ||  request1.getSellPrice() < 0 || request1.getStockNum() <= 0) {
+                        return CommandValidator.paramFailuredResult(ResultConsts.PARAM_MUST_POSIT_NUM);
+                    }
+                }
+            }
+            result = ResultUtil.getVaildResult(goodsService.insertGood(request), result);
             log.info("addGoods end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -701,7 +704,7 @@ public class GoodsManageController {
                 return CommandValidator.paramEmptyResult();
             }
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            GoodsDto goodsDetailForIndex = goodsService.getGoodsDetailForIndex(id);
+            GoodsDto goodsDetailForIndex = goodsService.getGoodsDetail(id);
             result.setData(goodsDetailForIndex);
             log.info("goodsDetail end");
         } catch (Exception e) {
@@ -732,7 +735,7 @@ public class GoodsManageController {
             }
             long uid = tokenValidator.getUidByToken(token);
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsService.getGoodsDetail(goods_id));
+            result.setData(goodsService.getGoodsDetailForIndex(goods_id));
             GoodsVisitRequest request = new GoodsVisitRequest();
             request.setUid(uid);
             request.setGoodsId(goods_id);
@@ -794,8 +797,7 @@ public class GoodsManageController {
             if (CommandValidator.isEmpty(request.getId())) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsService.updateGood(request));
+            result = ResultUtil.getVaildResult(goodsService.updateGood(request), result);
             log.info("updateGood end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -832,6 +834,58 @@ public class GoodsManageController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("exportGoods error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+
+
+    /**
+     * 添加商品运费
+     *
+     * @return
+     */
+    @PostMapping("/addGoodsCash")
+    public Result addGoodsCash(@RequestBody ExpressCash request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("addGoodsCash begin");
+            if (CommandValidator.isEmpty(request.getId())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = ResultUtil.getVaildResult(goodsExtensionService.addGloableExpressCash(request), result);
+            log.info("addGoodsCash end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("addGoodsCash error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 查询商品运费
+     *
+     * @return
+     */
+    @GetMapping("/goodsCash")
+    public Result goodsCash(@RequestBody ExpressCash request) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("goodsCash begin");
+            if (CommandValidator.isEmpty(request.getId())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.REQUEST_SUCCEED_STATUS);
+            result.setData(goodsExtensionService.getExpressCash());
+            log.info("goodsCash end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("goodsCash error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

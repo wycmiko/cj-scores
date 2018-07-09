@@ -46,7 +46,9 @@ public abstract class ResultConsts {
     public static final String CARD_NO_FAILURE = "身份证号不合法!";
     public static final String PARAM_NULL = "必传参数不能为空";
     //player
-    //
+    //必须为正数
+    public static final String PARAM_MUST_POSIT_NUM = "部分参数必须为正整数";
+
 
     //weichat
     public static final String OPEN_ID="openid";

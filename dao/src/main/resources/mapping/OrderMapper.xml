@@ -23,7 +23,8 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, shop_id, uid, order_num, order_name, preview_img, order_price, order_status, 
-    delivery_cash, delivery_protect, delete_flag, update_time, create_time, sort_flag
+    delivery_cash, delivery_protect, delete_flag, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time,
+    DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
   </sql>
   <sql id="Blob_Column_List" >
     goods_list, properties
@@ -40,7 +41,7 @@
     delete from s_order
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.OrderWithBLOBs" >
+  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.OrderWithBLOBs" useGeneratedKeys="true" keyProperty="id">
     insert into s_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="shopId != null" >
@@ -72,12 +73,6 @@
       </if>
       <if test="deleteFlag != null" >
         delete_flag,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="createTime != null" >
-        create_time,
       </if>
       <if test="sortFlag != null" >
         sort_flag,
@@ -119,12 +114,6 @@
       </if>
       <if test="deleteFlag != null" >
         #{deleteFlag,jdbcType=INTEGER},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=VARCHAR},
       </if>
       <if test="sortFlag != null" >
         #{sortFlag,jdbcType=INTEGER},

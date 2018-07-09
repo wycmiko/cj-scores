@@ -1,11 +1,13 @@
 package com.cj.shop.api.response.dto;
 
+import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
 import com.cj.shop.api.param.BaseRequest;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -38,16 +40,19 @@ public class UserCartDto extends BaseRequest implements Serializable {
      */
     @JsonProperty("brand_name")
     private String brandName;
+
+    @JsonProperty("shop_name")
+    private String shopName;
     /**
      * 供应商名
      */
     @JsonProperty("supply_name")
     private String supplyName;
     /**
-     * 规格名
+     * 规格排列组合列表
      */
-    @JsonProperty("spec_name")
-    private String specName;
+    @JsonProperty("spec_list")
+    private List<GoodsSpecWithBLOBs> specList;
     /**
      * 商品数量
      */

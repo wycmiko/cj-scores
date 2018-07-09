@@ -35,8 +35,12 @@ public class CommandValidator {
     }
 
     public static Result paramEmptyResult() {
+        return paramFailuredResult(ResultConsts.PARAM_NULL);
+    }
+
+    public static Result paramFailuredResult(String msg) {
         Result result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.PARAM_NULL_MSG);
-        result.setData(ResultConsts.PARAM_NULL);
+        result.setData(msg);
         return result;
     }
 
