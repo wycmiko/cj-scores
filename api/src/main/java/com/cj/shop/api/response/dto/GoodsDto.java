@@ -205,6 +205,9 @@ public class GoodsDto extends PropertyEntity implements Serializable {
     @JsonProperty("key_words")
     private String keyWords;
 
+    @JsonProperty("express_cash")
+    private Double expressCash;
+
     @JsonProperty("stock_list")
     private List<GoodsStockDto> stockList;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cj.shop.dao.mapper.ExpressCashMapper" >
-  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.Express" >
+  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.ExpressCash" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="uid" property="uid" jdbcType="BIGINT" />
     <result column="delivery_company" property="deliveryCompany" jdbcType="VARCHAR" />
@@ -16,31 +16,31 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from s_express
+    from s_express_cash
     where id = #{id,jdbcType=BIGINT}
   </select>
   <insert id="insertExpressCash" parameterType="com.cj.shop.api.entity.ExpressCash" >
     insert into s_express_cash
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        id
+        id,
       </if>
       <if test="deliveryCash != null" >
-        delivery_cash
+        delivery_cash,
       </if>
       <if test="deliveryCompany != null" >
-        delivery_company
+          delivery_company,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id}
+        #{id},
       </if>
       <if test="deliveryCash != null" >
-        #{deliveryCash}
+        #{deliveryCash},
       </if>
       <if test="deliveryCompany != null" >
-        #{deliveryCompany}
+        #{deliveryCompany},
       </if>
     </trim>
     ON DUPLICATE KEY UPDATE delivery_cash=#{deliveryCash}

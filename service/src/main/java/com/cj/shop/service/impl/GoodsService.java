@@ -228,7 +228,7 @@ public class GoodsService implements GoodsApi {
     public PagedList<GoodsBrand> findAllBrands(String brandName, Integer pageNum, Integer pageSize, String type) {
         Integer flag = null;
         if (!StringUtils.isBlank(brandName)) {
-            brandName= brandName.replaceAll(" ","");
+            brandName = brandName.replaceAll(" ", "");
         }
         if (!"all".equals(type.toLowerCase())) {
             flag = 1;
@@ -472,6 +472,11 @@ public class GoodsService implements GoodsApi {
         if (hget == null) {
             hget = getCompletGoods(goodsId);
             jedisCache.hset(JEDIS_PREFIX_GOODS, goodsId.toString(), hget);
+        }
+        //设置运费
+        if (hget != null) {
+            ExpressCash cash = goodsExtensionService.getExpressCash();
+            hget.setExpressCash(cash == null ? 0.0 : cash.getDeliveryCash());
         }
         return hget;
     }

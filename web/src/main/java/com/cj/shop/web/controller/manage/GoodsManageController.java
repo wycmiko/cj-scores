@@ -853,9 +853,6 @@ public class GoodsManageController {
         Result result = null;
         try {
             log.info("addGoodsCash begin");
-            if (CommandValidator.isEmpty(request.getId())) {
-                return CommandValidator.paramEmptyResult();
-            }
             result = ResultUtil.getVaildResult(goodsExtensionService.addGloableExpressCash(request), result);
             log.info("addGoodsCash end");
         } catch (Exception e) {
@@ -872,14 +869,11 @@ public class GoodsManageController {
      * @return
      */
     @GetMapping("/goodsCash")
-    public Result goodsCash(@RequestBody ExpressCash request) {
+    public Result goodsCash() {
         //token校验
         Result result = null;
         try {
             log.info("goodsCash begin");
-            if (CommandValidator.isEmpty(request.getId())) {
-                return CommandValidator.paramEmptyResult();
-            }
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.REQUEST_SUCCEED_STATUS);
             result.setData(goodsExtensionService.getExpressCash());
             log.info("goodsCash end");

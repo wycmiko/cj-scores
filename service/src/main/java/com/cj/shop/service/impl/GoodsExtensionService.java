@@ -535,7 +535,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
 
 
     public String addGloableExpressCash(ExpressCash expressCash) {
-        if (expressCash.getDeliveryCash() <= 0) {
+        if (expressCash.getDeliveryCash() < 0) {
             return ResultMsg.MUST_POSITIVE_NUM;
         }
         expressCash.setId(1L);
