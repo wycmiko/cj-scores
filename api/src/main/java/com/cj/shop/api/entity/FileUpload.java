@@ -16,6 +16,7 @@ public class FileUpload implements Serializable {
     private Long uid;
     private String fileType;
     private String fileName;
+    private String fileId;
     private String fileUrl;
     private Long fileSize;
     private String reqIp;

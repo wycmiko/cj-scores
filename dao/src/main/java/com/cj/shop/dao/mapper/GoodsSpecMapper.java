@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface GoodsSpecMapper {
-    int deleteByPrimaryKey(Long id);
+    int deleteByParentId(@Param("parentId") Long parentId);
 
     int insertSelective(GoodsSpecWithBLOBs record);
 

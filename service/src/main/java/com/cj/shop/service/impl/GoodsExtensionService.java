@@ -49,6 +49,8 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     private GoodsStockMapper goodsStockMapper;
     @Autowired
     private ExpressCashMapper expressCashMapper;
+    @Autowired
+    private GoodsService goodsService;
 
     @Autowired
     private JedisCache jedisCache;
@@ -57,6 +59,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     public static final String TAG_KEY = "cj_shop:mall:goods:tag:";
     public static final String UNIT_KEY = "cj_shop:mall:goods:unit:";
     public static final String STOCK_KEY = "cj_shop:mall:goods:stock:";
+
 
     /**
      * 添加商品规格
@@ -68,11 +71,9 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     public String insertGoodsSpec(GoodsSpecRequest request) {
         GoodsSpecWithBLOBs bloBs = new GoodsSpecWithBLOBs();
         BeanUtils.copyProperties(request, bloBs);
-        bloBs.setProperties(PropertiesUtil.addProperties(request.getProperties()));
         int i = goodsSpecMapper.insertSelective(bloBs);
         if (i > 0) {
             jedisCache.delWithPattern(SPEC_KEY + "*");
-            return bloBs.getId().toString();
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -101,7 +102,6 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         }
 
         BeanUtils.copyProperties(request, specDetail);
-        specDetail.setProperties(PropertiesUtil.changeProperties(specDetail.getProperties(), request.getProperties()));
         int i = goodsSpecMapper.updateByPrimaryKeySelective(specDetail);
         if (i > 0) {
             jedisCache.delWithPattern(SPEC_KEY + "*");
@@ -518,7 +518,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                 if (longList != null && !longList.isEmpty()) {
                     for (Long id1 : longList) {
                         GoodsSpecWithBLOBs detail = getGoodsSpecDetail(id1, "all");
-                        if (detail != null) {
+                        if (detail != null && detail.getParentId() != null) {
                             GoodsSpecWithBLOBs detail1 = getGoodsSpecDetail(detail.getParentId(), "all");
                             if (detail1 != null)
                                 detail.setParentName(detail1.getSpecName());
@@ -527,6 +527,8 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                     }
                 }
                 hget.setSpecList(list);
+                GoodsSupply detail = goodsService.getSupplyDetail(hget.getSupplyId());
+                hget.setSupplyName(detail == null ? null : detail.getSupplyName());
             }
             jedisCache.hset(STOCK_KEY, id.toString(), hget);
         }

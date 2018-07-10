@@ -15,6 +15,8 @@ public class ResultMsg {
     public static final String BRAND_NOT_EXISTS = "品牌不存在";
     public static final String GOOD_NOT_EXISTS = "商品不存在";
 
+    public static final String NOT_ENOUGH = "剩余库存不足";
+
     public static final String TOO_MANY_STOCKS = "不能超过最大库存数";
     public static final String NOT_EXIST_STOCK = "没有剩余库存了哦";
     public static final String GOOD_NAME_TOO_LONG = "商品名称过长";

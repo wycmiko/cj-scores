@@ -71,7 +71,6 @@
     </select>
 
 
-
     <select id="selectByGoodsType" resultType="com.cj.shop.api.response.dto.GoodsStockDto"
             parameterType="Long">
         select
@@ -79,6 +78,8 @@
         t1.goods_sn as goodsSn,
         t1.s_goods_sn as sGoodsSn,
         t2.goods_name as goodsName,
+        t2.preview_img as previewImg,
+        t2.supply_id as supplyId,
         t1.spec_id_list as specIdList,
         t1.cost_price as costPrice,
         t1.sell_price as sellPrice,
@@ -109,7 +110,10 @@
         t1.id as stockId,
         t1.goods_sn as goodsSn,
         t1.s_goods_sn as sGoodsSn,
+        t2.id as goodsId,
+        t2.supply_id as supplyId,
         t2.goods_name as goodsName,
+        t2.preview_img as previewImg,
         t1.spec_id_list as specIdList,
         t1.cost_price as costPrice,
         t1.sell_price as sellPrice,
@@ -157,6 +161,18 @@
         where goods_sn = #{goodSn}
         group by goods_sn
     </select>
+
+    <update id="updateGoodsStock">
+        update
+        s_goods_stock SET
+        <if test="type == 1">
+            stock_num = stock_num+#{nums}
+        </if>
+        <if test="type == 2">
+            stock_num = stock_num-#{nums}
+        </if>
+        where goods_sn = #{goodSn}
+    </update>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from s_goods_stock

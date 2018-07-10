@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cj.shop.dao.mapper.OrderMapper" >
-  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.Order" >
+  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.OrderWithBLOBs" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="shop_id" property="shopId" jdbcType="BIGINT" />
     <result column="uid" property="uid" jdbcType="BIGINT" />
     <result column="order_num" property="orderNum" jdbcType="VARCHAR" />
     <result column="order_name" property="orderName" jdbcType="VARCHAR" />
     <result column="preview_img" property="previewImg" jdbcType="VARCHAR" />
+    <result column="close_time" property="closeTime"  />
     <result column="order_price" property="orderPrice" jdbcType="DECIMAL" />
     <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
     <result column="delivery_cash" property="deliveryCash" jdbcType="DECIMAL" />
@@ -22,7 +23,7 @@
     <result column="properties" property="properties" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, shop_id, uid, order_num, order_name, preview_img, order_price, order_status, 
+    id, shop_id, uid, order_num, order_name, preview_img, close_time, order_price, order_status,
     delivery_cash, delivery_protect, delete_flag, DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as update_time,
     DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time, sort_flag
   </sql>
@@ -100,6 +101,9 @@
       <if test="previewImg != null" >
         #{previewImg,jdbcType=VARCHAR},
       </if>
+      <if test="closeTime != null" >
+        #{closeTime},
+      </if>
       <if test="orderPrice != null" >
         #{orderPrice,jdbcType=DECIMAL},
       </if>
@@ -129,23 +133,14 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.OrderWithBLOBs" >
     update s_order
     <set >
-      <if test="shopId != null" >
-        shop_id = #{shopId,jdbcType=BIGINT},
-      </if>
-      <if test="uid != null" >
-        uid = #{uid,jdbcType=BIGINT},
-      </if>
-      <if test="orderNum != null" >
-        order_num = #{orderNum,jdbcType=VARCHAR},
-      </if>
       <if test="orderName != null" >
         order_name = #{orderName,jdbcType=VARCHAR},
       </if>
       <if test="previewImg != null" >
         preview_img = #{previewImg,jdbcType=VARCHAR},
       </if>
-      <if test="orderPrice != null" >
-        order_price = #{orderPrice,jdbcType=DECIMAL},
+      <if test="closeTime != null" >
+        close_time = #{closeTime},
       </if>
       <if test="orderStatus != null" >
         order_status = #{orderStatus,jdbcType=TINYINT},
@@ -159,22 +154,55 @@
       <if test="deleteFlag != null" >
         delete_flag = #{deleteFlag,jdbcType=INTEGER},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=VARCHAR},
-      </if>
       <if test="sortFlag != null" >
         sort_flag = #{sortFlag,jdbcType=INTEGER},
-      </if>
-      <if test="goodsList != null" >
-        goods_list = #{goodsList,jdbcType=LONGVARCHAR},
       </if>
       <if test="properties != null" >
         properties = #{properties,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByOrderNum" resultType="com.cj.shop.api.entity.OrderWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from s_order
+    where order_num = #{orderNum}
+  </select>
+
+    <update id="updateByOrderNum" parameterType="com.cj.shop.api.entity.OrderWithBLOBs" >
+    update s_order
+    <set >
+      <if test="orderName != null" >
+        order_name = #{orderName,jdbcType=VARCHAR},
+      </if>
+      <if test="previewImg != null" >
+        preview_img = #{previewImg,jdbcType=VARCHAR},
+      </if>
+      <if test="closeTime != null" >
+        close_time = #{closeTime},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="deliveryCash != null" >
+        delivery_cash = #{deliveryCash,jdbcType=DECIMAL},
+      </if>
+      <if test="deliveryProtect != null" >
+        delivery_protect = #{deliveryProtect,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      </if>
+      <if test="sortFlag != null" >
+        sort_flag = #{sortFlag,jdbcType=INTEGER},
+      </if>
+      <if test="properties != null" >
+        properties = #{properties,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where order_num = #{orderNum}
   </update>
 </mapper>

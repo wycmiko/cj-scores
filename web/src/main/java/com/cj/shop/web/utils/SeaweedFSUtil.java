@@ -34,6 +34,7 @@ public class SeaweedFSUtil {
 
     private static FileSource fileSource;
     private static final String FILE_URL = "file_url";
+    private static final String FILE_ID = "file_id";
     private static final int MAX_NAME_LENGTH = 32;
     public static final long FILE_SIZE_4M = 1048576 << 2;
     public static final long FILE_SIZE_8M = 1048576 << 3;
@@ -74,7 +75,14 @@ public class SeaweedFSUtil {
         String fileUrl = template.getFileUrl(fileHandleStatus.getFileId());
         logger.debug("SeaweedFSUtil.uploadFile FILE_URL={}", fileUrl);
         resultMap.put(this.FILE_URL, fileUrl.replace(",", "/") + "/" + fileName);
+        resultMap.put(this.FILE_ID, fileHandleStatus.getFileId());
         return resultMap;
+    }
+
+
+    public void deleteFile(String fileId) throws IOException {
+        FileTemplate template = new FileTemplate(fileSource.getConnection());
+        template.deleteFile(fileId);
     }
 
 

@@ -20,12 +20,20 @@ import java.util.List;
 public class GoodsStockDto implements Serializable {
     @JsonProperty("stock_id")
     private Long stockId;
+    @JsonProperty("supply_id")
+    private Long supplyId;
     @JsonProperty("goods_sn")
     private String goodsSn;
+    @JsonProperty("goods_id")
+    private Long goodsId;
+    @JsonProperty("preview_img")
+    private String previewImg;
     @JsonProperty("s_goods_sn")
     private String sGoodsSn;
     @JsonProperty("goods_name")
     private String goodsName;
+    @JsonProperty("supply_name")
+    private String supplyName;
     @JsonProperty("spec_id_list")
     private String specIdList;
     @JsonProperty("spec_list")

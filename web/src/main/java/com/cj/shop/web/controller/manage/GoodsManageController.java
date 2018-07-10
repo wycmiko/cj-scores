@@ -137,7 +137,7 @@ public class GoodsManageController {
         //token校验
         Result result = null;
         try {
-            if (CommandValidator.isEmpty(goodsSupply.getId(), goodsSupply.getSupplyName())) {
+            if (CommandValidator.isEmpty(goodsSupply.getId())) {
                 return CommandValidator.paramEmptyResult();
             }
             log.info("updateSupply begin");
@@ -240,7 +240,7 @@ public class GoodsManageController {
         //token校验
         Result result = null;
         try {
-            if (CommandValidator.isEmpty(request.getId(), request.getBrandName())) {
+            if (CommandValidator.isEmpty(request.getId())) {
                 return CommandValidator.paramEmptyResult();
             }
             log.info("updateBrand begin");
@@ -261,16 +261,23 @@ public class GoodsManageController {
      * @return
      */
     @PostMapping("/addSpec")
-    public Result addSpec(@RequestBody GoodsSpecRequest request) {
+    public Result addSpec(@RequestBody List<GoodsSpecRequest> request) {
         //token校验
         Result result = null;
         try {
             log.info("addSpec begin");
-            if (CommandValidator.isEmpty(request.getSpecName())) {
+            if (CommandValidator.isEmpty(request) || request.isEmpty()) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsExtensionService.insertGoodsSpec(request));
+            String s = "";
+            for (GoodsSpecRequest request1 : request) {
+                if (request1.getId() == null) {
+                    s = goodsExtensionService.insertGoodsSpec(request1);
+                } else {
+                    s = goodsExtensionService.updateGoodsSpec(request1);
+                }
+            }
+            result = ResultUtil.getVaildResult(s, result);
             log.info("addSpec end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -443,10 +450,10 @@ public class GoodsManageController {
         Result result = null;
         try {
             log.info("updateTag begin");
-            if (CommandValidator.isEmpty(request.getTagName())) {
+            if (CommandValidator.isEmpty(request.getId())) {
                 return CommandValidator.paramEmptyResult();
             }
-            result = ResultUtil.getVaildResult(goodsExtensionService.insertGoodsTag(request), result);
+            result = ResultUtil.getVaildResult(goodsExtensionService.updateGoodsTag(request), result);
             log.info("updateTag end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -673,8 +680,8 @@ public class GoodsManageController {
             }
             List<GoodsStockRequest> stockList = request.getStockList();
             if (stockList != null && !stockList.isEmpty()) {
-                for (GoodsStockRequest request1: stockList) {
-                    if (request1.getCostPrice() < 0 ||  request1.getSellPrice() < 0 || request1.getStockNum() <= 0) {
+                for (GoodsStockRequest request1 : stockList) {
+                    if (request1.getCostPrice() < 0 || request1.getSellPrice() < 0 || request1.getStockNum() <= 0) {
                         return CommandValidator.paramFailuredResult(ResultConsts.PARAM_MUST_POSIT_NUM);
                     }
                 }
@@ -838,8 +845,6 @@ public class GoodsManageController {
         }
         return result;
     }
-
-
 
 
     /**

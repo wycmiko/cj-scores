@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cj.shop.dao.mapper.OrderDetailMapper" >
-  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.OrderDetail" >
+  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.OrderDetailWithBLOBs" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="shop_id" property="shopId" jdbcType="BIGINT" />
     <result column="uid" property="uid" jdbcType="BIGINT" />
     <result column="order_num" property="orderNum" jdbcType="VARCHAR" />
     <result column="order_name" property="orderName" jdbcType="VARCHAR" />
-    <result column="order_address" property="orderAddress" jdbcType="VARCHAR" />
     <result column="order_price" property="orderPrice" jdbcType="DECIMAL" />
     <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
     <result column="pay_status" property="payStatus" jdbcType="TINYINT" />
@@ -15,7 +14,7 @@
     <result column="delivery_cash" property="deliveryCash" jdbcType="DECIMAL" />
     <result column="delivery_protect" property="deliveryProtect" jdbcType="INTEGER" />
     <result column="receive_type" property="receiveType" jdbcType="INTEGER" />
-    <result column="express_id" property="expressId" jdbcType="BIGINT" />
+    <result column="express_id" property="expressId" jdbcType="VARCHAR" />
     <result column="addr_id" property="addrId" jdbcType="BIGINT" />
     <result column="coupon_price" property="couponPrice" jdbcType="DECIMAL" />
     <result column="real_price" property="realPrice" jdbcType="DECIMAL" />
@@ -32,7 +31,7 @@
     <result column="properties" property="properties" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, shop_id, uid, order_num, order_name, order_address, order_price, order_status, 
+    id, shop_id, uid, order_num, order_name,  order_price, order_status,
     pay_status, pay_type, delivery_cash, delivery_protect, receive_type, express_id, 
     addr_id, coupon_price, real_price, need_invoice, order_scores, delivery_time, delete_flag, 
     update_time, create_time
@@ -52,7 +51,7 @@
     delete from s_order_detail
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs" >
+  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs" useGeneratedKeys="true" keyProperty="id">
     insert into s_order_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="shopId != null" >
@@ -66,9 +65,6 @@
       </if>
       <if test="orderName != null" >
         order_name,
-      </if>
-      <if test="orderAddress != null" >
-        order_address,
       </if>
       <if test="orderPrice != null" >
         order_price,
@@ -112,15 +108,6 @@
       <if test="deliveryTime != null" >
         delivery_time,
       </if>
-      <if test="deleteFlag != null" >
-        delete_flag,
-      </if>
-      <if test="updateTime != null" >
-        update_time,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
       <if test="goodsList != null" >
         goods_list,
       </if>
@@ -144,9 +131,6 @@
       <if test="orderName != null" >
         #{orderName,jdbcType=VARCHAR},
       </if>
-      <if test="orderAddress != null" >
-        #{orderAddress,jdbcType=VARCHAR},
-      </if>
       <if test="orderPrice != null" >
         #{orderPrice,jdbcType=DECIMAL},
       </if>
@@ -169,7 +153,7 @@
         #{receiveType,jdbcType=INTEGER},
       </if>
       <if test="expressId != null" >
-        #{expressId,jdbcType=BIGINT},
+        #{expressId,jdbcType=VARCHAR},
       </if>
       <if test="addrId != null" >
         #{addrId,jdbcType=BIGINT},
@@ -189,15 +173,6 @@
       <if test="deliveryTime != null" >
         #{deliveryTime,jdbcType=VARCHAR},
       </if>
-      <if test="deleteFlag != null" >
-        #{deleteFlag,jdbcType=INTEGER},
-      </if>
-      <if test="updateTime != null" >
-        #{updateTime,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=VARCHAR},
-      </if>
       <if test="goodsList != null" >
         #{goodsList,jdbcType=LONGVARCHAR},
       </if>
@@ -212,23 +187,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs" >
     update s_order_detail
     <set >
-      <if test="shopId != null" >
-        shop_id = #{shopId,jdbcType=BIGINT},
-      </if>
-      <if test="uid != null" >
-        uid = #{uid,jdbcType=BIGINT},
-      </if>
-      <if test="orderNum != null" >
-        order_num = #{orderNum,jdbcType=VARCHAR},
-      </if>
       <if test="orderName != null" >
         order_name = #{orderName,jdbcType=VARCHAR},
-      </if>
-      <if test="orderAddress != null" >
-        order_address = #{orderAddress,jdbcType=VARCHAR},
-      </if>
-      <if test="orderPrice != null" >
-        order_price = #{orderPrice,jdbcType=DECIMAL},
       </if>
       <if test="orderStatus != null" >
         order_status = #{orderStatus,jdbcType=TINYINT},
@@ -249,16 +209,10 @@
         receive_type = #{receiveType,jdbcType=INTEGER},
       </if>
       <if test="expressId != null" >
-        express_id = #{expressId,jdbcType=BIGINT},
+        express_id = #{expressId,jdbcType=VARCHAR},
       </if>
       <if test="addrId != null" >
         addr_id = #{addrId,jdbcType=BIGINT},
-      </if>
-      <if test="couponPrice != null" >
-        coupon_price = #{couponPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="realPrice != null" >
-        real_price = #{realPrice,jdbcType=DECIMAL},
       </if>
       <if test="needInvoice != null" >
         need_invoice = #{needInvoice,jdbcType=INTEGER},
@@ -272,15 +226,6 @@
       <if test="deleteFlag != null" >
         delete_flag = #{deleteFlag,jdbcType=INTEGER},
       </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsList != null" >
-        goods_list = #{goodsList,jdbcType=LONGVARCHAR},
-      </if>
       <if test="invoiceDesc != null" >
         invoice_desc = #{invoiceDesc,jdbcType=LONGVARCHAR},
       </if>
@@ -289,5 +234,66 @@
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="selectByOrderDetailNum" resultType="com.cj.shop.api.entity.OrderDetailWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from s_order
+    where order_num = #{orderNum}
+  </select>
+  <update id="updateDetailByOrderNum" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs" >
+    update s_order_detail
+    <set >
+      <if test="orderName != null" >
+        order_name = #{orderName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payStatus != null" >
+        pay_status = #{payStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payType != null" >
+        pay_type = #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="deliveryCash != null" >
+        delivery_cash = #{deliveryCash,jdbcType=DECIMAL},
+      </if>
+      <if test="deliveryProtect != null" >
+        delivery_protect = #{deliveryProtect,jdbcType=INTEGER},
+      </if>
+      <if test="receiveType != null" >
+        receive_type = #{receiveType,jdbcType=INTEGER},
+      </if>
+      <if test="expressId != null" >
+        express_id = #{expressId,jdbcType=VARCHAR},
+      </if>
+      <if test="addrId != null" >
+        addr_id = #{addrId,jdbcType=BIGINT},
+      </if>
+      <if test="needInvoice != null" >
+        need_invoice = #{needInvoice,jdbcType=INTEGER},
+      </if>
+      <if test="orderScores != null" >
+        order_scores = #{orderScores,jdbcType=DECIMAL},
+      </if>
+      <if test="deliveryTime != null" >
+        delivery_time = #{deliveryTime,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      </if>
+      <if test="invoiceDesc != null" >
+        invoice_desc = #{invoiceDesc,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="properties != null" >
+        properties = #{properties,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where order_num = #{orderNum}
   </update>
 </mapper>

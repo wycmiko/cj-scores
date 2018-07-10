@@ -25,6 +25,8 @@ public class OrderWithBLOBs extends PropertyEntity implements Serializable {
 
     private Integer orderStatus;
 
+    private Long closeTime;
+
     private Double deliveryCash;
 
     private Integer deliveryProtect;

@@ -15,10 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -138,6 +135,23 @@ public class FileUploadController {
         return result;
     }
 
+    @DeleteMapping("/deleteFile")
+    public Result deleteFile(String fileId) {
+        //构造返回对象
+        Result result = null;
+        FileUpload fileUpload = null;
+        try {
+            log.info("deleteFile.uploadFilePc begin");
+            seaweedFSUtil.deleteFile(fileId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            //异常情况
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.UPLOAD_FAILURE);
+            result.setData("文件不存在");
+            log.error("FileUploadController.uploadFilePc error:{}", e.getMessage());
+        }
+        return result;
+    }
 
     private int insertRecord(FileUpload fileUpload, String fileName, String suffix, String token, HttpServletRequest request
             , Map<String, String> fileNameMap, int role, long fileSize) throws Exception {
@@ -151,6 +165,7 @@ public class FileUploadController {
         fileUpload.setReqIp(IPAddressUtil.getIpAddressNotInProxy(request));
         fileUpload.setRole((short) role);
         fileUpload.setFileUrl(fileNameMap.get("file_url"));
+        fileUpload.setFileId(fileNameMap.get("file_id"));
         fileUpload.setFileSize(fileSize);
         int i = fileUploadSerivce.addRecord(fileUpload);
         log.info("insert into fileupload table {}", i > 0);

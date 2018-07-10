@@ -24,6 +24,7 @@ public interface GoodsStockMapper {
     GoodsStockDto selectByGoodsType(@Param("id") Long id);
 
     GoodsStockDto selectBySgoodId(@Param("sid") String sid);
+
     int deleteBySgoodId(@Param("sid") String sid);
 
     int updateByPrimaryKeySelective(GoodsStock record);
@@ -31,10 +32,19 @@ public interface GoodsStockMapper {
     /**
      * 统计某商品总的库存量
      */
-    Integer getTotalStockNum(@Param("goodSn")String goodsSn);
+    Integer getTotalStockNum(@Param("goodSn") String goodsSn);
+
+    /**
+     * type=1 增加
+     * type=2 减少 相应的库存数量
+     *
+     * @param sGoodsSn
+     * @return
+     */
+    int updateGoodsStock(@Param("sGoodsSn") String sGoodsSn, @Param("type") int type, @Param("nums") int num);
 
     /**
      * 统计某商品的价格阈值
      */
-    PriceLimit getPriceLimit(@Param("goodSn")String goodSn);
+    PriceLimit getPriceLimit(@Param("goodSn") String goodSn);
 }

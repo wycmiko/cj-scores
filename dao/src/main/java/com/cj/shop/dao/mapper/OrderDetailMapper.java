@@ -11,6 +11,10 @@ public interface OrderDetailMapper {
 
     OrderDetailWithBLOBs selectByPrimaryKey(Long id);
 
+    OrderDetailWithBLOBs selectByOrderDetailNum(Long id);
+
     int updateByPrimaryKeySelective(OrderDetailWithBLOBs record);
+
+    int updateDetailByOrderNum(OrderDetailWithBLOBs record);
 
 }

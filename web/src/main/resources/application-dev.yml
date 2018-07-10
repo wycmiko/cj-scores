@@ -45,19 +45,12 @@ spring:
       max-active: 1000
       max-wait: -1
     expire-time: 1200
-#  rabbitmq:
-#      host: 172.28.3.45
-#      port: 5672
-#      username: test
-#      password: test
-#      cache:
-#        channel:
-#          size: 100
-#          checkout-timeout: 1000
-#        connection:
-#            size: 5
-#      connection-timeout: 3000
-#      virtual-host: /
+  rabbitmq:
+      host: localhost
+      port: 5672
+      username: guest
+      password: guest
+      publisher-confirms: true
 
 
 # file-system config

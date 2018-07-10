@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class GoodsSpecRequest extends BaseRequest {
+public class GoodsSpecRequest{
     private Long id;
     @JsonProperty("parent_id")
     private Long parentId;

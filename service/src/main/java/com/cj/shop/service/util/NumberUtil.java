@@ -25,7 +25,7 @@ public class NumberUtil {
 
     /**
      * 获取订单编号
-     *
+     * rule: yyyyMMdd+Hash+当日自增长订单笔数 24 bit
      * @return
      */
     public static String getOrderIdByUUId() {
@@ -38,7 +38,7 @@ public class NumberUtil {
             }
             String orderNum = DateUtils.getShortString() + String.valueOf(hashCodeV);
             ORDER_AUTOINCRENUM.increment();
-            String format = String.format("%09d", ORDER_AUTOINCRENUM.longValue());
+            String format = String.format("%07d", ORDER_AUTOINCRENUM.longValue());
             return orderNum + format;
         } finally {
 //            lock.unlock();
@@ -46,8 +46,8 @@ public class NumberUtil {
     }
 
     /**
-     * 获取商品编号
-     *
+     * 获取商品编号 7bit
+     * rule: hash
      * @return
      */
     public static String getGoodsNum() {

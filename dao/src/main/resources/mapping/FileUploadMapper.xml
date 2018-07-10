@@ -29,6 +29,9 @@
             <if test="fileUrl != null">
                 file_url,
             </if>
+            <if test="fileId != null">
+                file_id,
+            </if>
             <if test="fileSize != null">
                 file_size,
             </if>
@@ -51,6 +54,9 @@
             </if>
             <if test="fileUrl != null">
                 #{fileUrl},
+            </if>
+            <if test="fileId != null">
+                #{fileId},
             </if>
             <if test="fileSize != null">
                 #{fileSize},

@@ -1,6 +1,9 @@
-#pagehelper·ÖÒ³²å¼þ
+
+#pagehelperï¿½ï¿½Ò³ï¿½ï¿½ï¿½
 pagehelper:
     helperDialect: mysql
     reasonable: true
     supportMethodsArguments: true
     params: count=countSql
+server:
+  port: 8887

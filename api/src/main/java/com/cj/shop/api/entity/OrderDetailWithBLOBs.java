@@ -19,8 +19,6 @@ public class OrderDetailWithBLOBs extends PropertyEntity implements Serializable
 
     private String orderName;
 
-    private String orderAddress;
-
     private Double orderPrice;
 
     private Integer orderStatus;
@@ -35,7 +33,7 @@ public class OrderDetailWithBLOBs extends PropertyEntity implements Serializable
 
     private Integer receiveType;
 
-    private Long expressId;
+    private String expressId;
 
     private Long addrId;
 
