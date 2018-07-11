@@ -2,8 +2,7 @@ package com.cj.shop.api.interf;
 
 import com.cj.shop.api.entity.GoodsType;
 import com.cj.shop.api.param.GoodsTypeRequest;
-
-import java.util.List;
+import com.cj.shop.api.response.PagedList;
 /**
  * @author yuchuanWeng(wycmiko @ foxmail.com)
  * @date 2018/6/22
@@ -24,7 +23,7 @@ public interface GoodsTypeApi {
      * 查询全部商品分类
      * 三级对应关系
      */
-    List<GoodsType> getAllGoodsType(String type);
+    PagedList<GoodsType> getAllGoodsType(String types, Integer pageNum, Integer pageSize);
 
     GoodsType getGoodsTypeById(Long typeId, String type);
 

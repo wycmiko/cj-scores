@@ -1,6 +1,9 @@
 package com.cj.shop.api.interf;
 
+import com.cj.shop.api.entity.OrderDetailWithBLOBs;
 import com.cj.shop.api.param.OrderRequest;
+import com.cj.shop.api.response.dto.OrderDetailDto;
+import com.cj.shop.api.response.dto.OrderDto;
 
 /**
  * 订单api
@@ -17,17 +20,18 @@ public interface OrderApi {
     String insertOrder(OrderRequest request);
 
     /**
-     * 查询单订单详情
+     * 根据订单编号 查询单订单详情
      */
+    OrderDto getOrderById(String orderNum, Long uid);
 
     /**
-     * 查询订单明细详情
+     * 根据订单编号 查询订单明细详情
      */
-
+    OrderDetailDto getOrderDetailById(String orderNum, Long uid);
 
     /**
      * 修改订单状态
      */
-    String updateOrderStatus(String orderId, String status);
+    String updateOrderStatus(OrderDetailWithBLOBs bloBs);
 
 }

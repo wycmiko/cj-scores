@@ -171,7 +171,7 @@
         <if test="type == 2">
             stock_num = stock_num-#{nums}
         </if>
-        where goods_sn = #{goodSn}
+        where s_goods_sn = #{sGoodsSn}
     </update>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

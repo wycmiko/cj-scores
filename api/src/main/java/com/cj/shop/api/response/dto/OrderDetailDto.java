@@ -1,7 +1,7 @@
 package com.cj.shop.api.response.dto;
 
+import com.cj.shop.api.entity.OrderGoods;
 import com.cj.shop.api.entity.UserAddress;
-import com.cj.shop.api.response.GoodsOrder;
 import com.cj.shop.common.model.PropertyEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -9,12 +9,13 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
 public class OrderDetailDto extends PropertyEntity implements Serializable {
     @JsonProperty("detail_id")
-    private Long id;
+    private Long detailId;
     @JsonProperty("shop_id")
     private Long shopId;
     @JsonProperty("shop_name")
@@ -42,12 +43,16 @@ public class OrderDetailDto extends PropertyEntity implements Serializable {
 
     @JsonProperty("receive_type")
     private Integer receiveType;
-
+    /**
+     * 物流单号
+     */
     @JsonProperty("express_id")
     private String expressId;
 
     @JsonProperty("addr_id")
     private Long addrId;
+    @JsonProperty("close_time")
+    private Long closeTime;
 
     private UserAddress address;
 
@@ -78,7 +83,9 @@ public class OrderDetailDto extends PropertyEntity implements Serializable {
      * json-properties
      */
     @JsonProperty("goods_list")
-    private List<GoodsOrder> goodsList;
+    Map<Long, List<OrderGoods>> goodsList;
+    @JsonProperty("goods_list_json")
+    private String goodsListJson;
     /**
      * json-properties
      */

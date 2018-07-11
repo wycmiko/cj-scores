@@ -468,6 +468,28 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     }
 
     /**
+     * type=1 增加
+     * type=2 减少 相应的库存数量
+     *
+     * @param sGoodSn 小商品编号
+     * @param type
+     * @param num     商品数量
+     * @return
+     */
+    public String updateStockNum(String sGoodSn, int type, int num) {
+        GoodsStockDto stockDto = goodsStockMapper.selectBySgoodId(sGoodSn);
+        if (stockDto == null) {
+            return ResultMsg.STOCK_NOT_EXISTS;
+        }
+        int i = goodsStockMapper.updateGoodsStock(sGoodSn, type, num);
+        if (i > 0) {
+            jedisCache.hdel(STOCK_KEY, stockDto.getStockId().toString());
+            jedisCache.hset(STOCK_KEY, stockDto.getStockId().toString(), getStockById(stockDto.getStockId()));
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
      * 查询全部商品库存
      *
      * @param request

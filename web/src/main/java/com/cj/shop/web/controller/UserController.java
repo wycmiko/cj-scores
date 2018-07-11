@@ -3,14 +3,14 @@ package com.cj.shop.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cj.shop.api.entity.UserAddress;
-import com.cj.shop.api.param.CartDeleteRequest;
-import com.cj.shop.api.param.GoodsVisitRequest;
-import com.cj.shop.api.param.UserAddressRequest;
-import com.cj.shop.api.param.UserCartRequest;
+import com.cj.shop.api.param.*;
+import com.cj.shop.api.param.select.OrderSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsVisitDto;
+import com.cj.shop.api.response.dto.OrderDetailDto;
 import com.cj.shop.api.response.dto.UserCartDto;
 import com.cj.shop.service.impl.GoodsService;
+import com.cj.shop.service.impl.OrderService;
 import com.cj.shop.service.impl.UserService;
 import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
@@ -40,6 +40,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private GoodsService goodsService;
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 查询地址详情
@@ -392,6 +394,88 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("getCartGoods error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 用户提交订单
+     */
+    @PostMapping("/submitOrder")
+    public Result submitOrder(@RequestBody OrderRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(request.getToken(), request.getGoodsList(),
+                    request.getAddrId()) || request.getGoodsList().isEmpty()) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(request.getToken())) {
+                log.info("getCartGoods 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(request.getToken());
+            request.setUid(uid);
+            String s = orderService.insertOrder(request);
+            result = ResultUtil.getVaildResult(s, result);
+            log.info("getCartGoods end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getCartGoods error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 用户提交订单
+     */
+    @GetMapping("/orderDetail")
+    public Result orderDetail(String token, String order_num) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(order_num, token)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(token)) {
+                log.info("getCartGoods 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(token);
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            OrderDetailDto detailById = orderService.getOrderDetailById(order_num, uid);
+            result.setData(detailById);
+            log.info("getCartGoods end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getCartGoods error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    @PostMapping("/orderList")
+    public Result orderList(@RequestBody OrderSelect select) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(select.getToken())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(select.getToken())) {
+                log.info("user-orderList 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            select.setUid(tokenValidator.getUidByToken(select.getToken()));
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(orderService.getAllOrders(select));
+            log.info("user-orderList end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("user-orderList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

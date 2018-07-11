@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 订单Dto
@@ -44,6 +45,11 @@ public class OrderDto implements Serializable {
     private String createTime;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
+    @JsonProperty("goods_list_json")
+    private String goodsListJson;
+    /**
+     * 根据供应商分组
+     */
     @JsonProperty("goods_list")
-    private List<OrderGoods> goodsList;
+    private Map<Long, List<OrderGoods>> goodsList;
 }

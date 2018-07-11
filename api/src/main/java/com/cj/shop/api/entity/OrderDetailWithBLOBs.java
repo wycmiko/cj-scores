@@ -23,6 +23,15 @@ public class OrderDetailWithBLOBs extends PropertyEntity implements Serializable
 
     private Integer orderStatus;
 
+    /**
+     * 支付渠道id
+     */
+    private String tradeNo;
+    /**
+     * 支付平台id
+     */
+    private String platTradeNo;
+
     private Integer payStatus;
 
     private Integer payType;

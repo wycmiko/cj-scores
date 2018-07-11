@@ -17,6 +17,7 @@ public class DateUtils {
      */
     public static final SimpleDateFormat COMMON_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static final SimpleDateFormat SHORTDATEFORMAT = new SimpleDateFormat("yyyyMMdd");
+    public static final SimpleDateFormat DATESECONDFORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
     public static final SimpleDateFormat SHORT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static final SimpleDateFormat LONG_DATE_FORMAT_SSS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     public static final String NOT_START_CODE = "1";
@@ -77,6 +78,15 @@ public class DateUtils {
      */
     public static String getShortMonthDay(String date) {
         return SHORTDATEFORMAT.format(date);
+    }
+
+    /**
+     * yyyyMMdd 传入日期
+     *
+     * @return
+     */
+    public static String getShortMonthDaySeconds() {
+        return DATESECONDFORMAT.format(new Date());
     }
 
 

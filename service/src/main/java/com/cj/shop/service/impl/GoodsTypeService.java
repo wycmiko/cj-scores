@@ -3,12 +3,15 @@ package com.cj.shop.service.impl;
 import com.cj.shop.api.entity.GoodsType;
 import com.cj.shop.api.interf.GoodsTypeApi;
 import com.cj.shop.api.param.GoodsTypeRequest;
+import com.cj.shop.api.response.PagedList;
 import com.cj.shop.dao.mapper.GoodsTypeMapper;
 import com.cj.shop.service.cfg.JedisCache;
 import com.cj.shop.service.consts.ResultMsg;
 import com.cj.shop.service.util.PropertiesUtil;
 import com.cj.shop.service.util.ResultMsgUtil;
 import com.cj.shop.service.util.ValidatorUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,22 +89,29 @@ public class GoodsTypeService implements GoodsTypeApi {
      * ]}
      */
     @Override
-    public List<GoodsType> getAllGoodsType(String types) {
+    public PagedList<GoodsType> getAllGoodsType(String types, Integer pageNum, Integer pageSize) {
+        Page<Object> objects = null;
+        if (pageNum != null && pageSize != null) {
+            objects = PageHelper.startPage(pageNum, pageSize);
+        } else {
+            pageNum = 0;
+            pageSize = 0;
+        }
         //查出顶级父类ID列表
-        List<GoodsType> returnList = new ArrayList<>();
         List<Long> ids = ValidatorUtil.checkNotEmptyList(goodsTypeMapper.selectIds(1, null, types));
+        List<GoodsType> returnList = new ArrayList<>();
         if (!ids.isEmpty()) {
             for (Long id : ids) {
                 String key = JEDIS_PREFIX_GOODS_TYPE + "detail:" + id + types;
-                GoodsType hget = jedisCache.hget(key, id.toString(), GoodsType.class);
+                GoodsType hget = jedisCache.get(key, GoodsType.class);
                 if (hget == null) {
-                    hget = recursiveGoodsType(id, types);
-                    jedisCache.hset(key, id.toString(), hget);
+                    hget = getGoodsTypeById(id, types);
                 }
                 returnList.add(hget);
             }
         }
-        return returnList;
+        PagedList<GoodsType> pagedList = new PagedList<>(returnList, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
+        return pagedList;
     }
 
     @Override

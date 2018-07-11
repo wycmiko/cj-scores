@@ -26,6 +26,7 @@ public class NumberUtil {
     /**
      * 获取订单编号
      * rule: yyyyMMdd+Hash+当日自增长订单笔数 24 bit
+     *
      * @return
      */
     public static String getOrderIdByUUId() {
@@ -36,10 +37,16 @@ public class NumberUtil {
                 //避免负数
                 hashCodeV = -hashCodeV;
             }
-            String orderNum = DateUtils.getShortString() + String.valueOf(hashCodeV);
+            String s = String.valueOf(hashCodeV);
+            if (s.length() >= 9) {
+                s = s.substring(0,9);
+            } else {
+                s = String.format("%09d", hashCodeV);
+            }
+            String orderNum = DateUtils.getShortMonthDaySeconds() + s;
             ORDER_AUTOINCRENUM.increment();
-            String format = String.format("%07d", ORDER_AUTOINCRENUM.longValue());
-            return orderNum + format;
+            String format2 = String.format("%09d", ORDER_AUTOINCRENUM.longValue());
+            return orderNum + format2;
         } finally {
 //            lock.unlock();
         }
@@ -48,6 +55,7 @@ public class NumberUtil {
     /**
      * 获取商品编号 7bit
      * rule: hash
+     *
      * @return
      */
     public static String getGoodsNum() {
@@ -57,7 +65,13 @@ public class NumberUtil {
             hashCodeV = -hashCodeV;
         }
         GOODS_AUTOINCRENUM.increment();
-        String orderNum = String.valueOf(hashCodeV).substring(0, 6) + GOODS_AUTOINCRENUM.longValue();
+        String s = String.valueOf(hashCodeV);
+        if (s.length() >= 6) {
+            s = s.substring(0,6);
+        } else {
+            s = String.format("%06d", hashCodeV);
+        }
+        String orderNum = s + GOODS_AUTOINCRENUM.longValue();
         return orderNum;
     }
 
@@ -92,7 +106,8 @@ public class NumberUtil {
 
 
     public static void main(String[] args) {
-        log.info(getOrderIdByUUId());
+        String uuId = getOrderIdByUUId();
+        log.info("编号{} ,长度： {}", uuId, uuId.length());
         log.info(getGoodsNum());
         List<Long> objects = new ArrayList<>();
         objects.add(1L);

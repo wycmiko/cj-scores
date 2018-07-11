@@ -19,6 +19,7 @@ public class ResultMsg {
 
     public static final String TOO_MANY_STOCKS = "不能超过最大库存数";
     public static final String NOT_EXIST_STOCK = "没有剩余库存了哦";
+    public static final String ORDER_NOT_EXIST = "订单不存在";
     public static final String GOOD_NAME_TOO_LONG = "商品名称过长";
     public static final String ADDRESS_NOT_EXISTS = "地址不存在";
     public static final String TAG_NOT_EXISTS = "标签不存在";

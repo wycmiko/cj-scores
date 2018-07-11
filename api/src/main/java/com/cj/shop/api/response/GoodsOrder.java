@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class GoodsOrder implements Serializable {
+    private Long cart_id;
     private String s_goods_sn;
     private Integer goods_num;
 }

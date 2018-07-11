@@ -13,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 /**
  * 后台管理 - 商品管理 Rest服务
  *
@@ -38,7 +36,7 @@ public class GoodsTypeManageController {
      * @return
      */
     @GetMapping("/getTypeList")
-    public Result getTypeList(String type) {
+    public Result getTypeList(String type, Integer page_num, Integer page_size) {
         //token校验
         Result result = null;
         try {
@@ -47,8 +45,7 @@ public class GoodsTypeManageController {
         }
             log.info("getTypeList");
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            List<GoodsType> typeById = goodsTypeService.getAllGoodsType(type);
-            result.setData(typeById);
+            result.setData(goodsTypeService.getAllGoodsType(type, page_num, page_size));
             log.info("getTypeList end");
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,7 +119,7 @@ public class GoodsTypeManageController {
         Result result = null;
         try {
             log.info("updateType begin");
-            if (CommandValidator.isEmpty(request.getId(), request.getTypeName())) {
+            if (CommandValidator.isEmpty(request.getId())) {
                 return CommandValidator.paramEmptyResult();
             }
             String s = goodsTypeService.updateGoodsType(request);

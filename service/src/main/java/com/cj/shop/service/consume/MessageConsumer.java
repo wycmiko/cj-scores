@@ -1,10 +1,24 @@
 package com.cj.shop.service.consume;
 
+import com.alibaba.fastjson.JSON;
+import com.cj.shop.api.entity.OrderDetailWithBLOBs;
+import com.cj.shop.api.entity.OrderGoods;
+import com.cj.shop.api.entity.OrderMq;
+import com.cj.shop.api.response.dto.OrderDto;
+import com.cj.shop.dao.mapper.OrderMapper;
+import com.cj.shop.service.cfg.JedisCache;
+import com.cj.shop.service.impl.GoodsExtensionService;
+import com.cj.shop.service.impl.OrderService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author yuchuanWeng(wycmiko @ foxmail.com)
@@ -25,14 +39,70 @@ public class MessageConsumer {
      */
     @RabbitListener(queues = "order-status")
     @RabbitHandler
-    public void process(Message message) {
+    public void process(String message) {
         try {
-            final String mess = new String(message.getBody());
-            log.info("订单定时回溯 判断状态 消息接受的内容:{}", mess);
-
+            log.info("订单定时回溯 判断状态 消息接受的内容:{}", message);
+            final OrderMq orderMq = JSON.parseObject(message, OrderMq.class);
+            switch (orderMq.getType()) {
+                case 1:
+                    //30分钟未付款校验
+                    payStatusCheck(orderMq.getOrderNum());
+                    break;
+                case 2:
+                    //15天后自动确认收货校验
+                    break;
+                default:
+                    break;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+        }
+    }
+
+    @Autowired
+    private OrderMapper orderMapper;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private GoodsExtensionService goodsExtensionService;
+    private static final ReentrantLock lock  = new ReentrantLock();
+    @Autowired
+    private JedisCache jedisCache;
+
+    /**
+     * 30min 未付款自动关闭订单
+     *
+     * @param orderNum
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void payStatusCheck(String orderNum) {
+        try {
+            lock.lock();
+            OrderDto orderDto = orderMapper.selectByOrderNum(orderNum, null);
+            if (orderDto != null) {
+                if (orderDto.getOrderStatus() == 1) {
+                    //关闭订单
+                    OrderDetailWithBLOBs bloBs = new OrderDetailWithBLOBs();
+                    bloBs.setOrderNum(orderNum);
+                    bloBs.setOrderStatus(5);
+                    String s = orderService.updateOrderStatus(bloBs);
+                    log.info("订单:{} 超时取消, 结果:{}", orderNum, s);
+                    orderDto = orderService.getOrderById(orderNum, null);
+                    Map<Long, List<OrderGoods>> listMap = orderDto.getGoodsList();
+                    if (listMap != null && !listMap.isEmpty()) {
+                        listMap.forEach((k, v) -> {
+                            v.forEach(x -> {
+                                //恢复库存
+                                String s1 = goodsExtensionService.updateStockNum(x.getSGoodsSn(), 1, x.getGoodsNum());
+                                log.info("incre {} goods stock num={}", x.getSGoodsSn(), s1);
+                            });
+                        });
+                    }
+                }
+            }
+        } finally {
+            lock.unlock();
         }
     }
 }
