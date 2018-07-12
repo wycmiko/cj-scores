@@ -68,6 +68,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("getGoodsSupplyDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -98,6 +99,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("supplyList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -123,6 +125,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("addSupply error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -148,6 +151,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("updateSupply error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -174,6 +178,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("getGoodsBrandDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -202,6 +207,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("brandList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -226,6 +232,7 @@ public class GoodsManageController {
             log.error("addBrand error {}", e.getMessage());
             e.printStackTrace();
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -250,6 +257,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("updateBrand error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -283,6 +291,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("addSpec error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -307,6 +316,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("updateSpec error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -333,6 +343,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("getSpecDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -359,6 +370,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("specList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -385,6 +397,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("tagList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -411,6 +424,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("tagDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -435,6 +449,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("addTag error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -459,6 +474,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("updateTag error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -484,6 +500,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("addUnit error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -508,6 +525,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("updateUnit error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -533,6 +551,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("unitList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -558,6 +577,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("getUnitDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -584,6 +604,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("addStock error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -608,6 +629,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("updateStock error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -634,6 +656,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("getAllStock error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -659,6 +682,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("stockDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -692,6 +716,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("addGoods error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -718,6 +743,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("goodsDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -755,6 +781,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("detail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -785,6 +812,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("goodsList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -810,6 +838,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("updateGood error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -842,6 +871,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("exportGoods error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -864,6 +894,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("addGoodsCash error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -886,6 +917,7 @@ public class GoodsManageController {
             e.printStackTrace();
             log.error("goodsCash error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }

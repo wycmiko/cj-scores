@@ -79,6 +79,10 @@ public class OrderDetailDto extends PropertyEntity implements Serializable {
 
     @JsonProperty("create_time")
     private String createTime;
+    @JsonProperty("trade_no")
+    private String tradeNo;
+    @JsonProperty("plat_trade_no")
+    private String platTradeNo;
     /**
      * json-properties
      */

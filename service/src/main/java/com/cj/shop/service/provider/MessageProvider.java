@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
- * RabbitMQ消息生产者
+ * RabbitMQ 延迟队列之消息生产者
  * @author yuchuanWeng(wycmiko @ foxmail.com)
  * @date 2018/7/10
  * @since 1.0

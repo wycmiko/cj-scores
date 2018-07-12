@@ -22,6 +22,7 @@ public abstract class ResultConsts {
     public static final String TOKEN_FAILURE_MSG = "err:1101";
     public static final String USER_DONE_MSG = "err:1105";
     public static final String ERR_SERVER_DATA = "服务器繁忙 请稍后再试";
+    public static final String ERR_SERVER_MSG = "服务器出错了 原因：";
     //服务器错误
     public static final String SERVER_ERROR = "err:1000";
     //参数为空

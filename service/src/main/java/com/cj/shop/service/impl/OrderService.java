@@ -175,7 +175,7 @@ public class OrderService implements OrderApi {
                     int i2 = orderMapper.deleteByPrimaryKey(bloBs.getId());
                     log.info("insert s_order_detail fail roll back={}", i2);
                 }
-                return ResultMsgUtil.dmlResult(i1);
+                return ResultMsgUtil.dmlResult(i1)+"-"+orderNum;
             }
         } finally {
             reentrantLock.unlock();
@@ -250,7 +250,24 @@ public class OrderService implements OrderApi {
         if (orderDto == null) {
             return ResultMsg.ORDER_NOT_EXIST;
         }
+        if (bloBs.getOrderStatus() == 5) {
+            //如果为取消的话 那么恢复库存
+            orderDto = getOrderById(orderNum, null);
+            Map<Long, List<OrderGoods>> listMap = orderDto.getGoodsList();
+            if (listMap != null && !listMap.isEmpty()) {
+                listMap.forEach((k, v) -> {
+                    v.forEach(x -> {
+                        //恢复库存
+                        String s1 = goodsExtensionService.updateStockNum(x.getSGoodsSn(), 1, x.getGoodsNum());
+                        log.info("incre {} goods stock num={}", x.getSGoodsSn(), s1);
+                    });
+                });
+            }
+        }
         OrderWithBLOBs orderWithBLOBs = new OrderWithBLOBs();
+        if (bloBs.getUid() != null) {
+            orderWithBLOBs.setUid(bloBs.getUid());
+        }
         orderWithBLOBs.setOrderNum(orderNum);
         orderWithBLOBs.setOrderStatus(bloBs.getOrderStatus());
         int i = orderMapper.updateByOrderNum(orderWithBLOBs);

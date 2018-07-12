@@ -39,7 +39,7 @@ public class ResultUtil {
             result.setData(content);
         } else {
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.RESPONSE_FAILURE_MSG);
-            result.setData(s);
+            result.setData(content);
         }
         return result;
     }

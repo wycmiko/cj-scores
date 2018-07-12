@@ -2,7 +2,6 @@ package com.cj.shop.service.consume;
 
 import com.alibaba.fastjson.JSON;
 import com.cj.shop.api.entity.OrderDetailWithBLOBs;
-import com.cj.shop.api.entity.OrderGoods;
 import com.cj.shop.api.entity.OrderMq;
 import com.cj.shop.api.response.dto.OrderDto;
 import com.cj.shop.dao.mapper.OrderMapper;
@@ -16,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -66,7 +63,7 @@ public class MessageConsumer {
     private OrderService orderService;
     @Autowired
     private GoodsExtensionService goodsExtensionService;
-    private static final ReentrantLock lock  = new ReentrantLock();
+    private static final ReentrantLock lock = new ReentrantLock();
     @Autowired
     private JedisCache jedisCache;
 
@@ -88,18 +85,9 @@ public class MessageConsumer {
                     bloBs.setOrderStatus(5);
                     String s = orderService.updateOrderStatus(bloBs);
                     log.info("订单:{} 超时取消, 结果:{}", orderNum, s);
-                    orderDto = orderService.getOrderById(orderNum, null);
-                    Map<Long, List<OrderGoods>> listMap = orderDto.getGoodsList();
-                    if (listMap != null && !listMap.isEmpty()) {
-                        listMap.forEach((k, v) -> {
-                            v.forEach(x -> {
-                                //恢复库存
-                                String s1 = goodsExtensionService.updateStockNum(x.getSGoodsSn(), 1, x.getGoodsNum());
-                                log.info("incre {} goods stock num={}", x.getSGoodsSn(), s1);
-                            });
-                        });
-                    }
                 }
+            } else {
+                log.info("订单：{} 状态 无须修改", orderNum);
             }
         } finally {
             lock.unlock();

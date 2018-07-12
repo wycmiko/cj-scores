@@ -51,6 +51,7 @@ public class GoodsTypeManageController {
             e.printStackTrace();
             log.error("getTypeList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -78,6 +79,7 @@ public class GoodsTypeManageController {
             e.printStackTrace();
             log.error("getGoodsTypeDetail error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -104,6 +106,7 @@ public class GoodsTypeManageController {
             e.printStackTrace();
             log.error("addType error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -129,6 +132,7 @@ public class GoodsTypeManageController {
             e.printStackTrace();
             log.error("updateType error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }
@@ -154,6 +158,7 @@ public class GoodsTypeManageController {
             e.printStackTrace();
             log.error("deleteType error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG+e.getMessage());
         }
         return result;
     }

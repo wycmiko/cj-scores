@@ -2,6 +2,7 @@ package com.cj.shop.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cj.shop.api.entity.OrderDetailWithBLOBs;
 import com.cj.shop.api.entity.UserAddress;
 import com.cj.shop.api.param.*;
 import com.cj.shop.api.param.select.OrderSelect;
@@ -419,6 +420,17 @@ public class UserController {
             long uid = tokenValidator.getUidByToken(request.getToken());
             request.setUid(uid);
             String s = orderService.insertOrder(request);
+            if (s.contains("-")) {
+                String orderNum = s.split("-")[1];
+                OrderDetailDto dto = orderService.getOrderDetailById(orderNum, request.getUid());
+                JSONObject obj = new JSONObject();
+                obj.put("order_num", dto.getOrderNum());
+                obj.put("order_name", dto.getOrderName());
+                obj.put("order_price", dto.getOrderPrice());
+                result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+                result.setData(obj);
+                return result;
+            }
             result = ResultUtil.getVaildResult(s, result);
             log.info("getCartGoods end");
         } catch (Exception e) {
@@ -430,7 +442,7 @@ public class UserController {
     }
 
     /**
-     * 用户提交订单
+     * 查询订单详情
      */
     @GetMapping("/orderDetail")
     public Result orderDetail(String token, String order_num) {
@@ -452,6 +464,45 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             log.error("getCartGoods error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+
+    /**
+     * 用户取消订单
+     */
+    @PostMapping("/cancelOrder")
+    public Result cancelOrder(@RequestBody OrderSelect orderSelect) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(orderSelect.getOrderNum(), orderSelect.getToken())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(orderSelect.getToken())) {
+                log.info("cancelOrder 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(orderSelect.getToken());
+            log.info("uid={} cancelOrder ", uid);
+            OrderDetailDto byId = orderService.getOrderDetailById(orderSelect.getOrderNum(), orderSelect.getUid());
+            if (byId.getOrderStatus() == 1) {
+                OrderDetailWithBLOBs bloBs = new OrderDetailWithBLOBs();
+                bloBs.setOrderNum(orderSelect.getOrderNum());
+                bloBs.setUid(orderSelect.getUid());
+                bloBs.setOrderStatus(5);
+                String s = orderService.updateOrderStatus(bloBs);
+                result = ResultUtil.getVaildResult(s, result);
+                log.info("cancelOrder end");
+            } else {
+                result = ResultUtil.getVaildResultData(null, result, "当前状态不允许取消");
+                log.info("cancelOrder failure");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("cancelOrder error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

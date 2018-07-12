@@ -1,12 +1,14 @@
 package com.cj.shop.web;
 
 import com.cj.shop.api.entity.OrderGoods;
+import com.cj.shop.api.param.PayLogRequest;
 import com.cj.shop.api.param.select.GoodsSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsDto;
 import com.cj.shop.common.consts.QueueEnum;
 import com.cj.shop.common.utils.DateUtils;
 import com.cj.shop.service.impl.GoodsService;
+import com.cj.shop.service.impl.PayService;
 import com.cj.shop.service.provider.MessageProvider;
 import com.cj.shop.web.utils.UcUtil;
 import com.github.crab2died.ExcelUtils;
@@ -89,12 +91,30 @@ public class WebApplicationTests {
         list.add(o2);
         list.add(o3);
         list.add(o4);
-
         Map<String, List<OrderGoods>> collect = list.stream().collect(Collectors.groupingBy(OrderGoods::getSupplyName));
         collect.forEach((k,v) ->{
             log.info("key={} value={}", k, v);
         });
+    }
 
+
+    @Autowired
+    private PayService payService;
+
+    @Test
+    public void testInserPayLog(){
+        PayLogRequest request = new PayLogRequest();
+        request.setOrderNum("2018071118263342550000001");
+        request.setPlatTradeNo("test1");
+        request.setTradeNo("test1");
+        request.setUid(478L);
+        //支付成功
+        request.setPayStatus(1);
+        //
+        request.setPayTime(DateUtils.getCommonString());
+        request.setTotalPrice(9888.25);
+        request.setPayType(1);
+        payService.insertPayLog(request);
     }
 
 }

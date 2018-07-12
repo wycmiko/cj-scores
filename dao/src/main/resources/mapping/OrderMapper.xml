@@ -234,5 +234,8 @@
             </if>
         </set>
         where order_num = #{orderNum}
+        <if test="uid != null">
+            and uid = #{uid}
+        </if>
     </update>
 </mapper>

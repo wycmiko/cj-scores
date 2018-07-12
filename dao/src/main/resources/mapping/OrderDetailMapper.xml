@@ -1,352 +1,358 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cj.shop.dao.mapper.OrderDetailMapper" >
-  <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.OrderDetailWithBLOBs" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="shop_id" property="shopId" jdbcType="BIGINT" />
-    <result column="uid" property="uid" jdbcType="BIGINT" />
-    <result column="order_num" property="orderNum" jdbcType="VARCHAR" />
-    <result column="order_name" property="orderName" jdbcType="VARCHAR" />
-    <result column="order_price" property="orderPrice" jdbcType="DECIMAL" />
-    <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
-    <result column="pay_status" property="payStatus" jdbcType="TINYINT" />
-    <result column="pay_type" property="payType" jdbcType="TINYINT" />
-    <result column="delivery_cash" property="deliveryCash" jdbcType="DECIMAL" />
-    <result column="delivery_protect" property="deliveryProtect" jdbcType="INTEGER" />
-    <result column="receive_type" property="receiveType" jdbcType="INTEGER" />
-    <result column="express_id" property="expressId" jdbcType="VARCHAR" />
-    <result column="addr_id" property="addrId" jdbcType="BIGINT" />
-    <result column="coupon_price" property="couponPrice" jdbcType="DECIMAL" />
-    <result column="real_price" property="realPrice" jdbcType="DECIMAL" />
-    <result column="need_invoice" property="needInvoice" jdbcType="INTEGER" />
-    <result column="order_scores" property="orderScores" jdbcType="DECIMAL" />
-    <result column="delivery_time" property="deliveryTime" jdbcType="VARCHAR" />
-    <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER" />
-    <result column="update_time" property="updateTime" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.cj.shop.api.entity.OrderDetailWithBLOBs" extends="BaseResultMap" >
-    <result column="goods_list" property="goodsList" jdbcType="LONGVARCHAR" />
-    <result column="invoice_desc" property="invoiceDesc" jdbcType="LONGVARCHAR" />
-    <result column="properties" property="properties" jdbcType="LONGVARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="com.cj.shop.dao.mapper.OrderDetailMapper">
+    <resultMap id="BaseResultMap" type="com.cj.shop.api.entity.OrderDetailWithBLOBs">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="shop_id" property="shopId" jdbcType="BIGINT"/>
+        <result column="uid" property="uid" jdbcType="BIGINT"/>
+        <result column="order_num" property="orderNum" jdbcType="VARCHAR"/>
+        <result column="order_name" property="orderName" jdbcType="VARCHAR"/>
+        <result column="order_price" property="orderPrice" jdbcType="DECIMAL"/>
+        <result column="order_status" property="orderStatus" jdbcType="TINYINT"/>
+        <result column="pay_status" property="payStatus" jdbcType="TINYINT"/>
+        <result column="pay_type" property="payType" jdbcType="TINYINT"/>
+        <result column="delivery_cash" property="deliveryCash" jdbcType="DECIMAL"/>
+        <result column="delivery_protect" property="deliveryProtect" jdbcType="INTEGER"/>
+        <result column="receive_type" property="receiveType" jdbcType="INTEGER"/>
+        <result column="express_id" property="expressId" jdbcType="VARCHAR"/>
+        <result column="addr_id" property="addrId" jdbcType="BIGINT"/>
+        <result column="coupon_price" property="couponPrice" jdbcType="DECIMAL"/>
+        <result column="real_price" property="realPrice" jdbcType="DECIMAL"/>
+        <result column="need_invoice" property="needInvoice" jdbcType="INTEGER"/>
+        <result column="order_scores" property="orderScores" jdbcType="DECIMAL"/>
+        <result column="delivery_time" property="deliveryTime" jdbcType="VARCHAR"/>
+        <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.cj.shop.api.entity.OrderDetailWithBLOBs" extends="BaseResultMap">
+        <result column="goods_list" property="goodsList" jdbcType="LONGVARCHAR"/>
+        <result column="invoice_desc" property="invoiceDesc" jdbcType="LONGVARCHAR"/>
+        <result column="properties" property="properties" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, shop_id, uid, order_num, order_name,  order_price, order_status,
     pay_status, pay_type, delivery_cash, delivery_protect, receive_type, express_id, 
     addr_id, coupon_price, real_price, need_invoice, order_scores, delivery_time, delete_flag, 
     update_time, create_time
   </sql>
-  <sql id="Blob_Column_List" >
+    <sql id="Blob_Column_List">
     goods_list, invoice_desc, properties
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from s_order_detail
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from s_order_detail
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from s_order_detail
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insertSelective" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs" useGeneratedKeys="true" keyProperty="id">
-    insert into s_order_detail
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="shopId != null" >
-        shop_id,
-      </if>
-      <if test="uid != null" >
-        uid,
-      </if>
-      <if test="orderNum != null" >
-        order_num,
-      </if>
-      <if test="orderName != null" >
-        order_name,
-      </if>
-      <if test="orderPrice != null" >
-        order_price,
-      </if>
-      <if test="orderStatus != null" >
-        order_status,
-      </if>
-      <if test="payStatus != null" >
-        pay_status,
-      </if>
-      <if test="payType != null" >
-        pay_type,
-      </if>
-      <if test="deliveryCash != null" >
-        delivery_cash,
-      </if>
-      <if test="deliveryProtect != null" >
-        delivery_protect,
-      </if>
-      <if test="receiveType != null" >
-        receive_type,
-      </if>
-      <if test="expressId != null" >
-        express_id,
-      </if>
-      <if test="addrId != null" >
-        addr_id,
-      </if>
-      <if test="couponPrice != null" >
-        coupon_price,
-      </if>
-      <if test="realPrice != null" >
-        real_price,
-      </if>
-      <if test="needInvoice != null" >
-        need_invoice,
-      </if>
-      <if test="orderScores != null" >
-        order_scores,
-      </if>
-      <if test="deliveryTime != null" >
-        delivery_time,
-      </if>
-      <if test="goodsList != null" >
-        goods_list,
-      </if>
-      <if test="invoiceDesc != null" >
-        invoice_desc,
-      </if>
-      <if test="properties != null" >
-        properties,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="shopId != null" >
-        #{shopId,jdbcType=BIGINT},
-      </if>
-      <if test="uid != null" >
-        #{uid,jdbcType=BIGINT},
-      </if>
-      <if test="orderNum != null" >
-        #{orderNum,jdbcType=VARCHAR},
-      </if>
-      <if test="orderName != null" >
-        #{orderName,jdbcType=VARCHAR},
-      </if>
-      <if test="orderPrice != null" >
-        #{orderPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="orderStatus != null" >
-        #{orderStatus,jdbcType=TINYINT},
-      </if>
-      <if test="payStatus != null" >
-        #{payStatus,jdbcType=TINYINT},
-      </if>
-      <if test="payType != null" >
-        #{payType,jdbcType=TINYINT},
-      </if>
-      <if test="deliveryCash != null" >
-        #{deliveryCash,jdbcType=DECIMAL},
-      </if>
-      <if test="deliveryProtect != null" >
-        #{deliveryProtect,jdbcType=INTEGER},
-      </if>
-      <if test="receiveType != null" >
-        #{receiveType,jdbcType=INTEGER},
-      </if>
-      <if test="expressId != null" >
-        #{expressId,jdbcType=VARCHAR},
-      </if>
-      <if test="addrId != null" >
-        #{addrId,jdbcType=BIGINT},
-      </if>
-      <if test="couponPrice != null" >
-        #{couponPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="realPrice != null" >
-        #{realPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="needInvoice != null" >
-        #{needInvoice,jdbcType=INTEGER},
-      </if>
-      <if test="orderScores != null" >
-        #{orderScores,jdbcType=DECIMAL},
-      </if>
-      <if test="deliveryTime != null" >
-        #{deliveryTime,jdbcType=VARCHAR},
-      </if>
-      <if test="goodsList != null" >
-        #{goodsList,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="invoiceDesc != null" >
-        #{invoiceDesc,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="properties != null" >
-        #{properties,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs" >
-    update s_order_detail
-    <set >
-      <if test="orderName != null" >
-        order_name = #{orderName,jdbcType=VARCHAR},
-      </if>
-      <if test="orderStatus != null" >
-        order_status = #{orderStatus,jdbcType=TINYINT},
-      </if>
-      <if test="payStatus != null" >
-        pay_status = #{payStatus,jdbcType=TINYINT},
-      </if>
-      <if test="payType != null" >
-        pay_type = #{payType,jdbcType=TINYINT},
-      </if>
-      <if test="deliveryCash != null" >
-        delivery_cash = #{deliveryCash,jdbcType=DECIMAL},
-      </if>
-      <if test="deliveryProtect != null" >
-        delivery_protect = #{deliveryProtect,jdbcType=INTEGER},
-      </if>
-      <if test="receiveType != null" >
-        receive_type = #{receiveType,jdbcType=INTEGER},
-      </if>
-      <if test="expressId != null" >
-        express_id = #{expressId,jdbcType=VARCHAR},
-      </if>
-      <if test="addrId != null" >
-        addr_id = #{addrId,jdbcType=BIGINT},
-      </if>
-      <if test="needInvoice != null" >
-        need_invoice = #{needInvoice,jdbcType=INTEGER},
-      </if>
-      <if test="orderScores != null" >
-        order_scores = #{orderScores,jdbcType=DECIMAL},
-      </if>
-      <if test="deliveryTime != null" >
-        delivery_time = #{deliveryTime,jdbcType=VARCHAR},
-      </if>
-      <if test="deleteFlag != null" >
-        delete_flag = #{deleteFlag,jdbcType=INTEGER},
-      </if>
-      <if test="invoiceDesc != null" >
-        invoice_desc = #{invoiceDesc,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="properties != null" >
-        properties = #{properties,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+    <insert id="insertSelective" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into s_order_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">
+                shop_id,
+            </if>
+            <if test="uid != null">
+                uid,
+            </if>
+            <if test="orderNum != null">
+                order_num,
+            </if>
+            <if test="orderName != null">
+                order_name,
+            </if>
+            <if test="orderPrice != null">
+                order_price,
+            </if>
+            <if test="orderStatus != null">
+                order_status,
+            </if>
+            <if test="payStatus != null">
+                pay_status,
+            </if>
+            <if test="payType != null">
+                pay_type,
+            </if>
+            <if test="deliveryCash != null">
+                delivery_cash,
+            </if>
+            <if test="deliveryProtect != null">
+                delivery_protect,
+            </if>
+            <if test="receiveType != null">
+                receive_type,
+            </if>
+            <if test="expressId != null">
+                express_id,
+            </if>
+            <if test="addrId != null">
+                addr_id,
+            </if>
+            <if test="couponPrice != null">
+                coupon_price,
+            </if>
+            <if test="realPrice != null">
+                real_price,
+            </if>
+            <if test="needInvoice != null">
+                need_invoice,
+            </if>
+            <if test="orderScores != null">
+                order_scores,
+            </if>
+            <if test="deliveryTime != null">
+                delivery_time,
+            </if>
+            <if test="goodsList != null">
+                goods_list,
+            </if>
+            <if test="invoiceDesc != null">
+                invoice_desc,
+            </if>
+            <if test="properties != null">
+                properties,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopId != null">
+                #{shopId,jdbcType=BIGINT},
+            </if>
+            <if test="uid != null">
+                #{uid,jdbcType=BIGINT},
+            </if>
+            <if test="orderNum != null">
+                #{orderNum,jdbcType=VARCHAR},
+            </if>
+            <if test="orderName != null">
+                #{orderName,jdbcType=VARCHAR},
+            </if>
+            <if test="orderPrice != null">
+                #{orderPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="payStatus != null">
+                #{payStatus,jdbcType=TINYINT},
+            </if>
+            <if test="payType != null">
+                #{payType,jdbcType=TINYINT},
+            </if>
+            <if test="deliveryCash != null">
+                #{deliveryCash,jdbcType=DECIMAL},
+            </if>
+            <if test="deliveryProtect != null">
+                #{deliveryProtect,jdbcType=INTEGER},
+            </if>
+            <if test="receiveType != null">
+                #{receiveType,jdbcType=INTEGER},
+            </if>
+            <if test="expressId != null">
+                #{expressId,jdbcType=VARCHAR},
+            </if>
+            <if test="addrId != null">
+                #{addrId,jdbcType=BIGINT},
+            </if>
+            <if test="couponPrice != null">
+                #{couponPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="realPrice != null">
+                #{realPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="needInvoice != null">
+                #{needInvoice,jdbcType=INTEGER},
+            </if>
+            <if test="orderScores != null">
+                #{orderScores,jdbcType=DECIMAL},
+            </if>
+            <if test="deliveryTime != null">
+                #{deliveryTime,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsList != null">
+                #{goodsList,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="invoiceDesc != null">
+                #{invoiceDesc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="properties != null">
+                #{properties,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs">
+        update s_order_detail
+        <set>
+            <if test="orderName != null">
+                order_name = #{orderName,jdbcType=VARCHAR},
+            </if>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="payStatus != null">
+                pay_status = #{payStatus,jdbcType=TINYINT},
+            </if>
+            <if test="payType != null">
+                pay_type = #{payType,jdbcType=TINYINT},
+            </if>
+            <if test="deliveryCash != null">
+                delivery_cash = #{deliveryCash,jdbcType=DECIMAL},
+            </if>
+            <if test="deliveryProtect != null">
+                delivery_protect = #{deliveryProtect,jdbcType=INTEGER},
+            </if>
+            <if test="receiveType != null">
+                receive_type = #{receiveType,jdbcType=INTEGER},
+            </if>
+            <if test="expressId != null">
+                express_id = #{expressId,jdbcType=VARCHAR},
+            </if>
+            <if test="addrId != null">
+                addr_id = #{addrId,jdbcType=BIGINT},
+            </if>
+            <if test="needInvoice != null">
+                need_invoice = #{needInvoice,jdbcType=INTEGER},
+            </if>
+            <if test="orderScores != null">
+                order_scores = #{orderScores,jdbcType=DECIMAL},
+            </if>
+            <if test="deliveryTime != null">
+                delivery_time = #{deliveryTime,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="invoiceDesc != null">
+                invoice_desc = #{invoiceDesc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="properties != null">
+                properties = #{properties,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
 
-  <select id="selectByOrderDetailNum" resultType="com.cj.shop.api.response.dto.OrderDetailDto">
-    select
-    t1.id as detailId,
-    1 as shopId,
-    '珑讯自营' as shopName,
-    t1.uid,
-    t1.order_num as orderNum,
-    t1.order_name as orderName,
-    t1.order_price as orderPrice,
-    t1.order_status as order_status,
-    t1.pay_status as payStatus,
-    t1.pay_type as payType,
-    t1.delivery_cash as deliveryCash,
-    t1.delivery_protect as deliveryProtect,
-    t1.receive_type as receiveType,
-    t1.express_id as expressId,
-    t1.addr_id as addrId,
-    t1.coupon_price as couponPrice,
-    t1.real_price as realPrice,
-    t1.need_invoice as needInvoice,
-    t1.invoice_desc as invoiceDesc,
-    t1.order_scores as orderScores,
-    t1.delivery_time as deliveryTime,
-    t1.delete_flag as deleteFlag,
-    DATE_FORMAT(t1.update_time,'%Y-%m-%d %H:%i:%s') as update_time,
-    DATE_FORMAT(t1.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
-    t1.properties,
-    t1.goods_list as goodsListJson,
-    t2.close_time as closeTime
-    from s_order_detail t1
-    left join s_order t2 on t1.order_num = t2.order_num
-    where t1.order_num = #{orderNum}
-    <if test="uid != null">
-      and t1.uid = #{uid}
-    </if>
-  </select>
+    <select id="selectByOrderDetailNum" resultType="com.cj.shop.api.response.dto.OrderDetailDto">
+        select
+        t1.id as detailId,
+        1 as shopId,
+        '珑讯自营' as shopName,
+        t1.uid,
+        t1.order_num as orderNum,
+        t1.order_name as orderName,
+        t1.order_price as orderPrice,
+        t1.order_status as order_status,
+        t1.pay_status as payStatus,
+        t1.pay_type as payType,
+        t1.trade_no as tradeNo,
+        t1.plat_trade_no as platTradeNo,
+        t1.delivery_cash as deliveryCash,
+        t1.delivery_protect as deliveryProtect,
+        t1.receive_type as receiveType,
+        t1.express_id as expressId,
+        t1.addr_id as addrId,
+        t1.coupon_price as couponPrice,
+        t1.real_price as realPrice,
+        t1.need_invoice as needInvoice,
+        t1.invoice_desc as invoiceDesc,
+        t1.order_scores as orderScores,
+        t1.delivery_time as deliveryTime,
+        t1.delete_flag as deleteFlag,
+        DATE_FORMAT(t1.update_time,'%Y-%m-%d %H:%i:%s') as update_time,
+        DATE_FORMAT(t1.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+        t1.properties,
+        t1.goods_list as goodsListJson,
+        t2.close_time as closeTime
+        from s_order_detail t1
+        left join s_order t2 on t1.order_num = t2.order_num
+        where t1.order_num = #{orderNum}
+        <if test="uid != null">
+            and t1.uid = #{uid}
+        </if>
+    </select>
 
-  <select id="getOrderNumLists" parameterType="com.cj.shop.api.param.select.OrderSelect" resultType="String">
-    select order_num
-    from s_order_detail
-    <where>
-      1=1
-      <if test="orderNum != null">
-        and order_num = #{orderNum}
-      </if>
-      <if test="payType != null" >
-        and pay_type = #{payType}
-      </if>
-      <if test="status != null" >
-        and order_status = #{status}
-      </if>
-      <if test="uid != null" >
-        and uid = #{uid}
-      </if>
-    </where>
-    order by update_time desc,create_time desc
-  </select>
+    <select id="getOrderNumLists" parameterType="com.cj.shop.api.param.select.OrderSelect" resultType="String">
+        select order_num
+        from s_order_detail
+        <where>
+            1=1
+            <if test="orderNum != null">
+                and order_num = #{orderNum}
+            </if>
+            <if test="payType != null">
+                and pay_type = #{payType}
+            </if>
+            <if test="status != null">
+                and order_status = #{status}
+            </if>
+            <if test="uid != null">
+                and uid = #{uid}
+            </if>
+        </where>
+        order by create_time desc,update_time desc
+    </select>
 
-  <update id="updateDetailByOrderNum" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs" >
-    update s_order_detail
-    <set >
-      <if test="orderStatus != null" >
-        order_status = #{orderStatus,jdbcType=TINYINT},
-      </if>
-      <if test="tradeNo != null" >
-        trade_no = #{tradeNo},
-      </if>
-      <if test="platTradeNo != null" >
-        plat_trade_no = #{platTradeNo},
-      </if>
-      <if test="payStatus != null" >
-        pay_status = #{payStatus,jdbcType=TINYINT},
-      </if>
-      <if test="payType != null" >
-        pay_type = #{payType,jdbcType=TINYINT},
-      </if>
-      <if test="deliveryCash != null" >
-        delivery_cash = #{deliveryCash,jdbcType=DECIMAL},
-      </if>
-      <if test="deliveryProtect != null" >
-        delivery_protect = #{deliveryProtect,jdbcType=INTEGER},
-      </if>
-      <if test="receiveType != null" >
-        receive_type = #{receiveType,jdbcType=INTEGER},
-      </if>
-      <if test="expressId != null" >
-        express_id = #{expressId,jdbcType=VARCHAR},
-      </if>
-      <if test="addrId != null" >
-        addr_id = #{addrId,jdbcType=BIGINT},
-      </if>
-      <if test="needInvoice != null" >
-        need_invoice = #{needInvoice,jdbcType=INTEGER},
-      </if>
-      <if test="orderScores != null" >
-        order_scores = #{orderScores,jdbcType=DECIMAL},
-      </if>
-      <if test="deliveryTime != null" >
-        delivery_time = #{deliveryTime,jdbcType=VARCHAR},
-      </if>
-      <if test="deleteFlag != null" >
-        delete_flag = #{deleteFlag,jdbcType=INTEGER},
-      </if>
-      <if test="invoiceDesc != null" >
-        invoice_desc = #{invoiceDesc,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="properties != null" >
-        properties = #{properties,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where order_num = #{orderNum}
-  </update>
+    <update id="updateDetailByOrderNum" parameterType="com.cj.shop.api.entity.OrderDetailWithBLOBs">
+        update s_order_detail
+        <set>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="tradeNo != null">
+                trade_no = #{tradeNo},
+            </if>
+            <if test="platTradeNo != null">
+                plat_trade_no = #{platTradeNo},
+            </if>
+            <if test="payStatus != null">
+                pay_status = #{payStatus,jdbcType=TINYINT},
+            </if>
+            <if test="payType != null">
+                pay_type = #{payType,jdbcType=TINYINT},
+            </if>
+            <if test="deliveryCash != null">
+                delivery_cash = #{deliveryCash,jdbcType=DECIMAL},
+            </if>
+            <if test="deliveryProtect != null">
+                delivery_protect = #{deliveryProtect,jdbcType=INTEGER},
+            </if>
+            <if test="receiveType != null">
+                receive_type = #{receiveType,jdbcType=INTEGER},
+            </if>
+            <if test="expressId != null">
+                express_id = #{expressId,jdbcType=VARCHAR},
+            </if>
+            <if test="addrId != null">
+                addr_id = #{addrId,jdbcType=BIGINT},
+            </if>
+            <if test="needInvoice != null">
+                need_invoice = #{needInvoice,jdbcType=INTEGER},
+            </if>
+            <if test="orderScores != null">
+                order_scores = #{orderScores,jdbcType=DECIMAL},
+            </if>
+            <if test="deliveryTime != null">
+                delivery_time = #{deliveryTime,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="invoiceDesc != null">
+                invoice_desc = #{invoiceDesc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="properties != null">
+                properties = #{properties,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where order_num = #{orderNum}
+        <if test="uid != null">
+            and uid=#{uid}
+        </if>
+    </update>
 </mapper>
