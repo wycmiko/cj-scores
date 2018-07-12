@@ -38,7 +38,7 @@ public class MessageConsumer {
     @RabbitHandler
     public void process(String message) {
         try {
-            log.info("订单定时回溯 判断状态 消息接受的内容:{}", message);
+            log.info("订单延迟队列定时回溯修改状态,接受的内容:{}", message);
             final OrderMq orderMq = JSON.parseObject(message, OrderMq.class);
             switch (orderMq.getType()) {
                 case 1:
@@ -47,6 +47,7 @@ public class MessageConsumer {
                     break;
                 case 2:
                     //15天后自动确认收货校验
+                    autoConfirmed(orderMq.getOrderNum());
                     break;
                 default:
                     break;
@@ -81,13 +82,41 @@ public class MessageConsumer {
                 if (orderDto.getOrderStatus() == 1) {
                     //关闭订单
                     OrderDetailWithBLOBs bloBs = new OrderDetailWithBLOBs();
-                    bloBs.setOrderNum(orderNum);
                     bloBs.setOrderStatus(5);
+                    bloBs.setOrderNum(orderNum);
                     String s = orderService.updateOrderStatus(bloBs);
                     log.info("订单:{} 超时取消, 结果:{}", orderNum, s);
                 }
             } else {
                 log.info("订单：{} 状态 无须修改", orderNum);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * 发货后15天后 自动确认收货操作
+     *
+     * @param orderNum
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void autoConfirmed(String orderNum) {
+        try {
+            lock.lock();
+            OrderDto orderDto = orderMapper.selectByOrderNum(orderNum, null);
+            if (orderDto != null) {
+                //当前仅当待签收的订单才可自动确认
+                if (orderDto.getOrderStatus() == 3) {
+                    //关闭订单
+                    OrderDetailWithBLOBs bloBs = new OrderDetailWithBLOBs();
+                    bloBs.setOrderNum(orderNum);
+                    bloBs.setOrderStatus(4);
+                    String s = orderService.updateOrderStatus(bloBs);
+                    log.info("订单:{} 自动确认收货, 结果:{}", orderNum, s);
+                }
+            } else {
+                log.info("订单：{} 状态无须确认收货", orderNum);
             }
         } finally {
             lock.unlock();

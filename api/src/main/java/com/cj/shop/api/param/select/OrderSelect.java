@@ -19,7 +19,11 @@ public class OrderSelect implements Serializable {
      */
     @JsonProperty("order_num")
     private String orderNum;
-
+    /**
+     * type =1 取消订单
+     * type=2 确认收货
+     */
+    private Integer type;
     private String token;
     private Long uid;
     /**

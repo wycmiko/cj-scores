@@ -471,10 +471,56 @@ public class UserController {
 
 
     /**
-     * 用户取消订单
+     * 用户取消订单 、确认收货订单
+     * type =1 取消订单
+     * type =2 确认收货订单
      */
-    @PostMapping("/cancelOrder")
-    public Result cancelOrder(@RequestBody OrderSelect orderSelect) {
+    @PostMapping("/motiveOrder")
+    public Result motiveOrder(@RequestBody OrderSelect orderSelect) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(orderSelect.getOrderNum(), orderSelect.getToken(), orderSelect.getType())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(orderSelect.getToken())) {
+                log.info("motiveOrder 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(orderSelect.getToken());
+            if (orderSelect.getType() == 1) {
+                //取消订单
+                log.info("uid={} cancelOrder ", uid);
+                OrderDetailDto byId = orderService.getOrderDetailById(orderSelect.getOrderNum(), orderSelect.getUid());
+                if (byId.getOrderStatus() == 1) {
+                    OrderDetailWithBLOBs bloBs = new OrderDetailWithBLOBs();
+                    bloBs.setOrderNum(orderSelect.getOrderNum());
+                    bloBs.setUid(orderSelect.getUid());
+                    bloBs.setOrderStatus(5);
+                    String s = orderService.updateOrderStatus(bloBs);
+                    result = ResultUtil.getVaildResult(s, result);
+                    log.info("cancelOrder end");
+                } else {
+                    result = ResultUtil.getVaildResultData(null, result, "当前状态不允许取消");
+                    log.info("cancelOrder failure");
+                }
+            } else {
+                //确认收货
+                result = confirmOrder(orderSelect);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("motiveOrder error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 用户确认收货
+     */
+    @PostMapping("/confirmOrder")
+    public Result confirmOrder(@RequestBody OrderSelect orderSelect) {
         //token校验
         Result result = null;
         try {
@@ -482,27 +528,28 @@ public class UserController {
                 return CommandValidator.paramEmptyResult();
             }
             if (!tokenValidator.checkToken(orderSelect.getToken())) {
-                log.info("cancelOrder 【Invaild token!】");
+                log.info("confirmOrder 【Invaild token!】");
                 return tokenValidator.invaildTokenFailedResult();
             }
             long uid = tokenValidator.getUidByToken(orderSelect.getToken());
-            log.info("uid={} cancelOrder ", uid);
+            log.info("uid={} confirmOrder ", uid);
             OrderDetailDto byId = orderService.getOrderDetailById(orderSelect.getOrderNum(), orderSelect.getUid());
-            if (byId.getOrderStatus() == 1) {
+            //当且仅当状态为待收货时 可以进行确认收货
+            if (byId.getOrderStatus() == 3) {
                 OrderDetailWithBLOBs bloBs = new OrderDetailWithBLOBs();
                 bloBs.setOrderNum(orderSelect.getOrderNum());
                 bloBs.setUid(orderSelect.getUid());
-                bloBs.setOrderStatus(5);
+                bloBs.setOrderStatus(4);
                 String s = orderService.updateOrderStatus(bloBs);
                 result = ResultUtil.getVaildResult(s, result);
-                log.info("cancelOrder end");
+                log.info("confirmOrder end");
             } else {
-                result = ResultUtil.getVaildResultData(null, result, "当前状态不允许取消");
-                log.info("cancelOrder failure");
+                result = ResultUtil.getVaildResultData(null, result, "当前状态不允许确认收货");
+                log.info("confirmOrder failure");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("cancelOrder error {}", e.getMessage());
+            log.error("confirmOrder error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         }
         return result;

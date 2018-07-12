@@ -48,6 +48,8 @@ public class OrderDetailDto extends PropertyEntity implements Serializable {
      */
     @JsonProperty("express_id")
     private String expressId;
+    @JsonProperty("express_name")
+    private String expressName;
 
     @JsonProperty("addr_id")
     private Long addrId;

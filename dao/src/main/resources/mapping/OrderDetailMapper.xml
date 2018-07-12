@@ -15,6 +15,7 @@
         <result column="delivery_protect" property="deliveryProtect" jdbcType="INTEGER"/>
         <result column="receive_type" property="receiveType" jdbcType="INTEGER"/>
         <result column="express_id" property="expressId" jdbcType="VARCHAR"/>
+        <result column="express_name" property="expressName" jdbcType="VARCHAR"/>
         <result column="addr_id" property="addrId" jdbcType="BIGINT"/>
         <result column="coupon_price" property="couponPrice" jdbcType="DECIMAL"/>
         <result column="real_price" property="realPrice" jdbcType="DECIMAL"/>
@@ -32,7 +33,7 @@
     </resultMap>
     <sql id="Base_Column_List">
     id, shop_id, uid, order_num, order_name,  order_price, order_status,
-    pay_status, pay_type, delivery_cash, delivery_protect, receive_type, express_id, 
+    pay_status, pay_type, delivery_cash, delivery_protect, receive_type, express_id, express_name,
     addr_id, coupon_price, real_price, need_invoice, order_scores, delivery_time, delete_flag, 
     update_time, create_time
   </sql>
@@ -256,6 +257,7 @@
         t1.delivery_protect as deliveryProtect,
         t1.receive_type as receiveType,
         t1.express_id as expressId,
+        t1.express_name as expressName,
         t1.addr_id as addrId,
         t1.coupon_price as couponPrice,
         t1.real_price as realPrice,
@@ -327,6 +329,9 @@
             </if>
             <if test="expressId != null">
                 express_id = #{expressId,jdbcType=VARCHAR},
+            </if>
+            <if test="expressName != null">
+                express_name = #{expressName,jdbcType=VARCHAR},
             </if>
             <if test="addrId != null">
                 addr_id = #{addrId,jdbcType=BIGINT},

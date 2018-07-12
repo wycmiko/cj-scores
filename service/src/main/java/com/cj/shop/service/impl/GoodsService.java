@@ -281,6 +281,7 @@ public class GoodsService implements GoodsApi {
                 String smallNum = NumberUtil.getSmallGoodsNum(goodsSn, request1.getSpecIdList());
                 request1.setGoodsSn(goodsSn);
                 request1.setSGoodsSn(smallNum);
+
                 //判断是否已经存在该类商品库存
                 GoodsStockDto goodsStockDto = goodsStockMapper.selectBySgoodId(smallNum);
                 if (goodsStockDto == null) {

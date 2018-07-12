@@ -19,6 +19,8 @@ public class OrderDetailWithBLOBs extends PropertyEntity implements Serializable
 
     private String orderName;
 
+    private String expressName;
+
     private Double orderPrice;
 
     private Integer orderStatus;

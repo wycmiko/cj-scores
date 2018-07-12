@@ -122,7 +122,8 @@ public class WebApplicationTests {
     private ExpressConfig expressConfig;
     @Test
     public void testProp(){
-        log.info("userid={}, app-secret={}", expressConfig.getUserId(), expressConfig.getApiKey());
+        log.info("userid={}, app-secret={} map-size={}", expressConfig.getUserId(), expressConfig.getApiKey(), expressConfig.map);
+
     }
 
 }
