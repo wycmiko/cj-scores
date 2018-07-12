@@ -63,3 +63,9 @@ jwt:
 
 cjmatch:
   user-app-id: platform_app
+
+cj:
+  mall:
+    express:
+      userId: 1361369
+      apiKey: 0bd5c350-18a4-41ea-bfde-a56a8c103185

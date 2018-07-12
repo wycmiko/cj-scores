@@ -7,6 +7,7 @@ import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsDto;
 import com.cj.shop.common.consts.QueueEnum;
 import com.cj.shop.common.utils.DateUtils;
+import com.cj.shop.service.cfg.ExpressConfig;
 import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.service.impl.PayService;
 import com.cj.shop.service.provider.MessageProvider;
@@ -115,6 +116,13 @@ public class WebApplicationTests {
         request.setTotalPrice(9888.25);
         request.setPayType(1);
         payService.insertPayLog(request);
+    }
+
+    @Autowired
+    private ExpressConfig expressConfig;
+    @Test
+    public void testProp(){
+        log.info("userid={}, app-secret={}", expressConfig.getUserId(), expressConfig.getApiKey());
     }
 
 }
