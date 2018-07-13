@@ -7,7 +7,7 @@ import java.net.UnknownHostException;
 /**
  * 获取IP地址 工具类
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/4/14
  * @since 1.0
  */

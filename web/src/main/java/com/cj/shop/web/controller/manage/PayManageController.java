@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * 商城后台-财务管理类：
+ * 接口文档api: http://172.28.3.45:3008/project/15/interface/api  目录地址：商城后台-商品*管理
+ * @author yuchuanWeng
  * @date 2018/7/12
  * @since 1.0
  */

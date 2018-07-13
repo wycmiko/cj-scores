@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.Future;
 
 /**
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/5
  * @since 1.0
  */

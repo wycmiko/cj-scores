@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * 商品分类请求参数
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/6/22
  * @since 1.0
  */

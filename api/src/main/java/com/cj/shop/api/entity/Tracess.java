@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/13
  * @since 1.0
  */

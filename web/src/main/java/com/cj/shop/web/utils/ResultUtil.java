@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 /**
  * 通用结果处理类
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/5/4
  * @since 1.0
  */

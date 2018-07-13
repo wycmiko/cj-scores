@@ -7,7 +7,7 @@ import com.cj.shop.api.response.dto.PayLogDto;
 
 /**
  * 支付、财务 Api
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/12
  * @since 1.0
  */

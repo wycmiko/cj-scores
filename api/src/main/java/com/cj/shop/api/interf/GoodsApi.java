@@ -12,7 +12,7 @@ import com.cj.shop.api.response.dto.GoodsDto;
 /**
  * 商品相关服务 API
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/6/22
  * @since 1.0
  */

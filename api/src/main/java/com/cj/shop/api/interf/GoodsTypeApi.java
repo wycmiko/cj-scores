@@ -4,7 +4,7 @@ import com.cj.shop.api.entity.GoodsType;
 import com.cj.shop.api.param.GoodsTypeRequest;
 import com.cj.shop.api.response.PagedList;
 /**
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/6/22
  * @since 1.0
  */

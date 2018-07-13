@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/12
  * @since 1.0
  */
@@ -45,6 +45,9 @@ public class ExpressService {
 
     /**
      * 查询物流公司
+     * 根据快递鸟使用代码规范：
+     * http://www.kdniao.com/file/2018%E5%BF%AB%E9%80%92%E9%B8%9F%E6%8E%A5%E5%8F%A3%E6%94%AF%E6%8C%81%E5%BF%AB%E9%80%92%E5%85%AC%E5%8F%B8%E7%BC%96%E7%A0%81.xlsx
+     * 快递公司与代码维护的本地Map
      */
     public Map<String, Object> getExpressCompany() {
         return expressConfig.map;
@@ -53,6 +56,9 @@ public class ExpressService {
     /**
      * 订单发货：
      * 添加 /修改 运单号
+     * @param orderNum 订单号
+     * @param expressNo 快递单号
+     * @param expressName 物流公司名
      */
     public String addExpressNum(String orderNum, String expressNo, String expressName) {
         OrderDetailDto detailById = orderService.getOrderDetailById(orderNum, null);
@@ -90,7 +96,11 @@ public class ExpressService {
 
 
     /**
-     * 查询物流动态
+     * 查询物流动态：快递鸟&copy;
+     * 第三方Api地址： <b>http://www.kdniao.com/UserCenter/</b>
+     * 当前服务版本：免费版 3000次查询/天 到期日：2019-07-12
+     * @param orderNum 订单编号
+     * @param uid 用户中心ID
      */
     public Map<String, Object> getTraces(String orderNum, Long uid) throws Exception {
         String key = EXPRESS_KEY + orderNum;
@@ -131,6 +141,7 @@ public class ExpressService {
             }
         }
         if (traceDto != null) {
+            //
             returnMap.put("expressName", traceDto.getExpressName());
             returnMap.put("orderNum", traceDto.getOrderNum());
             returnMap.put("expressId", traceDto.getLogisticCode());

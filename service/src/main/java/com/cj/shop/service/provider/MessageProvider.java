@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * RabbitMQ 延迟队列之消息生产者
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/10
  * @since 1.0
  */

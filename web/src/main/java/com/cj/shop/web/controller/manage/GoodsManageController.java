@@ -28,7 +28,9 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 /**
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * 商品管理控制层
+ * 接口文档api: http://172.28.3.45:3008/project/15/interface/api  目录地址：商城后台-商品*管理
+ * @author yuchuanWeng
  * @date 2018/6/25
  * @since 1.0
  */

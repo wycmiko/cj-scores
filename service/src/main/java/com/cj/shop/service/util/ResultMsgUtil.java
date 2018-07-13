@@ -3,7 +3,7 @@ package com.cj.shop.service.util;
 import com.cj.shop.service.consts.ResultMsg;
 
 /**
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/5/4
  * @since 1.0
  */

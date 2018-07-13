@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * 校验请求Token
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/4/3
  * @since 1.0
  */

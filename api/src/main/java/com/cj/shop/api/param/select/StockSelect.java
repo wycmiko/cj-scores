@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 /**
  * 库存查询参数
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/2
  * @since 1.0
  */

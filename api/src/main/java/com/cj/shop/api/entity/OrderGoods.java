@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * 订单商品属性实体
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/10
  * @since 1.0
  */

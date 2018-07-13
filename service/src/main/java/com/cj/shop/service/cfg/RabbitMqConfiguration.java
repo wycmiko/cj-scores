@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * RabbitMq-延迟队列交换机以及路由器配置
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/10
  * @since 1.0
  */

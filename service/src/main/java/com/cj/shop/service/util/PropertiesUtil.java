@@ -11,7 +11,7 @@ import java.util.Set;
  * properties工具类
  * properties
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/4/14
  * @since 1.0
  */

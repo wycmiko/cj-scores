@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * 时间工具类
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @create 2018/3/23
  * @since 1.0
  */

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * 价格临界值实体
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/2
  * @since 1.0
  */

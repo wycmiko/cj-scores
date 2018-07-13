@@ -32,7 +32,7 @@ import java.util.ListIterator;
 /**
  * 货物扩展属性服务层 （规格、标签、单位CURD服务）
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/6/25
  * @since 1.0
  */
@@ -49,6 +49,8 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     private GoodsStockMapper goodsStockMapper;
     @Autowired
     private ExpressCashMapper expressCashMapper;
+    @Autowired
+    private GoodsMapper goodsMapper;
     @Autowired
     private GoodsService goodsService;
 
@@ -382,9 +384,6 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     }
 
 
-    /**
-     * 根据商品小编号查询 规格商品是否存在
-     */
 
     /**
      * 添加商品库存
@@ -453,7 +452,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
             double ratio = stockRequest.getWarnRatio().doubleValue();
             num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
         }
-
+        Long id = goodsMapper.selectIdByGoodsSn(goodsStock.getGoodsSn());
         BeanUtils.copyProperties(stockRequest, goodsStock);
         goodsStock.setProperties(PropertiesUtil.changeProperties(goodsStock.getProperties(), stockRequest.getProperties()));
         goodsStock.setWarnStockNum((int) num);
@@ -461,7 +460,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         int i = goodsStockMapper.updateByPrimaryKeySelective(goodsStock);
         if (i > 0) {
             jedisCache.hdel(STOCK_KEY, stockRequest.getId().toString());
-            jedisCache.hset(STOCK_KEY, stockRequest.getId().toString(), getStockById(stockRequest.getId()));
+            jedisCache.hdel(GoodsService.JEDIS_PREFIX_GOODS, id.toString());
         }
         return ResultMsgUtil.dmlResult(i);
     }

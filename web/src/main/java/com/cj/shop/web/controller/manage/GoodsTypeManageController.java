@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 后台管理 - 商品管理 Rest服务
- *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * 后台管理 - 商品类型管理 Rest服务
+ * 接口文档api: http://172.28.3.45:3008/project/15/interface/api  目录地址：商城后台-商品*管理
+ * @author yuchuanWeng
  * @date 2018/6/14
  * @since 1.0
  */

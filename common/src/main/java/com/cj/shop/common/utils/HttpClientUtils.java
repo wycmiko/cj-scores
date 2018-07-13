@@ -24,7 +24,7 @@ import java.util.concurrent.Future;
 /**
  * HttpClient 请求工具类
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @create 2018/3/21
  * @date 1.0
  */

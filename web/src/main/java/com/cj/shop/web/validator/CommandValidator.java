@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * 接口参数非空校验器 （不适用于低延迟场合）
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/3/23
  * @since 1.0
  */

@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * 支付流水表Dao实体Bean
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/12
  * @since 1.0
  */

@@ -1,7 +1,7 @@
 package com.cj.shop.service.consts;
 
 /**
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/4/23
  * @since 1.0
  */

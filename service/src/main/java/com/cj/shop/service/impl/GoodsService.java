@@ -40,7 +40,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * 商品service
  *
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/6/25
  * @since 1.0
  */
@@ -66,9 +66,9 @@ public class GoodsService implements GoodsApi {
     //non-fair lock
     private static final ReentrantLock lock = new ReentrantLock();
 
-    private static final String JEDIS_PREFIX_GOODS = "cj_shop:mall:goods:";
-    private static final String JEDIS_PREFIX_GOODS_SUPPLY = JEDIS_PREFIX_GOODS + "supply:";
-    private static final String JEDIS_PREFIX_GOODS_BRAND = JEDIS_PREFIX_GOODS + "brand:";
+    public static final String JEDIS_PREFIX_GOODS = "cj_shop:mall:goods:";
+    public static final String JEDIS_PREFIX_GOODS_SUPPLY = JEDIS_PREFIX_GOODS + "supply:";
+    public static final String JEDIS_PREFIX_GOODS_BRAND = JEDIS_PREFIX_GOODS + "brand:";
 
     /**
      * 添加供应商

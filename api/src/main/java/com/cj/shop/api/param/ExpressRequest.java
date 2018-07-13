@@ -6,7 +6,7 @@ import lombok.Setter;
 
 /**
  * 物流请求参数
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/12
  * @since 1.0
  */

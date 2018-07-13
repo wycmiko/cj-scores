@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/10
  * @since 1.0
  */

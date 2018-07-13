@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  * RabbitMQ 订单业务消息体
- * @author yuchuanWeng(wycmiko @ foxmail.com)
+ * @author yuchuanWeng( )
  * @date 2018/7/11
  * @since 1.0
  */
