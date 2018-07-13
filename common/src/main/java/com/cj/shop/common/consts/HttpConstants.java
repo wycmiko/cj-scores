@@ -15,5 +15,5 @@ public class HttpConstants {
     //content-type
     public static final String CONTENT_TYPE_JSON="application/json";
     public static final String CONTENT_TYPE_JSON_UTF8="application/json;charset=UTF-8";
-    public static final String CONTENT_TYPE_FORM_DATA="application/x-www-form-urlencoded";
+    public static final String CONTENT_TYPE_FORM_DATA="application/x-www-form-urlencoded;charset=UTF-8";
 }

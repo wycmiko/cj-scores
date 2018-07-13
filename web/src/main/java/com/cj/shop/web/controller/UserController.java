@@ -10,6 +10,7 @@ import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsVisitDto;
 import com.cj.shop.api.response.dto.OrderDetailDto;
 import com.cj.shop.api.response.dto.UserCartDto;
+import com.cj.shop.service.impl.ExpressService;
 import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.service.impl.OrderService;
 import com.cj.shop.service.impl.UserService;
@@ -43,6 +44,8 @@ public class UserController {
     private GoodsService goodsService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private ExpressService expressService;
 
     /**
      * 查询地址详情
@@ -575,6 +578,37 @@ public class UserController {
             e.printStackTrace();
             log.error("user-orderList error {}", e.getMessage());
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * 查询订单物流详情
+     *
+     * @return
+     */
+    @GetMapping("/getExpressInfo")
+    public Result getExpressInfo(String order_num, String token) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("getExpressInfo-user begin");
+            if (CommandValidator.isEmpty(order_num,token)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(token)) {
+                log.info("getExpressInfo-user 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(token);
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            result.setData(expressService.getTraces(order_num, uid));
+            log.info("getExpressInfo-user end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getExpressInfo-user error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG + e.getMessage());
         }
         return result;
     }

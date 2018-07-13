@@ -2,14 +2,12 @@ package com.cj.shop.service.cfg;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,45 +65,107 @@ public class ExpressConfig {
      * @param jsonPram
      * @return
      */
-    public String getDataSign(String jsonPram) throws UnsupportedEncodingException {
-        return URLEncoder.encode(Base64.getEncoder().encode(getMD5Byte(jsonPram + apiKey)).toString(), "UTF-8");
+    public String getDataSign(String jsonPram) throws Exception {
+        return  encrypt(jsonPram, apiKey, "UTF-8");
     }
 
 
+
     /**
-     * MD5加密字符串 返回十六进制编码
-     *
-     * @param message 要加密的信息
-     * @return 十六进制编码的MD5字符串
+     * base64编码
+     * @param str 内容
+     * @param charset 编码方式
+     * @throws UnsupportedEncodingException
      */
-    public static String getMD5Hex(String message) {
-        String md5 = "";
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5"); // 创建一个md5算法对象
-            byte[] messageByte = message.getBytes("UTF-8");
-            byte[] md5Byte = md.digest(messageByte); // 获得MD5字节数组,16*8=128位
-            md5 = HexUtils.toHexString(md5Byte); // 转换为16进制字符串
-        } catch (Exception e) {
-            e.printStackTrace();
+    private String base64(String str, String charset) throws UnsupportedEncodingException{
+        String encoded = base64Encode(str.getBytes(charset));
+        return encoded;
+    }
+    /**
+     * MD5加密
+     * @param str 内容
+     * @param charset 编码方式
+     * @throws Exception
+     */
+    @SuppressWarnings("unused")
+    private String MD5(String str, String charset) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(str.getBytes(charset));
+        byte[] result = md.digest();
+        StringBuffer sb = new StringBuffer(32);
+        for (int i = 0; i < result.length; i++) {
+            int val = result[i] & 0xff;
+            if (val <= 0xf) {
+                sb.append("0");
+            }
+            sb.append(Integer.toHexString(val));
         }
-        return md5;
+        return sb.toString().toLowerCase();
+    }
+
+    @SuppressWarnings("unused")
+    private String urlEncoder(String str, String charset) throws UnsupportedEncodingException {
+        String result = URLEncoder.encode(str, charset);
+        return result;
     }
 
     /**
-     * MD5加密字符串 返回字节数组
-     *
-     * @param message 要加密的信息
-     * @return 十六进制编码的MD5字符串
+     * 电商Sign签名生成
+     * @param content 内容
+     * @param keyValue Appkey
+     * @param charset 编码方式
+     * @throws UnsupportedEncodingException ,Exception
+     * @return DataSign签名
      */
-    public static byte[] getMD5Byte(String message) {
-        byte[] md5Byte = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5"); // 创建一个md5算法对象
-            byte[] messageByte = message.getBytes("UTF-8");
-            md5Byte = md.digest(messageByte); // 获得MD5字节数组,16*8=128位
-        } catch (Exception e) {
-            e.printStackTrace();
+    @SuppressWarnings("unused")
+    private String encrypt (String content, String keyValue, String charset) throws UnsupportedEncodingException, Exception
+    {
+        if (keyValue != null)
+        {
+            return base64(MD5(content + keyValue, charset), charset);
         }
-        return md5Byte;
+        return base64(MD5(content, charset), charset);
+    }
+
+    private static char[] base64EncodeChars = new char[] {
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+            'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+            'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+            'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+            'w', 'x', 'y', 'z', '0', '1', '2', '3',
+            '4', '5', '6', '7', '8', '9', '+', '/' };
+
+    public static String base64Encode(byte[] data) {
+        StringBuffer sb = new StringBuffer();
+        int len = data.length;
+        int i = 0;
+        int b1, b2, b3;
+        while (i < len) {
+            b1 = data[i++] & 0xff;
+            if (i == len)
+            {
+                sb.append(base64EncodeChars[b1 >>> 2]);
+                sb.append(base64EncodeChars[(b1 & 0x3) << 4]);
+                sb.append("==");
+                break;
+            }
+            b2 = data[i++] & 0xff;
+            if (i == len)
+            {
+                sb.append(base64EncodeChars[b1 >>> 2]);
+                sb.append(base64EncodeChars[((b1 & 0x03) << 4) | ((b2 & 0xf0) >>> 4)]);
+                sb.append(base64EncodeChars[(b2 & 0x0f) << 2]);
+                sb.append("=");
+                break;
+            }
+            b3 = data[i++] & 0xff;
+            sb.append(base64EncodeChars[b1 >>> 2]);
+            sb.append(base64EncodeChars[((b1 & 0x03) << 4) | ((b2 & 0xf0) >>> 4)]);
+            sb.append(base64EncodeChars[((b2 & 0x0f) << 2) | ((b3 & 0xc0) >>> 6)]);
+            sb.append(base64EncodeChars[b3 & 0x3f]);
+        }
+        return sb.toString();
     }
 }

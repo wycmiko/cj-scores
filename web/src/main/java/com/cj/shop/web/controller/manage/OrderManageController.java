@@ -93,4 +93,31 @@ public class OrderManageController {
         return result;
     }
 
+    /**
+     * 查询订单物流详情
+     *
+     * @return
+     */
+    @GetMapping("/getExpressInfo")
+    public Result getExpressInfo(String order_num) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("getExpressInfo begin");
+            if (CommandValidator.isEmpty(order_num)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+
+            result.setData(expressService.getTraces(order_num, null));
+            log.info("getExpressInfo end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getExpressInfo error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG + e.getMessage());
+        }
+        return result;
+    }
+
 }

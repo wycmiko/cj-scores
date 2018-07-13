@@ -1,5 +1,6 @@
 package com.cj.shop.web;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cj.shop.api.entity.OrderGoods;
 import com.cj.shop.api.param.PayLogRequest;
 import com.cj.shop.api.param.select.GoodsSelect;
@@ -7,6 +8,7 @@ import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsDto;
 import com.cj.shop.common.consts.QueueEnum;
 import com.cj.shop.common.utils.DateUtils;
+import com.cj.shop.common.utils.HttpClientUtils;
 import com.cj.shop.service.cfg.ExpressConfig;
 import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.service.impl.PayService;
@@ -21,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -57,7 +60,6 @@ public class WebApplicationTests {
     }
 
 
-
     @Autowired
     private MessageProvider messageProvider;
 
@@ -74,7 +76,7 @@ public class WebApplicationTests {
     }
 
     @Test
-    public void testGroupMap(){
+    public void testGroupMap() {
         List<OrderGoods> list = new ArrayList<>();
         OrderGoods o1 = new OrderGoods();
         o1.setSupplyName("京东自营");
@@ -93,7 +95,7 @@ public class WebApplicationTests {
         list.add(o3);
         list.add(o4);
         Map<String, List<OrderGoods>> collect = list.stream().collect(Collectors.groupingBy(OrderGoods::getSupplyName));
-        collect.forEach((k,v) ->{
+        collect.forEach((k, v) -> {
             log.info("key={} value={}", k, v);
         });
     }
@@ -103,7 +105,7 @@ public class WebApplicationTests {
     private PayService payService;
 
     @Test
-    public void testInserPayLog(){
+    public void testInserPayLog() {
         PayLogRequest request = new PayLogRequest();
         request.setOrderNum("2018071118263342550000001");
         request.setPlatTradeNo("test1");
@@ -120,10 +122,25 @@ public class WebApplicationTests {
 
     @Autowired
     private ExpressConfig expressConfig;
+
     @Test
-    public void testProp(){
+    public void testProp() throws Exception {
         log.info("userid={}, app-secret={} map-size={}", expressConfig.getUserId(), expressConfig.getApiKey(), expressConfig.map);
+        String url = "http://api.kdniao.cc/Ebusiness/EbusinessOrderHandle.aspx";
+        Map<String, Object> map = new HashMap<>();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("OrderCode", "");
+        jsonObject.put("ShipperCode", expressConfig.map.get("中通快递"));   //快递公司编码
+        jsonObject.put("LogisticCode", "212214710595");  //快递单号
+        map.put("DataType", "2-json");
+        map.put("RequestData", jsonObject.toJSONString());
+        map.put("EBusinessID", expressConfig.getUserId());
+        map.put("RequestType", "1002");
+        map.put("DataSign", expressConfig.getDataSign(jsonObject.toJSONString()));
+        String s = HttpClientUtils.httpAsyncPostFormData(url, map);
+        log.info("s = {}", s);
 
     }
+
 
 }

@@ -1,19 +1,27 @@
 package com.cj.shop.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.cj.shop.api.entity.OrderDetailWithBLOBs;
 import com.cj.shop.api.entity.OrderMq;
+import com.cj.shop.api.entity.Tracess;
+import com.cj.shop.api.response.dto.ExpressTraceDto;
 import com.cj.shop.api.response.dto.OrderDetailDto;
 import com.cj.shop.common.consts.QueueEnum;
+import com.cj.shop.common.utils.HttpClientUtils;
 import com.cj.shop.service.cfg.ExpressConfig;
+import com.cj.shop.service.cfg.JedisCache;
 import com.cj.shop.service.consts.ResultMsg;
 import com.cj.shop.service.provider.MessageProvider;
 import com.cj.shop.service.util.PropertiesUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +30,7 @@ import java.util.Map;
  * @since 1.0
  */
 @Service
+@Slf4j
 @Transactional
 public class ExpressService {
     @Autowired
@@ -30,6 +39,9 @@ public class ExpressService {
     private OrderService orderService;
     @Autowired
     private MessageProvider messageProvider;
+    @Autowired
+    private JedisCache jedisCache;
+    public static final String EXPRESS_KEY = "cj_shop:mall:express:";
 
     /**
      * 查询物流公司
@@ -74,6 +86,58 @@ public class ExpressService {
         } else {
             return ResultMsg.EXPRESS_CANNOT_UPDATE;
         }
+    }
+
+
+    /**
+     * 查询物流动态
+     */
+    public Map<String, Object> getTraces(String orderNum, Long uid) throws Exception {
+        String key = EXPRESS_KEY + orderNum;
+        ExpressTraceDto traceDto = jedisCache.get(key, ExpressTraceDto.class);
+        Map<String,Object> returnMap = new HashMap<>();
+        List<Tracess> list = new ArrayList<>();
+        if (traceDto != null && traceDto.getTraces() != null) {
+            log.info("get express info by cache");
+            list.addAll(traceDto.getTraces());
+        } else {
+            OrderDetailDto detailById = orderService.getOrderDetailById(orderNum, uid);
+            if (detailById != null) {
+                if (detailById.getOrderStatus() == 3 || detailById.getOrderStatus() == 4) {
+                    String expressId = detailById.getExpressId();
+                    String expressName = detailById.getExpressName();
+                    log.info("userid={}, app-secret={} map-size={}", expressConfig.getUserId(), expressConfig.getApiKey(), expressConfig.map);
+                    String url = "http://api.kdniao.cc/Ebusiness/EbusinessOrderHandle.aspx";
+                    Map<String, Object> map = new HashMap<>();
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("OrderCode", "");
+                    jsonObject.put("ShipperCode", expressConfig.map.get(expressName));   //快递公司编码
+                    jsonObject.put("LogisticCode", expressId);  //快递单号
+                    map.put("DataType", "2-json");
+                    map.put("RequestData", jsonObject.toJSONString());
+                    map.put("EBusinessID", expressConfig.getUserId());
+                    map.put("RequestType", "1002");
+                    map.put("DataSign", expressConfig.getDataSign(jsonObject.toJSONString()));
+                    String s = HttpClientUtils.httpAsyncPostFormData(url, map);
+                    log.info("http post express info={}", s);
+                    traceDto = JSON.parseObject(s, ExpressTraceDto.class);
+                    if (traceDto != null && traceDto.getTraces() != null) {
+                        traceDto.setExpressName(expressName);
+                        traceDto.setOrderNum(orderNum);
+                        jedisCache.set(key, traceDto, 7200);
+                        list.addAll(traceDto.getTraces());
+                    }
+                }
+            }
+        }
+        if (traceDto != null) {
+            returnMap.put("expressName", traceDto.getExpressName());
+            returnMap.put("orderNum", traceDto.getOrderNum());
+            returnMap.put("expressId", traceDto.getLogisticCode());
+            returnMap.put("trace", list);
+        }
+        return returnMap;
+
     }
 
 }
