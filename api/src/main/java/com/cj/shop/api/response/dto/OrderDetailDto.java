@@ -89,7 +89,7 @@ public class OrderDetailDto extends PropertyEntity implements Serializable {
      * json-properties
      */
     @JsonProperty("goods_list")
-    Map<Long, List<OrderGoods>> goodsList;
+    Map<String, List<OrderGoods>> goodsList;
     @JsonProperty("goods_list_json")
     private String goodsListJson;
     /**

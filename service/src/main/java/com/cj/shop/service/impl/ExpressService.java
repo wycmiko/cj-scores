@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,11 +109,11 @@ public class ExpressService {
         Map<String,Object> returnMap = new HashMap<>();
         List<Tracess> list = new ArrayList<>();
         if (traceDto != null && traceDto.getTraces() != null) {
-            log.info("get express info by cache");
+            log.info("orderNum = {} uid={},get express info by cache", orderNum, uid);
             list.addAll(traceDto.getTraces());
         } else {
             OrderDetailDto detailById = orderService.getOrderDetailById(orderNum, uid);
-            if (detailById != null) {
+            if (detailById != null && detailById.getExpressId() !=null && !StringUtils.isEmpty(detailById.getExpressName())) {
                 if (detailById.getOrderStatus() == 3 || detailById.getOrderStatus() == 4) {
                     String expressId = detailById.getExpressId();
                     String expressName = detailById.getExpressName();

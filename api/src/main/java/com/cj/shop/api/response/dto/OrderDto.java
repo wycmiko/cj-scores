@@ -51,5 +51,5 @@ public class OrderDto implements Serializable {
      * 根据供应商分组
      */
     @JsonProperty("goods_list")
-    private Map<Long, List<OrderGoods>> goodsList;
+    private Map<String, List<OrderGoods>> goodsList;
 }

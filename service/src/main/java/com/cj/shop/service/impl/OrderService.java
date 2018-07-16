@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 /**
  * 订单服务层
  *
- * @author yuchuanWeng( )
+ * @author yuchuanWeng()
  * @date 2018/7/10
  * @since 1.0
  */
@@ -175,7 +175,7 @@ public class OrderService implements OrderApi {
                     int i2 = orderMapper.deleteByPrimaryKey(bloBs.getId());
                     log.info("insert s_order_detail fail roll back={}", i2);
                 }
-                return ResultMsgUtil.dmlResult(i1)+"-"+orderNum;
+                return ResultMsgUtil.dmlResult(i1) + "-" + orderNum;
             }
         } finally {
             reentrantLock.unlock();
@@ -196,7 +196,7 @@ public class OrderService implements OrderApi {
             hget = orderMapper.selectByOrderNum(orderNum, uid);
             List<OrderGoods> orders = JSON.parseArray(hget.getGoodsListJson(), OrderGoods.class);
             if (orders != null && !orders.isEmpty()) {
-                Map<Long, List<OrderGoods>> collect = orders.stream().collect(Collectors.groupingBy(OrderGoods::getSupplyId));
+                Map<String, List<OrderGoods>> collect = orders.stream().collect(Collectors.groupingBy(OrderGoods::getSupplyName));
                 hget.setGoodsList(collect);
             }
             jedisCache.hset(ORDER_KEY, orderNum, hget);
@@ -218,7 +218,7 @@ public class OrderService implements OrderApi {
             if (hget != null) {
                 List<OrderGoods> orders = JSON.parseArray(hget.getGoodsListJson(), OrderGoods.class);
                 if (orders != null && !orders.isEmpty()) {
-                    Map<Long, List<OrderGoods>> collect = orders.stream().collect(Collectors.groupingBy(OrderGoods::getSupplyId));
+                    Map<String, List<OrderGoods>> collect = orders.stream().collect(Collectors.groupingBy(OrderGoods::getSupplyName));
                     hget.setGoodsList(collect);
                 }
                 hget.setAddress(userService.getDetailById(hget.getUid(), hget.getAddrId()));
@@ -245,41 +245,46 @@ public class OrderService implements OrderApi {
      */
     @Override
     public String updateOrderStatus(OrderDetailWithBLOBs bloBs) {
-        String orderNum = bloBs.getOrderNum();
-        OrderDto orderDto = orderMapper.selectByOrderNum(orderNum, null);
-        if (orderDto == null) {
-            return ResultMsg.ORDER_NOT_EXIST;
-        }
-        if (bloBs.getOrderStatus() == 5) {
-            //如果为取消的话 那么恢复库存
-            orderDto = getOrderById(orderNum, null);
-            Map<Long, List<OrderGoods>> listMap = orderDto.getGoodsList();
-            if (listMap != null && !listMap.isEmpty()) {
-                listMap.forEach((k, v) -> {
-                    v.forEach(x -> {
-                        //恢复库存
-                        String s1 = goodsExtensionService.updateStockNum(x.getSGoodsSn(), 1, x.getGoodsNum());
-                        log.info("incre {} goods stock num={}", x.getSGoodsSn(), s1);
+        try {
+            reentrantLock.lock();
+            String orderNum = bloBs.getOrderNum();
+            OrderDto orderDto = orderMapper.selectByOrderNum(orderNum, null);
+            if (orderDto == null) {
+                return ResultMsg.ORDER_NOT_EXIST;
+            }
+            if (bloBs.getOrderStatus() == 5) {
+                //如果为取消的话 那么恢复库存
+                orderDto = getOrderById(orderNum, null);
+                Map<String, List<OrderGoods>> listMap = orderDto.getGoodsList();
+                if (listMap != null && !listMap.isEmpty()) {
+                    listMap.forEach((k, v) -> {
+                        v.forEach(x -> {
+                            //恢复库存
+                            String s1 = goodsExtensionService.updateStockNum(x.getSGoodsSn(), 1, x.getGoodsNum());
+                            log.info("incre {} goods stock num={}", x.getSGoodsSn(), s1);
+                        });
                     });
-                });
+                }
             }
-        }
-        OrderWithBLOBs orderWithBLOBs = new OrderWithBLOBs();
-        if (bloBs.getUid() != null) {
-            orderWithBLOBs.setUid(bloBs.getUid());
-        }
-        orderWithBLOBs.setOrderNum(orderNum);
-        orderWithBLOBs.setOrderStatus(bloBs.getOrderStatus());
-        int i = orderMapper.updateByOrderNum(orderWithBLOBs);
-        if (i > 0) {
-            jedisCache.hdel(ORDER_KEY, orderNum);
-            int i1 = orderDetailMapper.updateDetailByOrderNum(bloBs);
-            if (i1 > 0) {
-                jedisCache.hdel(ORDER_DETAIL_KEY, orderNum);
-                return ResultMsg.HANDLER_SUCCESS;
+            OrderWithBLOBs orderWithBLOBs = new OrderWithBLOBs();
+            if (bloBs.getUid() != null) {
+                orderWithBLOBs.setUid(bloBs.getUid());
             }
+            orderWithBLOBs.setOrderNum(orderNum);
+            orderWithBLOBs.setOrderStatus(bloBs.getOrderStatus());
+            int i = orderMapper.updateByOrderNum(orderWithBLOBs);
+            if (i > 0) {
+                jedisCache.hdel(ORDER_KEY, orderNum);
+                int i1 = orderDetailMapper.updateDetailByOrderNum(bloBs);
+                if (i1 > 0) {
+                    jedisCache.hdel(ORDER_DETAIL_KEY, orderNum);
+                    return ResultMsg.HANDLER_SUCCESS;
+                }
+            }
+            return ResultMsg.HANDLER_FAILURE;
+        } finally {
+            reentrantLock.unlock();
         }
-        return ResultMsg.HANDLER_FAILURE;
     }
 
 
