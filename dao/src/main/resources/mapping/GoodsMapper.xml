@@ -112,8 +112,10 @@
         </if>
     </select>
     
-    <select id="selectIdByGoodsSn" resultType="Long">
-        select id
+    <select id="selectIdByGoodsSn" resultType="com.cj.shop.api.response.dto.GoodsDto">
+        select
+        t1.id,
+        t1.goods_sn as goodsSn
         from s_goods
         where goods_sn=#{goodsSn}
     </select>

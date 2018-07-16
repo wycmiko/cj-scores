@@ -3,12 +3,11 @@ package com.cj.shop.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.cj.shop.api.entity.*;
 import com.cj.shop.api.interf.GoodsExtensionApi;
-import com.cj.shop.api.param.GoodsSpecRequest;
-import com.cj.shop.api.param.GoodsStockRequest;
-import com.cj.shop.api.param.GoodsTagRequest;
-import com.cj.shop.api.param.GoodsUnitRequest;
+import com.cj.shop.api.param.*;
 import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
+import com.cj.shop.api.response.PriceLimit;
+import com.cj.shop.api.response.dto.GoodsDto;
 import com.cj.shop.api.response.dto.GoodsStockDto;
 import com.cj.shop.dao.mapper.*;
 import com.cj.shop.service.cfg.JedisCache;
@@ -19,6 +18,7 @@ import com.cj.shop.service.util.ResultMsgUtil;
 import com.cj.shop.service.util.ValidatorUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +32,12 @@ import java.util.ListIterator;
 /**
  * 货物扩展属性服务层 （规格、标签、单位CURD服务）
  *
- * @author yuchuanWeng( )
+ * @author yuchuanWeng()
  * @date 2018/6/25
  * @since 1.0
  */
 @Service
+@Slf4j
 @Transactional(rollbackFor = Exception.class)
 public class GoodsExtensionService implements GoodsExtensionApi {
     @Autowired
@@ -384,7 +385,6 @@ public class GoodsExtensionService implements GoodsExtensionApi {
     }
 
 
-
     /**
      * 添加商品库存
      *
@@ -452,15 +452,30 @@ public class GoodsExtensionService implements GoodsExtensionApi {
             double ratio = stockRequest.getWarnRatio().doubleValue();
             num = NumberUtil.getFloorNumber(stockRequest.getStockNum(), ratio);
         }
-        Long id = goodsMapper.selectIdByGoodsSn(goodsStock.getGoodsSn());
+        GoodsDto dto = goodsMapper.selectIdByGoodsSn(goodsStock.getGoodsSn());
         BeanUtils.copyProperties(stockRequest, goodsStock);
         goodsStock.setProperties(PropertiesUtil.changeProperties(goodsStock.getProperties(), stockRequest.getProperties()));
         goodsStock.setWarnStockNum((int) num);
         goodsStock.setSpecIdList(jsonString);
         int i = goodsStockMapper.updateByPrimaryKeySelective(goodsStock);
         if (i > 0) {
+            //级联更新父类商品
+            if (stockRequest.getStockNum() != null || stockRequest.getSellPrice() != null || stockRequest.getCostPrice() != null) {
+                GoodsWithBLOBs request = new GoodsWithBLOBs();
+                Integer stockNum = goodsStockMapper.getTotalStockNum(dto.getGoodsSn());
+                request.setId(dto.getId());
+                request.setStockNum(stockNum);
+                PriceLimit priceLimit = goodsStockMapper.getPriceLimit(dto.getGoodsSn());
+                request.setMinCostPrice(priceLimit.getMinCostPrice());
+                request.setMaxCostPrice(priceLimit.getMaxCostPrice());
+                request.setMinSellPrice(priceLimit.getMinSellPrice());
+                request.setMaxSellPrice(priceLimit.getMaxSellPrice());
+                int i1 = goodsMapper.updateByPrimaryKeySelective(request);
+                log.info("update Goods Stock Num(id={},stockNum={}) Result={}", dto.getId(), stockNum, i1 > 0);
+                jedisCache.hdel(GoodsService.JEDIS_PREFIX_GOODS, dto.getId().toString());
+            }
             jedisCache.hdel(STOCK_KEY, stockRequest.getId().toString());
-            jedisCache.hdel(GoodsService.JEDIS_PREFIX_GOODS, id.toString());
+            jedisCache.hdel(GoodsService.JEDIS_PREFIX_GOODS, dto.getId().toString());
         }
         return ResultMsgUtil.dmlResult(i);
     }
@@ -481,7 +496,13 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         }
         int i = goodsStockMapper.updateGoodsStock(sGoodSn, type, num);
         if (i > 0) {
+            GoodsWithBLOBs request = new GoodsWithBLOBs();
+            Integer stockNum = goodsStockMapper.getTotalStockNum(stockDto.getGoodsSn());
+            request.setId(stockDto.getGoodsId());
+            request.setStockNum(stockNum);
+            goodsMapper.updateByPrimaryKeySelective(request);
             jedisCache.hdel(STOCK_KEY, stockDto.getStockId().toString());
+            jedisCache.hdel(GoodsService.JEDIS_PREFIX_GOODS, stockDto.getGoodsId().toString());
             jedisCache.hset(STOCK_KEY, stockDto.getStockId().toString(), getStockById(stockDto.getStockId()));
         }
         return ResultMsgUtil.dmlResult(i);

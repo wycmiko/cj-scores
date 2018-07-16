@@ -7,7 +7,6 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * @author tangxd
  * @Description: TODO
  * @date 2017/12/15
  */

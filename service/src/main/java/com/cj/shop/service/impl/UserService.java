@@ -202,7 +202,6 @@ public class UserService implements UserApi {
             return ResultMsg.GOOD_NOT_EXISTS;
         }
         GoodsStockDto stockDto = list.get(0);
-        Long aLong = goodsMapper.selectIdByGoodsSn(stockDto.getGoodsSn());
         //判断是否有这类商品
         Integer goodsNum = request.getGoodsNum();
         //判断库存剩余量
@@ -213,7 +212,7 @@ public class UserService implements UserApi {
         int i;
         UserCart userCart = new UserCart();
         BeanUtils.copyProperties(request, userCart);
-        userCart.setGoodsId(aLong);
+        userCart.setGoodsId(stockDto.getGoodsId());
         userCart.setProperties(PropertiesUtil.addProperties(request.getProperties()));
         if (userCart1 != null) {
             //直接增加相应数量

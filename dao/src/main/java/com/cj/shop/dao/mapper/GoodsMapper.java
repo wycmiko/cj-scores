@@ -16,7 +16,7 @@ public interface GoodsMapper {
 
     GoodsDto  selectByPrimaryKey(Long id);
 
-    Long selectIdByGoodsSn(@Param("goodsSn") String goodsSn);
+    GoodsDto selectIdByGoodsSn(@Param("goodsSn") String goodsSn);
 
     List<Long> selectGoodsIds(GoodsSelect select);
 

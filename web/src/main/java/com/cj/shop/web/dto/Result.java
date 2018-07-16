@@ -5,7 +5,6 @@ import lombok.Setter;
 
 /**
  * <p>Create Time: 2018年03月21日</p>
- * <p>@author tangxd</p>
  **/
 @Getter
 @Setter
