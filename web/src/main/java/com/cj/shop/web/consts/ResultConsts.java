@@ -18,17 +18,22 @@ public abstract class ResultConsts {
     // response message
     public static final String RESPONSE_SUCCEED_MSG = "success";
     public static final String RESPONSE_FAILURE_MSG = "ERROR";
-    //token验证失败 用户已封禁
-    public static final String TOKEN_FAILURE_MSG = "err:1101";
-    public static final String USER_DONE_MSG = "err:1105";
+
     public static final String ERR_SERVER_DATA = "服务器繁忙 请稍后再试";
-    public static final String ERR_SERVER_MSG = "服务器出错了 原因：";
+    public static final String ERR_SERVER_MSG = "服务器繁忙 请稍后再试!--错误信息:";
     //服务器错误
     public static final String SERVER_ERROR = "err:1000";
     //参数为空
     public static final String PARAM_NULL_MSG = "err:1001";
+    //重复提交
+    public static final String DUPLICATED_MOTIVE = "err:1002";
+    //token验证失败
+    public static final String TOKEN_FAILURE_MSG = "err:1101";
+    //用户已封禁
+    public static final String USER_DONE_MSG = "err:1105";
 
 
+    public static final String DUPLICATED_SUBMIT="您操作太频繁了哦";
 
     //upload
     public static final String UPLOAD_SUCCESS = "success";

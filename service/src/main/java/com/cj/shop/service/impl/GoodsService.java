@@ -304,7 +304,7 @@ public class GoodsService implements GoodsApi {
                 //添加成功 加入缓存
                 jedisCache.hdel(JEDIS_PREFIX_GOODS, bloBs.getId().toString());
             } else {
-                //回滚
+                //添加失败-补偿事务
                 insertFailRollBack("添加失败", goodsSn);
             }
         } finally {
@@ -314,7 +314,7 @@ public class GoodsService implements GoodsApi {
     }
 
     /**
-     * 添加商品失败回滚
+     * 添加商品失败事务回滚
      *
      * @param msg 失败提示信息
      * @param num

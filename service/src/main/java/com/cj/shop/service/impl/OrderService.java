@@ -171,7 +171,7 @@ public class OrderService implements OrderApi {
                     }
                     log.info("insert order success delete cart={}", s);
                 } else {
-                    //添加失败 回滚
+                    //添加失败-补偿事务 回滚
                     int i2 = orderMapper.deleteByPrimaryKey(bloBs.getId());
                     log.info("insert s_order_detail fail roll back={}", i2);
                 }

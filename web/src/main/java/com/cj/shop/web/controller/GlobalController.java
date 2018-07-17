@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalController {
 
 
-    @RequestMapping("/error")
+    @RequestMapping("/error/submitFast")
     Result errorFast(HttpServletRequest req, Exception e) {
-        Result res = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
-        if (e != null) res.setData(e.getMessage());
+        Result res = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.DUPLICATED_MOTIVE);
+        res.setData(ResultConsts.DUPLICATED_SUBMIT);
         return res;
     }
 
