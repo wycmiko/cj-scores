@@ -1,5 +1,6 @@
 package com.cj.shop.api.response.dto;
 
+import com.cj.shop.api.entity.GoodsSpecWithBLOBs;
 import com.cj.shop.api.entity.GoodsTag;
 import com.cj.shop.common.model.PropertyEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,6 +10,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yuchuanWeng( )
@@ -32,6 +34,8 @@ public class GoodsDto extends PropertyEntity implements Serializable {
     @ExcelField(title = "商品名", order = 3)
     @JsonProperty("goods_name")
     private String goodsName;
+    @JsonProperty("spec_array")
+    private  Map<String, List<GoodsSpecWithBLOBs>> specArray;
     /**
      * 品牌ID
      */

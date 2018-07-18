@@ -33,14 +33,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * 商品service
  *
- * @author yuchuanWeng( )
+ * @author yuchuanWeng()
  * @date 2018/6/25
  * @since 1.0
  */
@@ -336,7 +336,7 @@ public class GoodsService implements GoodsApi {
     private GoodsWithBLOBs updateGoosProp(GoodsRequest request, GoodsWithBLOBs bloBs, String goodsSn) {
         if (bloBs == null) bloBs = new GoodsWithBLOBs();
         //如果为上架商品
-        if (request.getSaleFlag() == 1) {
+        if (request.getSaleFlag() != null && request.getSaleFlag() == 1) {
             bloBs.setSaleTime(DateUtils.getCommonString());
         }
         PriceLimit priceLimit = goodsStockMapper.getPriceLimit(goodsSn);
@@ -534,7 +534,21 @@ public class GoodsService implements GoodsApi {
             StockSelect select = new StockSelect();
             select.setGoodSn(dto.getGoodsSn());
             PagedList<GoodsStockDto> allGoodsStock = goodsExtensionService.findAllGoodsStock(select);
-            dto.setStockList(allGoodsStock.getList());
+            List<GoodsStockDto> list = allGoodsStock.getList();
+            dto.setStockList(list);
+            //封装Spec列表
+            if (!list.isEmpty()) {
+                List<GoodsSpecWithBLOBs> spec = new ArrayList<>();
+                for (GoodsStockDto dt : list) {
+                    List<GoodsSpecWithBLOBs> specList = dt.getSpecList();
+                    if (specList != null && !specList.isEmpty()) {
+                        spec.addAll(specList);
+                    }
+                }
+                spec = spec.stream().collect(Collectors.collectingAndThen((Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getParentName() + ";" + o.getSpecName())))), ArrayList::new));
+                Map<String, List<GoodsSpecWithBLOBs>> collect = spec.stream().collect(Collectors.groupingBy(GoodsSpecWithBLOBs::getParentName));
+                dto.setSpecArray(collect);
+            }
             dto.setTagList(goodsTagList);
         }
         return dto;
