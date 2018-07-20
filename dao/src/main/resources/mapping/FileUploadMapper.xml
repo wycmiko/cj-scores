@@ -5,6 +5,7 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="uid" property="uid" />
         <result column="file_name" property="fileName"/>
+        <result column="file_id" property="fileId"/>
         <result column="file_url" property="fileUrl"/>
         <result column="file_size" property="fileSize"/>
         <result column="req_ip" property="reqIp"/>
@@ -12,8 +13,26 @@
         <result column="post_time" property="postTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, uid, file_type, file_name,file_url,file_size, req_ip, role,post_time
+    id, uid, file_type,file_id,file_name,file_url,file_size, req_ip, role,post_time
   </sql>
+
+    <delete id="deleteByFileId">
+        delete from s_file_upload
+        where file_id=#{fileId}
+    </delete>
+
+    <select id="selectByFileUrl" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from s_file_upload
+        <where>
+            1=1
+            <if test="uid != null">
+                and uid = #{uid}
+            </if>
+            and file_url=#{url}
+        </where>
+    </select>
     <insert id="addRecord" parameterType="com.cj.shop.api.entity.FileUpload">
         insert into s_file_upload
         <trim prefix="(" suffix=")" suffixOverrides=",">

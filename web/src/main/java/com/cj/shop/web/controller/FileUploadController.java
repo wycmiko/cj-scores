@@ -1,10 +1,12 @@
 package com.cj.shop.web.controller;
 
 import com.cj.shop.api.entity.FileUpload;
+import com.cj.shop.api.param.FileDeleteRequest;
 import com.cj.shop.service.impl.FileUploadSerivce;
 import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
 import com.cj.shop.web.utils.IPAddressUtil;
+import com.cj.shop.web.utils.ResultUtil;
 import com.cj.shop.web.utils.SeaweedFSUtil;
 import com.cj.shop.web.validator.CommandValidator;
 import com.cj.shop.web.validator.TokenValidator;
@@ -136,13 +138,36 @@ public class FileUploadController {
     }
 
     @DeleteMapping("/deleteFile")
-    public Result deleteFile(String fileId) {
+    public Result deleteFile(@RequestBody FileDeleteRequest request) {
         //构造返回对象
         Result result = null;
         FileUpload fileUpload = null;
         try {
+            if (StringUtils.isEmpty(request.getFileUrl())) {
+                return CommandValidator.paramEmptyResult();
+            }
             log.info("deleteFile.uploadFilePc begin");
-            seaweedFSUtil.deleteFile(fileId);
+            String s = null;
+            Long uid = null;
+            if (StringUtils.isEmpty(request.getToken())) {
+                //后台管理 需IP鉴权
+
+            } else {
+                //前台用户 只能操作自己的图片
+                //token校验
+                if (!tokenValidator.checkToken(request.getToken())) {
+                    log.info("FileUploadController.uploadFile 【Invaild token!】");
+                    return tokenValidator.invaildTokenFailedResult();
+                }
+                uid = tokenValidator.getUidByToken(request.getToken());
+            }
+
+            FileUpload upload = fileUploadSerivce.selectByFileUrl(request.getFileUrl(), uid);
+            if (upload != null) {
+                seaweedFSUtil.deleteFile(upload.getFileId());
+            }
+            s = fileUploadSerivce.deleteByFileId(request.getFileUrl(), uid);
+            result = ResultUtil.getVaildResult(s, result);
         } catch (Exception e) {
             e.printStackTrace();
             //异常情况
