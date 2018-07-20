@@ -35,6 +35,7 @@ public class GlobalExceptionHandler {
         log.error("【error】  path: {}:{}{}, errMsg:{}", request.getRemoteAddr(), request.getLocalPort(), request.getRequestURI(), e.getMessage());
         Result result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
         result.setData(ResultConsts.ERR_SERVER_DATA + "!--错误信息:" + e.getMessage());
+        e.printStackTrace();
         return result;
     }
 

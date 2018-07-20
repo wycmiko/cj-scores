@@ -29,11 +29,13 @@ public abstract class ResultConsts {
     public static final String DUPLICATED_MOTIVE = "err:1002";
     //token验证失败
     public static final String TOKEN_FAILURE_MSG = "err:1101";
+    public static final String IP_FAILURE_MSG = "err:1102";
     //用户已封禁
     public static final String USER_DONE_MSG = "err:1105";
 
 
     public static final String DUPLICATED_SUBMIT="您操作太频繁了哦";
+    public static final String IP_NOT_ALLOWED="请联系管理员开通【删除】权限";
 
     //upload
     public static final String UPLOAD_SUCCESS = "success";

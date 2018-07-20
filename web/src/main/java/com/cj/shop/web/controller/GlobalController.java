@@ -2,6 +2,7 @@ package com.cj.shop.web.controller;
 
 import com.cj.shop.web.consts.ResultConsts;
 import com.cj.shop.web.dto.Result;
+import com.cj.shop.web.utils.IPAddressUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,9 +20,16 @@ public class GlobalController {
 
 
     @RequestMapping("/error/submitFast")
-    Result errorFast(HttpServletRequest req, Exception e) {
+    public Result errorFast() {
         Result res = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.DUPLICATED_MOTIVE);
         res.setData(ResultConsts.DUPLICATED_SUBMIT);
+        return res;
+    }
+
+    @RequestMapping("/error/ipDenied")
+    public Result ipDenied(HttpServletRequest request) {
+        Result res = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.IP_FAILURE_MSG);
+        res.setData(ResultConsts.IP_NOT_ALLOWED + ",你的IP:" + IPAddressUtil.getIpAddressNotInProxy(request));
         return res;
     }
 

@@ -1,6 +1,9 @@
 package com.cj.shop.web.cfg;
 
+import com.cj.shop.service.impl.IpAddressService;
+import com.cj.shop.web.intercep.IpAllowInterceptor;
 import com.cj.shop.web.intercep.OrderInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -14,7 +17,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 public class WebInterceptorConfig extends WebMvcConfigurerAdapter {
-
+    @Autowired
+    private IpAddressService service;
 
     //增加拦截器
     @Override
@@ -22,5 +26,8 @@ public class WebInterceptorConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new OrderInterceptor())    //指定拦截器类
                 .addPathPatterns("/v1/mall/json/user/submitOrder")
                 .addPathPatterns("/v1/mall/manage/goods/addGoods");        //指定该类拦截的url
+        registry.addInterceptor(new IpAllowInterceptor(service))
+                .addPathPatterns("/v1/mall/manage/deleteFile");
+
     }
 }
