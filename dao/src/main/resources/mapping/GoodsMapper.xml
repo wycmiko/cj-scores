@@ -96,19 +96,19 @@
             order by sale_count asc,sort_flag desc
         </if>
         <if test="sortType == 4">
-            order by sale_count asc,sort_flag desc
+            order by sale_count desc,sort_flag desc
         </if>
         <if test="sortType == 5">
             order by stock_num asc,sort_flag desc
         </if>
         <if test="sortType == 6">
-            order by stock_num asc,sort_flag desc
+            order by stock_num desc,sort_flag desc
         </if>
         <if test="sortType == 7">
             order by pv asc,sort_flag desc
         </if>
         <if test="sortType == 8">
-            order by pv asc,sort_flag desc
+            order by pv desc,sort_flag desc
         </if>
     </select>
 
