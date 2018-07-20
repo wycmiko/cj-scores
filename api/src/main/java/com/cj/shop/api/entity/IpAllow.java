@@ -16,6 +16,10 @@ import java.io.Serializable;
 public class IpAllow implements Serializable {
     private Long id;
     private String ip;
+    @JsonProperty("role_name")
+    private String roleName;
+    @JsonProperty("person_name")
+    private String personName;
     private Integer enabled;
     @JsonProperty("update_time")
     private String updateTime;

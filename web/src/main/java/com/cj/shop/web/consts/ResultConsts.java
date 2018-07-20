@@ -35,7 +35,7 @@ public abstract class ResultConsts {
 
 
     public static final String DUPLICATED_SUBMIT="您操作太频繁了哦";
-    public static final String IP_NOT_ALLOWED="请联系管理员开通【删除】权限";
+    public static final String IP_NOT_ALLOWED="请联系管理员开通操作权限";
 
     //upload
     public static final String UPLOAD_SUCCESS = "success";

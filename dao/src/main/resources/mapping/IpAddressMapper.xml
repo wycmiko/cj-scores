@@ -5,11 +5,13 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="ip" property="ip"/>
         <result column="enabled" property="enabled"/>
+        <result column="role_name" property="roleName"/>
+        <result column="person_name" property="personName"/>
         <result column="update_time" property="updateTime"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, ip, enabled,update_time,create_time
+    id, ip, role_name, person_name,enabled,update_time,create_time
   </sql>
 
     <update id="deleteByIpAddress">
@@ -43,16 +45,22 @@
             <if test="ip != null">
                 ip,
             </if>
-            <if test="enabled != null">
-                enabled,
+            <if test="roleName != null">
+                role_name,
+            </if>
+            <if test="personName != null">
+                person_name,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="ip != null">
                 #{ip},
             </if>
-            <if test="enabled != null">
-                #{enabled},
+            <if test="roleName != null">
+                #{roleName},
+            </if>
+            <if test="personName != null">
+                #{personName},
             </if>
         </trim>
     </insert>
