@@ -33,7 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
@@ -545,13 +547,25 @@ public class GoodsService implements GoodsApi {
                         spec.addAll(specList);
                     }
                 }
-                spec = spec.stream().collect(Collectors.collectingAndThen((Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getParentName() + ";" + o.getSpecName())))), ArrayList::new));
-                Map<String, List<GoodsSpecWithBLOBs>> collect = spec.stream().collect(Collectors.groupingBy(GoodsSpecWithBLOBs::getParentName));
+                spec = spec.stream()
+                        .filter(PropertiesUtil.distinctByKey(o -> o.getSpecName()))
+                        .collect(Collectors.toList());
+                //封装 JSON-spec_array给前台
+//                spec = spec.stream().distinct().collect(Collectors.collectingAndThen((Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getSpecName())))), ArrayList::new));
+                //第二个参数表示指定一个Map 第三个参数分组后如何收集
+                LinkedHashMap<String, List<GoodsSpecWithBLOBs>> collect = spec.stream().collect(Collectors.groupingBy(GoodsSpecWithBLOBs::getParentName, LinkedHashMap::new, Collectors.toList()));
                 dto.setSpecArray(collect);
+                //封装json- spec_name_array给前台
+                if (collect != null && !collect.isEmpty()) {
+                    dto.setSpecNameArray(collect.keySet().stream().collect(Collectors.toList()));
+                }
             }
             dto.setTagList(goodsTagList);
         }
         return dto;
     }
+
+
+
 
 }

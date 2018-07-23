@@ -6,6 +6,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * properties工具类
@@ -44,5 +47,16 @@ public class PropertiesUtil {
         } else {
             return JSON.toJSONString(map);
         }
+    }
+
+    /**
+     * java 8 根据某字段ID去重 保存顺序
+     * @param keyExtractor
+     * @param <T>
+     * @return
+     */
+    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }

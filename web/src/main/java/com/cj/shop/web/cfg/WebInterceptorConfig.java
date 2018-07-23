@@ -25,7 +25,8 @@ public class WebInterceptorConfig extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new IpAllowInterceptor(service))
                 .addPathPatterns("/v1/mall/manage/**").excludePathPatterns("/v1/mall/manage/ip/allow/_add")
-        .excludePathPatterns("/v1/mall/manage/ip/allow/_update");
+        .excludePathPatterns("/v1/mall/manage/ip/allow/_update")
+        .excludePathPatterns("/v1/mall/manage/ip/allow/_list");
         registry.addInterceptor(new OrderInterceptor())    //指定拦截器类
                 .addPathPatterns("/v1/mall/json/user/submitOrder")
                 .addPathPatterns("/v1/mall/manage/goods/addGoods");        //指定该类拦截的url

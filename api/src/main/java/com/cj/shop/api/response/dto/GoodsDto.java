@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author yuchuanWeng( )
@@ -34,8 +34,12 @@ public class GoodsDto extends PropertyEntity implements Serializable {
     @ExcelField(title = "商品名", order = 3)
     @JsonProperty("goods_name")
     private String goodsName;
+
+
+    @JsonProperty("spec_name_array")
+    private List<String> specNameArray;
     @JsonProperty("spec_array")
-    private  Map<String, List<GoodsSpecWithBLOBs>> specArray;
+    private LinkedHashMap<String, List<GoodsSpecWithBLOBs>> specArray;
     /**
      * 品牌ID
      */
