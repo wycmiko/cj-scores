@@ -32,6 +32,8 @@ public class OrderDetailDto extends PropertyEntity implements Serializable {
     @JsonProperty("pay_status")
     private Integer payStatus;
 
+    @JsonProperty("pay_time")
+    private String payTime;
     @JsonProperty("pay_type")
     private Integer payType;
 

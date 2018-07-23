@@ -7,15 +7,15 @@ import com.cj.shop.api.entity.UserAddress;
 import com.cj.shop.api.param.*;
 import com.cj.shop.api.param.select.OrderSelect;
 import com.cj.shop.api.response.PagedList;
-import com.cj.shop.api.response.dto.GoodsVisitDto;
-import com.cj.shop.api.response.dto.OrderDetailDto;
-import com.cj.shop.api.response.dto.UserCartDto;
+import com.cj.shop.api.response.dto.*;
 import com.cj.shop.service.impl.ExpressService;
 import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.service.impl.OrderService;
 import com.cj.shop.service.impl.UserService;
 import com.cj.shop.web.consts.ResultConsts;
+import com.cj.shop.web.consume.ShopMallFeign;
 import com.cj.shop.web.dto.Result;
+import com.cj.shop.web.utils.IPAddressUtil;
 import com.cj.shop.web.utils.ResultUtil;
 import com.cj.shop.web.validator.CommandValidator;
 import com.cj.shop.web.validator.TokenValidator;
@@ -25,11 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
  * <title>用户服务控制层<title/>
  * 接口文档api: http://172.28.3.45:3008/project/15/interface/api  目录地址：商城前台-*
+ *
  * @author yuchuanWeng
  * @date 2018/6/14
  * @since 1.0
@@ -48,6 +50,8 @@ public class UserController {
     private OrderService orderService;
     @Autowired
     private ExpressService expressService;
+    @Autowired
+    private ShopMallFeign shopMallFeign;
 
     /**
      * 查询地址详情
@@ -562,6 +566,7 @@ public class UserController {
 
     /**
      * 用户查询订单列表
+     *
      * @param select
      * @return
      */
@@ -600,7 +605,7 @@ public class UserController {
         Result result = null;
         try {
             log.info("getExpressInfo-user begin");
-            if (CommandValidator.isEmpty(order_num,token)) {
+            if (CommandValidator.isEmpty(order_num, token)) {
                 return CommandValidator.paramEmptyResult();
             }
             if (!tokenValidator.checkToken(token)) {
@@ -619,4 +624,71 @@ public class UserController {
         }
         return result;
     }
+
+    @PostMapping("/pay")
+    public Result pay(@RequestBody PayRequest request, HttpServletRequest request2) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("pay begin");
+            if (CommandValidator.isEmpty(request.getAppId(), request.getBody(), request.getSubject(), request.getToken())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(request.getToken())) {
+                log.info("pay 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(request.getToken());
+            request.setIp(IPAddressUtil.getIpAddressNotInProxy(request2));
+            request.setBuyerId(String.valueOf(uid));
+            PayTradeDto pay = shopMallFeign.pay(request);
+            if ("Success".equals(pay.getMsg())) {
+                result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+                PayTradeDtoOnly only = new PayTradeDtoOnly();
+                BeanUtils.copyProperties(pay, only);
+                result.setData(only);
+            } else {
+                result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.RESPONSE_FAILURE_MSG);
+                result.setData(pay);
+            }
+            log.info("pay end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("pay error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG + e.getMessage());
+        }
+        return result;
+    }
+
+
+    @GetMapping("/queryPay")
+    public Result queryPay(String app_id, String plat_trade_no, String out_trade_no, String token) {
+        //token校验
+        Result result = null;
+        try {
+            log.info("queryPay begin");
+            if (CommandValidator.isEmpty(token)) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(token)) {
+                log.info("queryPay 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            PayTradeDto pay = shopMallFeign.query(app_id, plat_trade_no, out_trade_no);
+            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
+            PayTradeDtoOnly only = new PayTradeDtoOnly();
+            BeanUtils.copyProperties(pay, only);
+            result.setData(only);
+            log.info("queryPay end");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("queryPay error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+            result.setData(ResultConsts.ERR_SERVER_MSG + e.getMessage());
+        }
+        return result;
+    }
+
+
 }

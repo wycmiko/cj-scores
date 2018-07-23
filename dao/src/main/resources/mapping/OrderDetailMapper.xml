@@ -15,6 +15,7 @@
         <result column="delivery_protect" property="deliveryProtect" jdbcType="INTEGER"/>
         <result column="receive_type" property="receiveType" jdbcType="INTEGER"/>
         <result column="express_id" property="expressId" jdbcType="VARCHAR"/>
+        <result column="pay_time" property="payTime" jdbcType="VARCHAR"/>
         <result column="express_name" property="expressName" jdbcType="VARCHAR"/>
         <result column="addr_id" property="addrId" jdbcType="BIGINT"/>
         <result column="coupon_price" property="couponPrice" jdbcType="DECIMAL"/>
@@ -32,7 +33,7 @@
         <result column="properties" property="properties" jdbcType="LONGVARCHAR"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, shop_id, uid, order_num, order_name,  order_price, order_status,
+    id, shop_id, uid, order_num, order_name,  order_price, order_status, pay_time,
     pay_status, pay_type, delivery_cash, delivery_protect, receive_type, express_id, express_name,
     addr_id, coupon_price, real_price, need_invoice, order_scores, delivery_time, delete_flag, 
     update_time, create_time
@@ -79,6 +80,9 @@
             </if>
             <if test="payType != null">
                 pay_type,
+            </if>
+            <if test="payTime != null">
+                pay_time,
             </if>
             <if test="deliveryCash != null">
                 delivery_cash,
@@ -145,6 +149,9 @@
             <if test="payType != null">
                 #{payType,jdbcType=TINYINT},
             </if>
+            <if test="payTime != null">
+                #{payTime},
+            </if>
             <if test="deliveryCash != null">
                 #{deliveryCash,jdbcType=DECIMAL},
             </if>
@@ -200,6 +207,9 @@
             </if>
             <if test="payType != null">
                 pay_type = #{payType,jdbcType=TINYINT},
+            </if>
+            <if test="payTime != null">
+                pay_time = #{payTime,jdbcType=VARCHAR},
             </if>
             <if test="deliveryCash != null">
                 delivery_cash = #{deliveryCash,jdbcType=DECIMAL},

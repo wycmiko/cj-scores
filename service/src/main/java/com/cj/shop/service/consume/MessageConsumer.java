@@ -64,7 +64,7 @@ public class MessageConsumer {
     private OrderService orderService;
     @Autowired
     private GoodsExtensionService goodsExtensionService;
-    private static final ReentrantLock lock = new ReentrantLock();
+    private  ReentrantLock orderLock = new ReentrantLock();
     @Autowired
     private JedisCache jedisCache;
 
@@ -76,7 +76,7 @@ public class MessageConsumer {
     @Transactional(rollbackFor = Exception.class)
     public void payStatusCheck(String orderNum) {
         try {
-            lock.lock();
+            orderLock.lock();
             OrderDto orderDto = orderMapper.selectByOrderNum(orderNum, null);
             if (orderDto != null) {
                 if (orderDto.getOrderStatus() == 1) {
@@ -91,7 +91,7 @@ public class MessageConsumer {
                 log.info("订单：{} 状态 无须修改", orderNum);
             }
         } finally {
-            lock.unlock();
+            orderLock.unlock();
         }
     }
 
@@ -103,7 +103,7 @@ public class MessageConsumer {
     @Transactional(rollbackFor = Exception.class)
     public void autoConfirmed(String orderNum) {
         try {
-            lock.lock();
+            orderLock.lock();
             OrderDto orderDto = orderMapper.selectByOrderNum(orderNum, null);
             if (orderDto != null) {
                 //当前仅当待签收的订单才可自动确认
@@ -119,7 +119,7 @@ public class MessageConsumer {
                 log.info("订单：{} 状态无须确认收货", orderNum);
             }
         } finally {
-            lock.unlock();
+            orderLock.unlock();
         }
     }
 }

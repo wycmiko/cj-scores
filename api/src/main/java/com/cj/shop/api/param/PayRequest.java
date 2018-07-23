@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @author yuchuanWeng( )
+ * @author yuchuanWeng()
  * @date 2018/7/12
  * @since 1.0
  */
@@ -32,6 +32,8 @@ public class PayRequest {
      */
     @JsonProperty("seller_id")
     private String sellerId;
+
+    private String token;
     /**
      * 买家uid
      */
@@ -50,6 +52,18 @@ public class PayRequest {
     private String ip;
 
     private String properties;
+
+    /**
+     * 订单标题
+     */
+    private String subject;
+
+    @JsonProperty("total_amount")
+    private Double totalAmount;
+    /**
+     * app
+     */
+    private String mode;
 
 
 }
