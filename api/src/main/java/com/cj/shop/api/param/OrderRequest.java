@@ -37,6 +37,9 @@ public class OrderRequest extends BaseRequest implements Serializable {
     private Double orderPrice;
     @JsonProperty("sort_flag")
     private Integer sortFlag;
+    // 1= 支付宝 2=微信
+    @JsonProperty("pay_type")
+    private Integer payType;
 
     /**
      * 是否需要发票

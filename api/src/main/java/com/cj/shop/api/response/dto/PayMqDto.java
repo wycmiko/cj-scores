@@ -32,8 +32,15 @@ public class PayMqDto implements Serializable {
 
     @JsonProperty("paid_time")
     private String paidTime;
-
+    /**
+     * "SUCCESS"
+     * "FAIL"
+     */
     @JsonProperty("status")
     private String status;
+    /**
+     * 失败的话保存失败信息
+     */
+    private String message;
 
 }

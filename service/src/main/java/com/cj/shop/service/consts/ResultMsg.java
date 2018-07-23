@@ -6,6 +6,9 @@ package com.cj.shop.service.consts;
  * @since 1.0
  */
 public class ResultMsg {
+    public static final String SUCCESS = "SUCCESS";
+    public static final String FAIL = "FAIL";
+
     //参数
     public static final String PARAM_NULL = "参数不能为空";
     //操作

@@ -137,6 +137,7 @@ public class OrderService implements OrderApi {
                 bloBs1.setProperties(PropertiesUtil.addProperties(request.getProperties()));
                 bloBs1.setOrderName(sb.toString());
                 bloBs1.setShopId(1L);
+                bloBs1.setPayType(request.getPayType());
                 bloBs1.setUid(request.getUid());
                 bloBs1.setAddrId(request.getAddrId());
                 bloBs1.setRealPrice(totalPrice + cash.getDeliveryCash());
