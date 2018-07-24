@@ -57,7 +57,7 @@ endpoints:
 # JWT
 jwt:
   header: Authorization
-  secret: cj-match|secret
+  secret: cj-mall|secret
   expiration: 3600
   tokenHead: "Bearer "
 

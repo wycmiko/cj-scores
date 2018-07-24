@@ -36,6 +36,8 @@ public class GoodsStockDto implements Serializable {
     private String supplyName;
     @JsonProperty("spec_id_list")
     private String specIdList;
+    @JsonProperty("spec_name_list")
+    private List<String> specNameList;
     @JsonProperty("spec_list")
     private List<GoodsSpecWithBLOBs> specList;
     @JsonProperty("stock_num")

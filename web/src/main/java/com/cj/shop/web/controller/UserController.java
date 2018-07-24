@@ -8,6 +8,7 @@ import com.cj.shop.api.param.*;
 import com.cj.shop.api.param.select.OrderSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.*;
+import com.cj.shop.service.consts.ResultMsg;
 import com.cj.shop.service.impl.ExpressService;
 import com.cj.shop.service.impl.GoodsService;
 import com.cj.shop.service.impl.OrderService;
@@ -122,7 +123,7 @@ public class UserController {
         //token校验
         Result result = null;
         try {
-            if (CommandValidator.isEmpty(request.getToken(), request.getUserName(), request.getMobile(), request.getDetailAddr())
+            if (CommandValidator.isEmpty(request.getArea(), request.getToken(), request.getUserName(), request.getMobile(), request.getDetailAddr())
                     || !CommandValidator.isMobile(request.getMobile())) {
                 return CommandValidator.paramEmptyResult();
             }
@@ -642,14 +643,16 @@ public class UserController {
             request.setIp(IPAddressUtil.getIpAddressNotInProxy(request2));
             request.setBuyerId(String.valueOf(uid));
             PayTradeDto pay = shopMallFeign.pay(request);
-            if ("Success".equals(pay.getMsg())) {
+            PayTradeDtoOnly only = new PayTradeDtoOnly();
+            BeanUtils.copyProperties(pay, only);
+            only.setRpc_msg(pay.getMsg());
+            only.setProperties(pay.getProperties());
+            if (ResultMsg.SUCCESS.equals(pay.getMsg())) {
                 result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-                PayTradeDtoOnly only = new PayTradeDtoOnly();
-                BeanUtils.copyProperties(pay, only);
                 result.setData(only);
             } else {
                 result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.RESPONSE_FAILURE_MSG);
-                result.setData(pay);
+                result.setData(only);
             }
             log.info("pay end");
         } catch (Exception e) {

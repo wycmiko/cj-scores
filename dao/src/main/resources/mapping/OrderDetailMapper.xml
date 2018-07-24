@@ -295,7 +295,7 @@
         <where>
             1=1
             <if test="orderNum != null">
-                and order_num = #{orderNum}
+                and order_num like concat('%','${orderNum}','%')
             </if>
             <if test="payType != null">
                 and pay_type = #{payType}

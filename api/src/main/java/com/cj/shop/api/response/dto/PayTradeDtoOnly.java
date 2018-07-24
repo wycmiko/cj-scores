@@ -1,5 +1,6 @@
 package com.cj.shop.api.response.dto;
 
+import com.cj.shop.api.param.BaseRequest;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +13,9 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class PayTradeDtoOnly implements Serializable {
+public class PayTradeDtoOnly extends BaseRequest implements Serializable {
     private String trade_no;
+    private String rpc_msg;
     /**
      * 平台订单号
      */
@@ -27,5 +29,4 @@ public class PayTradeDtoOnly implements Serializable {
     private Double total_amount;
     private String create_time;
     private String status;
-    private String properties;
 }

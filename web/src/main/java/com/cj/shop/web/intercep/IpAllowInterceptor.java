@@ -26,11 +26,13 @@ public class IpAllowInterceptor implements HandlerInterceptor {
         this.ipAddressService = ipAddressService;
     }
 
-    //校验该IP是否重复调用
+    //校验该IP是否授权
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
+//        String headerIp = httpServletRequest.getHeader("ip-allow");
+//        log.info("header ip = {}", headerIp);
         String ip = IPAddressUtil.getIpAddressNotInProxy(httpServletRequest);
-        log.info("ipAllowed check request, ip={}", ip);
+        log.info("shop mall manage ip check request, ip={}", ip);
         IpAllow detail = ipAddressService.getIpAllowedDetail(ip, 1);
         if (detail == null) {
             httpServletRequest.getRequestDispatcher("/v1/mall/error/ipDenied").forward(httpServletRequest, httpServletResponse);

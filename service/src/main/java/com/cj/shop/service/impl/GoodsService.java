@@ -368,9 +368,12 @@ public class GoodsService implements GoodsApi {
     public String updateGood(GoodsRequest request) {
         GoodsDto goodsDetail = getGoodsDetail(request.getId());
         if (goodsDetail == null) return ResultMsg.GOOD_NOT_EXISTS;
-        if (request.getStockList() != null && !request.getStockList().isEmpty()) {
+        List<GoodsStockRequest> stockList = request.getStockList();
+        if (stockList != null && !stockList.isEmpty()) {
+            //过滤null值
+            stockList = stockList.stream().filter(x-> x.getStockNum() != null).collect(Collectors.toList());
             //添加商品规格库存列表
-            for (GoodsStockRequest request1 : request.getStockList()) {
+            for (GoodsStockRequest request1 : stockList) {
                 //小商品编号
                 String smallNum = NumberUtil.getSmallGoodsNum(goodsDetail.getGoodsSn(), request1.getSpecIdList());
                 request1.setGoodsSn(goodsDetail.getGoodsSn());

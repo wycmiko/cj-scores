@@ -238,7 +238,7 @@ public class OrderService implements OrderApi {
      * 4、已完成 = 交易成功
      * 5、已关闭 = 交易关闭
      * 2、订单明细 支付状态 ：pay_status = '1=未付款 2=已支付 3=已退款
-     * pay_type:1=支付宝 2=微信 3=网银 4=货到付款
+     * pay_type:1=微信 2=支付宝 3=网银 4=货到付款
      * <p>
      * orderNum 订单编号
      * status  要修改的状态

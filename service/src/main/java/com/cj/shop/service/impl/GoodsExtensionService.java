@@ -556,17 +556,20 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                 }
                 List<Long> longList = JSON.parseArray(hget.getSpecIdList(), Long.class);
                 List<GoodsSpecWithBLOBs> list = new ArrayList<>();
+                List<String> nameList = new ArrayList<>();
                 if (longList != null && !longList.isEmpty()) {
                     for (Long id1 : longList) {
                         GoodsSpecWithBLOBs detail = getGoodsSpecDetail(id1, "all");
-                        if (detail != null && detail.getParentId() != null) {
+                        if (detail != null || detail.getParentId() != null) {
                             GoodsSpecWithBLOBs detail1 = getGoodsSpecDetail(detail.getParentId(), "all");
                             if (detail1 != null)
                                 detail.setParentName(detail1.getSpecName());
+                            nameList.add(detail.getSpecName());
                         }
                         list.add(detail);
                     }
                 }
+                hget.setSpecNameList(nameList);
                 hget.setSpecList(list);
                 GoodsSupply detail = goodsService.getSupplyDetail(hget.getSupplyId());
                 hget.setSupplyName(detail == null ? null : detail.getSupplyName());

@@ -23,7 +23,7 @@ public class PayRequest {
     @JsonProperty("out_trade_no")
     private String outTradeNo;
     /**
-     * 支付通道 1=支付宝 2=微信
+     * 支付通道 1=微信 2=支付宝
      */
     @JsonProperty("pay_channel")
     private String payChannel;
