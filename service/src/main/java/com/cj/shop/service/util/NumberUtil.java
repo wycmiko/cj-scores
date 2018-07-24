@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author yuchuanWeng( )
@@ -21,7 +20,7 @@ public class NumberUtil {
     public static final LongAdder ORDER_AUTOINCRENUM = new LongAdder();
     public static final LongAdder GOODS_AUTOINCRENUM = new LongAdder();
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.00");
-    private static ReentrantLock lock = new ReentrantLock();
+//    private static ReentrantLock lock = new ReentrantLock();
 
     /**
      * 获取订单编号
@@ -104,7 +103,7 @@ public class NumberUtil {
         return Math.round(totalNums * ratio);
     }
 
-
+    //test
     public static void main(String[] args) {
         String uuId = getOrderIdByUUId();
         log.info("编号{} ,长度： {}", uuId, uuId.length());

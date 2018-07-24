@@ -77,7 +77,7 @@ public class MessageConsumer {
      *
      * @param message
      */
-//    @RabbitListener(queues = "test")
+//    @RabbitListener(queues = "pay-queue")
 //    @RabbitHandler
 //    public void process2(String message) {
 //        try {
