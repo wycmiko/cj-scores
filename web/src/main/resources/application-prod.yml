@@ -98,8 +98,8 @@ server:
 #        host: 172.28.3.45
 #        port: 32878
 
-# cj-match config
-cjmatch:
+# cj-mall config
+cjmall:
   vaild:
     template: 429246
     app-template: 425206

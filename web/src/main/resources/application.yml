@@ -14,7 +14,7 @@ spring:
       maxFileSize: 20Mb
       maxRequestSize: 20Mb
 
-
+# mybatis scanner
 mybatis:
   mapper-locations: classpath*:mapping/*.xml
   config-location: classpath:mybatis-config.xml
@@ -26,7 +26,7 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
-#请求处理的超时时间
+#配置springcloud feign请求处理的超时时间
 ribbon:
   ReadTimeout: 120000
  #请求连接的超时时间
@@ -54,16 +54,18 @@ endpoints:
     enabled: true
     sensitive: false
 
-# JWT
+# Security-JWT
 jwt:
   header: Authorization
   secret: cj-mall|secret
   expiration: 3600
   tokenHead: "Bearer "
 
-cjmatch:
+# 用户中心app-id 以及支付 app-id
+cjmall:
   user-app-id: platform_app
-
+  pay-app-id: test
+# 第三方物流接口 id 与 secret
 cj:
   mall:
     express:

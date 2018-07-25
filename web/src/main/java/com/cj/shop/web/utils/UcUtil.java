@@ -25,8 +25,10 @@ import java.io.IOException;
 @Component
 public class UcUtil {
 
-    @Value("${cjmatch.user-app-id}")
+    @Value("${cjmall.user-app-id}")
     public String userAppId;
+    @Value("${cjmall.pay-app-id}")
+    public String payAppId;
 
     @Value("${wechat.app-id}")
     public String appId;

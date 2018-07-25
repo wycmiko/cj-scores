@@ -100,7 +100,7 @@ server:
 #        port: 32878
 
 # cj-match config
-cjmatch:
+cjmall:
   vaild:
     template: 429246
     app-template: 425206

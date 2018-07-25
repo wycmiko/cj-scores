@@ -26,7 +26,7 @@ import java.io.IOException;
 @Component
 public class TokenValidator {
 
-    @Value("${cjmatch.user-app-id}")
+    @Value("${cjmall.user-app-id}")
     public String userAppId;
 
     @Value("${wechat.app-id}")

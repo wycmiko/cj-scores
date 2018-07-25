@@ -33,7 +33,7 @@ public class ResultUtil {
         return result;
     }
 
-    public static Result getVaildResultData(String s, Result result, String content) {
+    public static Result getResultData(String s, Result result, String content) {
         if (ResultMsg.HANDLER_SUCCESS.equals(s)) {
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
             result.setData(content);

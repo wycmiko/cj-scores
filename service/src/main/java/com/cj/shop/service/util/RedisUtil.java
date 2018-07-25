@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtil {
     @Value("${spring.redis.expire-time}")
     public Long expiraTime;
-    private static final String prefix = "cjmatch:mall:";
+    private static final String prefix = "cj_mall:";
     @Autowired
     private RedisTemplate redisTemplate;
 

@@ -18,6 +18,7 @@ import com.cj.shop.web.consume.ShopMallFeign;
 import com.cj.shop.web.dto.Result;
 import com.cj.shop.web.utils.IPAddressUtil;
 import com.cj.shop.web.utils.ResultUtil;
+import com.cj.shop.web.utils.UcUtil;
 import com.cj.shop.web.validator.CommandValidator;
 import com.cj.shop.web.validator.TokenValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,6 +55,8 @@ public class UserController {
     private ExpressService expressService;
     @Autowired
     private ShopMallFeign shopMallFeign;
+    @Autowired
+    private UcUtil ucUtil;
 
     /**
      * 查询地址详情
@@ -412,14 +416,14 @@ public class UserController {
 
 
     /**
-     * 用户提交订单
+     * 用户.提交订单
      */
     @PostMapping("/submitOrder")
     public Result submitOrder(@RequestBody OrderRequest request) {
         //token校验
         Result result = null;
         try {
-            if (CommandValidator.isEmpty(request.getToken(), request.getGoodsList(),
+            if (CommandValidator.isEmpty(request.getToken(), request.getGoodsList(), request.getPayType(),
                     request.getAddrId()) || request.getGoodsList().isEmpty()) {
                 return CommandValidator.paramEmptyResult();
             }
@@ -511,7 +515,7 @@ public class UserController {
                     result = ResultUtil.getVaildResult(s, result);
                     log.info("cancelOrder end");
                 } else {
-                    result = ResultUtil.getVaildResultData(null, result, "当前状态不允许取消");
+                    result = ResultUtil.getResultData(null, result, "当前状态不允许取消");
                     log.info("cancelOrder failure");
                 }
             } else {
@@ -554,7 +558,7 @@ public class UserController {
                 result = ResultUtil.getVaildResult(s, result);
                 log.info("confirmOrder end");
             } else {
-                result = ResultUtil.getVaildResultData(null, result, "当前状态不允许确认收货");
+                result = ResultUtil.getResultData(null, result, "当前状态不允许确认收货");
                 log.info("confirmOrder failure");
             }
         } catch (Exception e) {
@@ -632,22 +636,46 @@ public class UserController {
         Result result = null;
         try {
             log.info("pay begin");
-            if (CommandValidator.isEmpty(request.getAppId(), request.getBody(), request.getSubject(), request.getToken())) {
+            if (CommandValidator.isEmpty(request.getOutTradeNo(), request.getToken())) {
                 return CommandValidator.paramEmptyResult();
             }
             if (!tokenValidator.checkToken(request.getToken())) {
                 log.info("pay 【Invaild token!】");
                 return tokenValidator.invaildTokenFailedResult();
             }
-            long uid = tokenValidator.getUidByToken(request.getToken());
+            final long uid = tokenValidator.getUidByToken(request.getToken());
+            OrderDetailDto orderDetailById = orderService.getOrderDetailById(request.getOutTradeNo(), uid);
+            if (orderDetailById == null) {
+                log.info("订单不存在");
+                return ResultUtil.getResultData("error", result, ResultMsg.ORDER_NOT_EXIST);
+            }
+            //校验订单状态为待付款的时候才可以继续
+            if (orderDetailById.getOrderStatus() != 1) {
+                log.info("状态不允许");
+                return ResultUtil.getResultData("error", result, "订单当前状态无法付款");
+            }
+            request.setAppId(ucUtil.payAppId);
             request.setIp(IPAddressUtil.getIpAddressNotInProxy(request2));
             request.setBuyerId(String.valueOf(uid));
+            request.setPayChannel(String.valueOf(orderDetailById.getPayType()));
+            request.setSellerId(String.valueOf(orderDetailById.getShopId()));
+            request.setTotalAmount(orderDetailById.getOrderPrice());
+            request.setSubject(orderDetailById.getOrderName());
+            List<Long> list = new ArrayList<>();
+            orderDetailById.getGoodsList().forEach((k, v) -> {
+                v.stream().forEach(x -> {
+                    list.add(x.getGoodsId());
+                });
+            });
+            request.setProductId(JSON.toJSONString(list));
+            request.setBody(orderDetailById.getOrderName());
             PayTradeDto pay = shopMallFeign.pay(request);
             PayTradeDtoOnly only = new PayTradeDtoOnly();
             BeanUtils.copyProperties(pay, only);
             only.setRpc_msg(pay.getMsg());
             only.setProperties(pay.getProperties());
-            if (ResultMsg.SUCCESS.equals(pay.getMsg())) {
+            log.info("pay rollback={}", JSON.toJSONString(pay));
+            if (ResultMsg.SUCCESS.equals(pay.getCode())) {
                 result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
                 result.setData(only);
             } else {
