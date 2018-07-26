@@ -4,13 +4,13 @@ import com.cj.shop.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * @author yuchuanWeng( )
+ * 编号处理工具类
+ * @author yuchuanWeng
  * @date 2018/6/22
  * @since 1.0
  */
@@ -20,17 +20,16 @@ public class NumberUtil {
     public static final LongAdder ORDER_AUTOINCRENUM = new LongAdder();
     public static final LongAdder GOODS_AUTOINCRENUM = new LongAdder();
     public static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.00");
-//    private static ReentrantLock lock = new ReentrantLock();
 
     /**
-     * 获取订单编号
-     * rule: yyyyMMdd+Hash+当日自增长订单笔数 24 bit
-     *
-     * @return
+     * 创建订单-获取订单编号
+     * rule: yyyyMMddHHmmss(14bit)+防重Hash(9bit)+当日自增长订单笔数(9bit) = 32 bit
+     * Demo: 20180712093009 199271600 000000001
+     * @return 32位订单编号
      */
     public static String getOrderIdByUUId() {
         try {
-//            lock.lock();
+            //can lock
             int hashCodeV = UUID.randomUUID().toString().hashCode();
             if (hashCodeV < 0) {
                 //避免负数
@@ -47,14 +46,14 @@ public class NumberUtil {
             String format2 = String.format("%09d", ORDER_AUTOINCRENUM.longValue());
             return orderNum + format2;
         } finally {
-//            lock.unlock();
+            // can unlock
         }
     }
 
     /**
      * 获取商品编号 7bit
-     * rule: hash
-     *
+     * Rule: hash
+     * Demo: 1094851
      * @return
      */
     public static String getGoodsNum() {
@@ -70,13 +69,13 @@ public class NumberUtil {
         } else {
             s = String.format("%06d", hashCodeV);
         }
-        String orderNum = s + GOODS_AUTOINCRENUM.longValue();
-        return orderNum;
+        String goodsNum = s + GOODS_AUTOINCRENUM.longValue();
+        return goodsNum;
     }
 
     /**
      * 获取小商品编号
-     *
+     * Rule: 大商品编号 拼接规格ID "-"拼接
      * @return
      */
     public static String getSmallGoodsNum(String goodsSn, List<Long> specId) {
@@ -103,15 +102,4 @@ public class NumberUtil {
         return Math.round(totalNums * ratio);
     }
 
-    //test
-    public static void main(String[] args) {
-        String uuId = getOrderIdByUUId();
-        log.info("编号{} ,长度： {}", uuId, uuId.length());
-        log.info(getGoodsNum());
-        List<Long> objects = new ArrayList<>();
-        objects.add(1L);
-        objects.add(2L);
-        objects.add(3L);
-        log.info(getSmallGoodsNum("9509912", objects));
-    }
 }

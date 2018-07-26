@@ -765,7 +765,7 @@ public class GoodsManageController {
                 return CommandValidator.paramEmptyResult();
             }
             if (!tokenValidator.checkToken(token)) {
-                log.info("visitList 【Invaild token!】");
+                log.info("goods detail 【Invaild token!】");
                 return tokenValidator.invaildTokenFailedResult();
             }
             long uid = tokenValidator.getUidByToken(token);

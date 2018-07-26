@@ -273,6 +273,7 @@ public class OrderService implements OrderApi {
             }
             orderWithBLOBs.setOrderNum(orderNum);
             orderWithBLOBs.setOrderStatus(bloBs.getOrderStatus());
+            orderWithBLOBs.setDeleteFlag(bloBs.getDeleteFlag());
             int i = orderMapper.updateByOrderNum(orderWithBLOBs);
             if (i > 0) {
                 jedisCache.hdel(ORDER_KEY, orderNum);

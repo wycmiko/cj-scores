@@ -1,5 +1,6 @@
 package com.cj.shop.web.cfg;
 
+import com.cj.shop.service.cfg.JedisCache;
 import com.cj.shop.service.impl.IpAddressService;
 import com.cj.shop.web.intercep.IpAllowInterceptor;
 import com.cj.shop.web.intercep.OrderInterceptor;
@@ -19,6 +20,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class WebInterceptorConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private IpAddressService service;
+    @Autowired
+    private JedisCache jedisCache;
 
     //增加拦截器
     @Override
@@ -27,7 +30,7 @@ public class WebInterceptorConfig extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/v1/mall/manage/**").excludePathPatterns("/v1/mall/manage/ip/allow/_add")
         .excludePathPatterns("/v1/mall/manage/ip/allow/_update")
         .excludePathPatterns("/v1/mall/manage/ip/allow/_list");
-        registry.addInterceptor(new OrderInterceptor())    //指定拦截器类
+        registry.addInterceptor(new OrderInterceptor(jedisCache))    //指定拦截器类
                 .addPathPatterns("/v1/mall/json/user/submitOrder")
                 .addPathPatterns("/v1/mall/manage/goods/addGoods");        //指定该类拦截的url
 

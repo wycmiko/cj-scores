@@ -27,7 +27,7 @@ public class JedisCache implements Cache {
 
     @Autowired
     private JedisPool jedisCluster;
-
+    //过期秒数
     @Value("${spring.redis.expire-time}")
     private int default_time;
 

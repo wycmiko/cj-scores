@@ -502,14 +502,14 @@ public class UserController {
                 return tokenValidator.invaildTokenFailedResult();
             }
             long uid = tokenValidator.getUidByToken(orderSelect.getToken());
+            OrderDetailWithBLOBs bloBs = new OrderDetailWithBLOBs();
+            bloBs.setOrderNum(orderSelect.getOrderNum());
+            bloBs.setUid(orderSelect.getUid());
+            OrderDetailDto byId = orderService.getOrderDetailById(orderSelect.getOrderNum(), orderSelect.getUid());
             if (orderSelect.getType() == 1) {
                 //取消订单
                 log.info("uid={} cancelOrder ", uid);
-                OrderDetailDto byId = orderService.getOrderDetailById(orderSelect.getOrderNum(), orderSelect.getUid());
                 if (byId.getOrderStatus() == 1) {
-                    OrderDetailWithBLOBs bloBs = new OrderDetailWithBLOBs();
-                    bloBs.setOrderNum(orderSelect.getOrderNum());
-                    bloBs.setUid(orderSelect.getUid());
                     bloBs.setOrderStatus(5);
                     String s = orderService.updateOrderStatus(bloBs);
                     result = ResultUtil.getVaildResult(s, result);
@@ -518,9 +518,20 @@ public class UserController {
                     result = ResultUtil.getResultData(null, result, "当前状态不允许取消");
                     log.info("cancelOrder failure");
                 }
-            } else {
+            } else if (orderSelect.getType() == 2) {
                 //确认收货
                 result = confirmOrder(orderSelect);
+            } else if (orderSelect.getType() == 3) {
+                //删除订单
+                if (byId.getOrderStatus() == 5) {
+                    bloBs.setDeleteFlag(1);
+                    String s = orderService.updateOrderStatus(bloBs);
+                    result = ResultUtil.getVaildResult(s, result);
+                    log.info("delete order={}", s);
+                } else {
+                    result = ResultUtil.getResultData(null, result, "当前状态不允许删除");
+                    log.info("deleteOrder failure");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
