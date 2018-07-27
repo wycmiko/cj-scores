@@ -99,6 +99,7 @@ public class MessageConsumer {
             if (ResultMsg.SUCCESS.equals(payMqDto.getStatus())) {
                 //2=待发货
                 detail.setOrderStatus(2);
+                detail.setPayStatus(2);
                 detail.setPayTime(payMqDto.getPaidTime());
                 detail.setTradeNo(payMqDto.getTradeNo());
                 detail.setPlatTradeNo(payMqDto.getPlatTradeNo());

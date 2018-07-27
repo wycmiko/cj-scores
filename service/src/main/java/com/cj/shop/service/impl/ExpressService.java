@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author yuchuanWeng( )
+ * @author yuchuanWeng()
  * @date 2018/7/12
  * @since 1.0
  */
@@ -57,8 +57,9 @@ public class ExpressService {
     /**
      * 订单发货：
      * 添加 /修改 运单号
-     * @param orderNum 订单号
-     * @param expressNo 快递单号
+     *
+     * @param orderNum    订单号
+     * @param expressNo   快递单号
      * @param expressName 物流公司名
      */
     public String addExpressNum(String orderNum, String expressNo, String expressName) {
@@ -89,6 +90,8 @@ public class ExpressService {
                         QueueEnum.MESSAGE_TTL_QUEUE.getRouteKey(),
                         900000L);
             }
+            //清除物流缓存
+            jedisCache.del(EXPRESS_KEY + orderNum);
             return orderService.updateOrderStatus(bloBs);
         } else {
             return ResultMsg.EXPRESS_CANNOT_UPDATE;
@@ -100,20 +103,21 @@ public class ExpressService {
      * 查询物流动态：快递鸟&copy;
      * 第三方Api地址： <b>http://www.kdniao.com/UserCenter/</b>
      * 当前服务版本：免费版 3000次查询/天 到期日：2019-07-12
+     *
      * @param orderNum 订单编号
-     * @param uid 用户中心ID
+     * @param uid      用户中心ID
      */
     public Map<String, Object> getTraces(String orderNum, Long uid) throws Exception {
         String key = EXPRESS_KEY + orderNum;
         ExpressTraceDto traceDto = jedisCache.get(key, ExpressTraceDto.class);
-        Map<String,Object> returnMap = new HashMap<>();
+        Map<String, Object> returnMap = new HashMap<>();
         List<Tracess> list = new ArrayList<>();
         if (traceDto != null && traceDto.getTraces() != null) {
             log.info("orderNum = {} uid={},get express info by cache", orderNum, uid);
             list.addAll(traceDto.getTraces());
         } else {
             OrderDetailDto detailById = orderService.getOrderDetailById(orderNum, uid);
-            if (detailById != null && detailById.getExpressId() !=null && !StringUtils.isEmpty(detailById.getExpressName())) {
+            if (detailById != null && detailById.getExpressId() != null && !StringUtils.isEmpty(detailById.getExpressName())) {
                 if (detailById.getOrderStatus() == 3 || detailById.getOrderStatus() == 4) {
                     String expressId = detailById.getExpressId();
                     String expressName = detailById.getExpressName();

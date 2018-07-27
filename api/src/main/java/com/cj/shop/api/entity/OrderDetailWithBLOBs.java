@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ public class OrderDetailWithBLOBs extends PropertyEntity implements Serializable
     private String orderNum;
 
     private String orderName;
-    private String payTime;
+    private Date payTime;
 
     private String expressName;
 

@@ -45,18 +45,18 @@ spring:
       max-active: 1000
       max-wait: -1
     expire-time: 3600
-  rabbitmq:
-      host: localhost
-      port: 5672
-      username: guest
-      password: guest
-      publisher-confirms: true
 #  rabbitmq:
-#      host: 172.28.3.45
+#      host: localhost
 #      port: 5672
-#      username: test
-#      password: test
+#      username: guest
+#      password: guest
 #      publisher-confirms: true
+  rabbitmq:
+      host: 172.28.3.45
+      port: 5672
+      username: test
+      password: test
+      publisher-confirms: true
 
 
 # file-system config

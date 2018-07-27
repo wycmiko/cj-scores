@@ -114,7 +114,7 @@ public class WebApplicationTests {
         //支付成功
         request.setPayStatus(1);
         //
-        request.setPayTime(DateUtils.getCommonString());
+//        request.setPayTime(DateUtils.getCommonString());
         request.setTotalPrice(9888.25);
         request.setPayType(1);
         payService.insertPayLog(request);

@@ -15,7 +15,7 @@
         <result column="delivery_protect" property="deliveryProtect" jdbcType="INTEGER"/>
         <result column="receive_type" property="receiveType" jdbcType="INTEGER"/>
         <result column="express_id" property="expressId" jdbcType="VARCHAR"/>
-        <result column="pay_time" property="payTime" jdbcType="VARCHAR"/>
+        <result column="pay_time" property="payTime"/>
         <result column="express_name" property="expressName" jdbcType="VARCHAR"/>
         <result column="addr_id" property="addrId" jdbcType="BIGINT"/>
         <result column="coupon_price" property="couponPrice" jdbcType="DECIMAL"/>
@@ -209,7 +209,7 @@
                 pay_type = #{payType,jdbcType=TINYINT},
             </if>
             <if test="payTime != null">
-                pay_time = #{payTime,jdbcType=VARCHAR},
+                pay_time = #{payTime},
             </if>
             <if test="deliveryCash != null">
                 delivery_cash = #{deliveryCash,jdbcType=DECIMAL},
@@ -272,6 +272,7 @@
         t1.coupon_price as couponPrice,
         t1.real_price as realPrice,
         t1.need_invoice as needInvoice,
+        DATE_FORMAT(t1.pay_time,'%Y-%m-%d %H:%i:%s') as payTime,
         t1.invoice_desc as invoiceDesc,
         t1.order_scores as orderScores,
         t1.delivery_time as deliveryTime,
@@ -324,6 +325,9 @@
             </if>
             <if test="payStatus != null">
                 pay_status = #{payStatus,jdbcType=TINYINT},
+            </if>
+            <if test="payTime != null">
+                pay_time = #{payTime},
             </if>
             <if test="payType != null">
                 pay_type = #{payType,jdbcType=TINYINT},

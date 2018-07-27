@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author yuchuanWeng
@@ -31,7 +32,7 @@ public class PayMqDto implements Serializable {
     private String platTradeNo;
 
     @JsonProperty("paid_time")
-    private String paidTime;
+    private Date paidTime;
     /**
      * "SUCCESS"
      * "FAIL"

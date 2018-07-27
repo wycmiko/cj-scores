@@ -45,6 +45,7 @@ public class PayService implements PayApi {
     public String insertPayLog(PayLogRequest request) {
         PayLogDto dto = new PayLogDto();
         BeanUtils.copyProperties(request, dto);
+        dto.setPayTime(request.getPayTime());
         dto.setProperties(PropertiesUtil.addProperties(request.getProperties()));
         int i = payLogMapper.insertPayLog(dto);
         if (i > 0) {

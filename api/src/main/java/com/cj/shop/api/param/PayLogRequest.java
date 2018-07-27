@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 支付流水表Dao实体Bean
@@ -40,5 +41,5 @@ public class PayLogRequest extends BaseRequest implements Serializable {
     @JsonProperty("total_price")
     private Double totalPrice;
     @JsonProperty("pay_time")
-    private String payTime;
+    private Date payTime;
 }
