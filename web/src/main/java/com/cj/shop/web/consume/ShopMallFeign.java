@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2018/7/12
  * @since 1.0
  */
-@FeignClient(name = "match-engine", url = "172.28.3.154:8088")
+@FeignClient(name = "cj-pay")
 @RequestMapping("/v1/trade")
 public interface ShopMallFeign {
     /**

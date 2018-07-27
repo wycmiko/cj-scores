@@ -119,7 +119,7 @@ public class MessageConsumer {
                 request.setTotalPrice(detailById.getOrderPrice());
                 request.setProperties(map);
                 request.setPayType(detailById.getPayType());
-                request.setUid(detail.getUid());
+                request.setUid(detailById.getUid());
                 String s = payService.insertPayLog(request);
                 log.info("添加交易流水记录 结果:{}", s);
             }

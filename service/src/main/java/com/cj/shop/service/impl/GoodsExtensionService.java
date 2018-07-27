@@ -596,8 +596,11 @@ public class GoodsExtensionService implements GoodsExtensionApi {
         ExpressCash hget = jedisCache.hget(EXPRESS_CASH_KEY, "1", ExpressCash.class);
         if (hget == null) {
             hget = expressCashMapper.selectByPrimaryKey(1L);
+            if (hget == null) {
+                hget.setDeliveryCash(0.0);
+            }
             jedisCache.hset(EXPRESS_CASH_KEY, "1", hget);
         }
-        return hget;
+        return  hget;
     }
 }

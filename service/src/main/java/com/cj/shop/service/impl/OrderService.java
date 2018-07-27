@@ -253,18 +253,20 @@ public class OrderService implements OrderApi {
             if (orderDto == null) {
                 return ResultMsg.ORDER_NOT_EXIST;
             }
-            if (bloBs.getOrderStatus() == 5) {
-                //如果为取消的话 那么恢复库存
-                orderDto = getOrderById(orderNum, null);
-                Map<String, List<OrderGoods>> listMap = orderDto.getGoodsList();
-                if (listMap != null && !listMap.isEmpty()) {
-                    listMap.forEach((k, v) -> {
-                        v.forEach(x -> {
-                            //恢复库存
-                            String s1 = goodsExtensionService.updateStockNum(x.getSGoodsSn(), 1, x.getGoodsNum());
-                            log.info("incre {} goods stock num={}", x.getSGoodsSn(), s1);
+            if (bloBs.getOrderStatus() != null) {
+                if (bloBs.getOrderStatus() == 5) {
+                    //如果为取消的话 那么恢复库存
+                    orderDto = getOrderById(orderNum, null);
+                    Map<String, List<OrderGoods>> listMap = orderDto.getGoodsList();
+                    if (listMap != null && !listMap.isEmpty()) {
+                        listMap.forEach((k, v) -> {
+                            v.forEach(x -> {
+                                //恢复库存
+                                String s1 = goodsExtensionService.updateStockNum(x.getSGoodsSn(), 1, x.getGoodsNum());
+                                log.info("incre {} goods stock num={}", x.getSGoodsSn(), s1);
+                            });
                         });
-                    });
+                    }
                 }
             }
             OrderWithBLOBs orderWithBLOBs = new OrderWithBLOBs();

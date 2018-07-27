@@ -36,7 +36,7 @@ public class OrderGoods extends PropertyEntity implements Serializable {
     /**
      * 单价
      */
-    @JsonProperty("goods_price")
+    @JsonProperty("sell_price")
     private Double goodsPrice;
 
     @JsonProperty("spec_list")
