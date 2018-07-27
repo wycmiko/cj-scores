@@ -327,7 +327,7 @@
                 pay_status = #{payStatus,jdbcType=TINYINT},
             </if>
             <if test="payTime != null">
-                pay_time = #{payTime},
+                pay_time = #{payTime,jdbcType=TIMESTAMP},
             </if>
             <if test="payType != null">
                 pay_type = #{payType,jdbcType=TINYINT},

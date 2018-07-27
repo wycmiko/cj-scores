@@ -104,7 +104,7 @@
                 #{totalPrice},
             </if>
             <if test="payTime != null">
-                #{payTime},
+                #{payTime,jdbcType=TIMESTAMP},
             </if>
             <if test="properties != null">
                 #{properties},

@@ -108,7 +108,7 @@ public class MessageConsumer {
                 request.setTradeNo(payMqDto.getTradeNo());
                 request.setPlatTradeNo(payMqDto.getPlatTradeNo());
                 request.setPayStatus(1);
-                log.info("订单 {} 付款成功 修改结果:{}", payMqDto.getOutTradeNo(), s);
+                log.info("支付时间：{} 订单 {} 付款成功 修改结果:{}",request.getPayTime(), payMqDto.getOutTradeNo(), s);
             } else {
                 request.setPayStatus(2);
                 //支付失败 保存原因

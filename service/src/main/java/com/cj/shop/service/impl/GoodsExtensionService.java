@@ -470,6 +470,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
                 request.setMaxCostPrice(priceLimit.getMaxCostPrice());
                 request.setMinSellPrice(priceLimit.getMinSellPrice());
                 request.setMaxSellPrice(priceLimit.getMaxSellPrice());
+                request.setProperties(null);
                 int i1 = goodsMapper.updateByPrimaryKeySelective(request);
                 log.info("update Goods Stock Num(id={},stockNum={}) Result={}", dto.getId(), stockNum, i1 > 0);
                 jedisCache.hdel(GoodsService.JEDIS_PREFIX_GOODS, dto.getId().toString());
@@ -500,6 +501,7 @@ public class GoodsExtensionService implements GoodsExtensionApi {
             Integer stockNum = goodsStockMapper.getTotalStockNum(stockDto.getGoodsSn());
             request.setId(stockDto.getGoodsId());
             request.setStockNum(stockNum);
+            request.setProperties(null);
             goodsMapper.updateByPrimaryKeySelective(request);
             jedisCache.hdel(STOCK_KEY, stockDto.getStockId().toString());
             jedisCache.hdel(GoodsService.JEDIS_PREFIX_GOODS, stockDto.getGoodsId().toString());
