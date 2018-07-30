@@ -29,7 +29,10 @@ public class PropertiesUtil {
      */
     public static String changeProperties(String properties_json, Map<String, Object> map) {
         JSONObject jsonObject = null;
-        if (map != null && !map.isEmpty() && !StringUtils.isEmpty(properties_json)) {
+        if (StringUtils.isEmpty(properties_json)) {
+            properties_json = "{}";
+        }
+        if (map != null && !map.isEmpty()) {
             jsonObject = JSONObject.parseObject(properties_json, JSONObject.class);
             Set<Map.Entry<String, Object>> entries = map.entrySet();
             for (Map.Entry<String, Object> m : entries) {

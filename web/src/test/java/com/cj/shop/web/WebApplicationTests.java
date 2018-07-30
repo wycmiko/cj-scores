@@ -130,8 +130,8 @@ public class WebApplicationTests {
         Map<String, Object> map = new HashMap<>();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("OrderCode", "");
-        jsonObject.put("ShipperCode", expressConfig.map.get("中通快递"));   //快递公司编码
-        jsonObject.put("LogisticCode", "212214710595");  //快递单号
+        jsonObject.put("ShipperCode", expressConfig.map.get("顺丰速运"));   //快递公司编码
+        jsonObject.put("LogisticCode", "544366617000");  //快递单号
         map.put("DataType", "2-json");
         map.put("RequestData", jsonObject.toJSONString());
         map.put("EBusinessID", expressConfig.getUserId());

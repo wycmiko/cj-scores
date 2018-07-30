@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -30,18 +30,18 @@ public class ExpressConfig {
     public ExpressConfig() {
         if (map == null) {
             synchronized (this) {
-                map = new HashMap<>();
+                map = new LinkedHashMap<>();
+                map.put("中通快递", "ZTO");
                 map.put("顺丰速运", "SF");
                 map.put("百世快递", "HTKY");
-                map.put("中通快递", "ZTO");
                 map.put("申通快递", "STO");
                 map.put("圆通速递", "YTO");
                 map.put("韵达速递", "YD");
                 map.put("邮政快递包裹", "YZPY");
+                map.put("优速快递", "UC");
                 map.put("EMS", "EMS");
                 map.put("天天快递", "HHTT");
                 map.put("京东物流", "JD");
-                map.put("优速快递", "UC");
                 map.put("德邦快递", "DBL");
                 map.put("快捷快递", "FAST");
                 map.put("宅急送", "ZJS");
