@@ -198,13 +198,14 @@ public class UserService implements UserApi {
         StockSelect select = new StockSelect();
         select.setSGoodSn(request.getSGoodsSn());
         List<GoodsStockDto> list = goodsExtensionService.findAllGoodsStock(select).getList();
+        //判断是否有这类商品
         if (list == null || list.isEmpty()) {
             return ResultMsg.GOOD_NOT_EXISTS;
         }
         GoodsStockDto stockDto = list.get(0);
-        //判断是否有这类商品
-        Integer goodsNum = request.getGoodsNum();
+
         //判断库存剩余量
+        Integer goodsNum = request.getGoodsNum();
         if (request.getGoodsNum() > stockDto.getStockNum()) {
             return ResultMsg.TOO_MANY_STOCKS;
         }
@@ -230,7 +231,6 @@ public class UserService implements UserApi {
                 jedisCache.hdel(JEDIS_PREFIX_CART, userCart.getId().toString());
             }
         }
-
         return ResultMsgUtil.dmlResult(i);
     }
 

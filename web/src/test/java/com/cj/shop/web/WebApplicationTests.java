@@ -6,6 +6,7 @@ import com.cj.shop.api.param.PayLogRequest;
 import com.cj.shop.api.param.select.GoodsSelect;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsDto;
+import com.cj.shop.common.anno.TestAnno;
 import com.cj.shop.common.consts.QueueEnum;
 import com.cj.shop.common.utils.DateUtils;
 import com.cj.shop.common.utils.HttpClientUtils;
@@ -139,6 +140,13 @@ public class WebApplicationTests {
         map.put("DataSign", expressConfig.getDataSign(jsonObject.toJSONString()));
         String s = HttpClientUtils.httpAsyncPostFormData(url, map);
         log.info("s = {}", s);
+
+    }
+
+
+    @Test
+    @TestAnno("test")
+    public void contextLoads2() {
 
     }
 
