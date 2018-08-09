@@ -402,9 +402,8 @@ public class UserController {
                 return tokenValidator.invaildTokenFailedResult();
             }
             long uid = tokenValidator.getUidByToken(token);
-            PagedList<UserCartDto> goodsFromCart = userService.getGoodsFromCart(uid, page_num, page_size);
             result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG);
-            result.setData(goodsFromCart);
+            result.setData(userService.getGoodsFromCart(uid, page_num, page_size));
             log.info("getCartGoods end");
         } catch (Exception e) {
             e.printStackTrace();

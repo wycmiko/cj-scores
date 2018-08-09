@@ -8,10 +8,7 @@ import com.cj.shop.api.param.GoodsVisitRequest;
 import com.cj.shop.api.param.UserCartRequest;
 import com.cj.shop.api.param.select.StockSelect;
 import com.cj.shop.api.response.PagedList;
-import com.cj.shop.api.response.dto.GoodsDto;
-import com.cj.shop.api.response.dto.GoodsStockDto;
-import com.cj.shop.api.response.dto.GoodsVisitDto;
-import com.cj.shop.api.response.dto.UserCartDto;
+import com.cj.shop.api.response.dto.*;
 import com.cj.shop.common.utils.DateUtils;
 import com.cj.shop.dao.mapper.GoodsMapper;
 import com.cj.shop.dao.mapper.GoodsVisitMapper;
@@ -30,12 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * @author yuchuanWeng( )
+ * @author yuchuanWeng()
  * @date 2018/6/20
  * @since 1.0
  */
@@ -254,28 +250,31 @@ public class UserService implements UserApi {
      * 查询我的购物车
      *
      * @param uid
-     * @param pageNum
-     * @param pageSize
      */
     @Override
-    public PagedList<UserCartDto> getGoodsFromCart(Long uid, Integer pageNum, Integer pageSize) {
+    public UserCartListDto getGoodsFromCart(Long uid, Integer page_num, Integer page_size) {
         Page<Object> objects = null;
-        List<UserCartDto> list = new ArrayList<>();
-        if (pageNum != null && pageSize != null) {
-            objects = PageHelper.startPage(pageNum, pageSize);
+        if (page_num != null && page_size != null) {
+            objects = PageHelper.startPage(page_num, page_size);
         } else {
-            pageNum = 0;
-            pageSize = 0;
+            page_num = 0;
+            page_size = 0;
         }
         List<Long> longs = ValidatorUtil.checkNotEmptyList(userCartMapper.selectUserCartThings(uid));
+        UserCartListDto userCartListDto = new UserCartListDto(objects == null ? longs.size() : objects.getTotal(), page_num, page_size);
         if (!longs.isEmpty()) {
+            List<UserCartDto> list = new ArrayList<>();
             for (Long id : longs) {
                 UserCartDto cartGoodById = getCartGoodById(id, uid);
                 list.add(cartGoodById);
             }
+            Map<String, List<UserCartDto>> collect = list.stream().collect(
+                    Collectors.groupingBy(UserCartDto::getSupplyName, LinkedHashMap::new, Collectors.toList()));
+            userCartListDto.setCount(longs.size());
+            userCartListDto.setCollect(collect);
+            userCartListDto.setSupplyArray(collect == null ? new LinkedHashSet<>() : collect.keySet());
         }
-        PagedList<UserCartDto> pagedList = new PagedList<>(list, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
-        return pagedList;
+        return userCartListDto;
     }
 
     /**

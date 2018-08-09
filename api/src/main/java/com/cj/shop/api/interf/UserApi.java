@@ -6,6 +6,7 @@ import com.cj.shop.api.param.UserCartRequest;
 import com.cj.shop.api.response.PagedList;
 import com.cj.shop.api.response.dto.GoodsVisitDto;
 import com.cj.shop.api.response.dto.UserCartDto;
+import com.cj.shop.api.response.dto.UserCartListDto;
 
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public interface UserApi {
     /**
      * 查询我的购物车
      */
-    PagedList<UserCartDto> getGoodsFromCart(Long uid, Integer pageNum, Integer pageSize);
+    public UserCartListDto getGoodsFromCart(Long uid, Integer page_num, Integer page_size);
 
     /**
      * 查询单条购物车详情
