@@ -351,6 +351,37 @@ public class UserController {
     }
 
     /**
+     * 加入/修改 购物车商品
+     *
+     * @param request
+     * @return
+     */
+    @PutMapping("/updateCartNum")
+    public Result updateCartNum(@RequestBody UserCartRequest request) {
+        //token校验
+        Result result = null;
+        try {
+            if (CommandValidator.isEmpty(request.getToken())) {
+                return CommandValidator.paramEmptyResult();
+            }
+            if (!tokenValidator.checkToken(request.getToken())) {
+                log.info("updateCartNum 【Invaild token!】");
+                return tokenValidator.invaildTokenFailedResult();
+            }
+            long uid = tokenValidator.getUidByToken(request.getToken());
+            request.setUid(uid);
+            String s = userService.updateFromCart(request);
+            result = ResultUtil.getVaildResult(s, result);
+            log.info("updateCartNum end {}", s);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("updateCartNum error {}", e.getMessage());
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
+        }
+        return result;
+    }
+
+    /**
      * 删除购物车商品
      *
      * @return

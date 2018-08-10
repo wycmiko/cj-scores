@@ -10,6 +10,9 @@ import java.io.Serializable;
 @Setter
 public class UserCartRequest extends BaseRequest implements Serializable {
     private Long id;
+
+    @JsonProperty("cart_id")
+    private Long cartId;
     private Long uid;
     private String token;
     @JsonProperty("goods_id")

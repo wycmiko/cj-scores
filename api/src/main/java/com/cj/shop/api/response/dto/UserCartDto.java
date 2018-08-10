@@ -18,6 +18,8 @@ public class UserCartDto extends BaseRequest implements Serializable {
      * 用户UID
      */
     private Long uid;
+    @JsonProperty("stock_id")
+    private Long stockId;
     @JsonProperty("goods_id")
     private Long goodsId;
     /**

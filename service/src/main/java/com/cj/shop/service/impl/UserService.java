@@ -26,6 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -242,6 +243,54 @@ public class UserService implements UserApi {
         if (i > 0) {
             //add cache
             jedisCache.hdel(JEDIS_PREFIX_CART, cartId.toString());
+        }
+        return ResultMsgUtil.dmlResult(i);
+    }
+
+    /**
+     * 修改购物车商品数量
+     *
+     * @return
+     */
+    @Override
+    public String updateFromCart(UserCartRequest request) {
+        Integer goodsNum = request.getGoodsNum();
+        if (goodsNum != null && goodsNum <= 0)
+            return ResultMsg.CART_NUMS_TOO_LESS;
+        UserCartDto cartGoodById = getCartGoodById(request.getCartId(), request.getUid());
+        GoodsStockDto stockById = goodsExtensionService.getStockById(cartGoodById.getStockId());
+        if (cartGoodById == null || stockById == null)
+            return ResultMsg.GOOD_NOT_EXISTS;
+        //判断库存是否满足需求
+        if (goodsNum != null && goodsNum > stockById.getStockNum())
+            return ResultMsg.CART_NUMS_TOO_MUCH;
+        //如果是修改规格 判断是否有同类型商品
+        if (!StringUtils.isEmpty(request.getSGoodsSn())) {
+            Map<String, List<UserCartDto>> collect = getGoodsFromCart(request.getUid(), null, null).getCollect();
+            Set<Map.Entry<String, List<UserCartDto>>> entries = collect.entrySet();
+            for (Map.Entry<String, List<UserCartDto>> enrty:entries) {
+                List<UserCartDto> value = enrty.getValue();
+                if (value != null && !value.isEmpty()) {
+                    for (UserCartDto dto: value) {
+                        if (request.getSGoodsSn().equals(dto.getSGoodsSn())) {
+                            return ResultMsg.STOCK_ALREADY_EXISTS;
+                        }
+                    }
+                }
+            }
+            // 如果不存在的话  则添加该类商品 数量默认为1
+            request.setGoodsNum(1);
+            return addCart(request);
+        }
+        //否则则是修改数量
+        UserCart userCart = new UserCart();
+        userCart.setUid(request.getUid());
+        userCart.setId(request.getCartId());
+        userCart.setGoodsNum(goodsNum);
+        int i = userCartMapper.updateByPrimaryKeySelective(userCart);
+        if (i > 0) {
+            //add cache
+            jedisCache.hdel(JEDIS_PREFIX_CART, request.getCartId().toString());
         }
         return ResultMsgUtil.dmlResult(i);
     }

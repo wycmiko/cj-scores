@@ -45,6 +45,7 @@
         t1.uid,
         t1.goods_id as goodsId,
         t1.s_goods_sn as sGoodsSn,
+        t2.id as stockId,
         t2.warn_stock as warnStock,
         t1.goods_num as goodsNum,
         DATE_FORMAT(t1.create_time,'%Y-%m-%d %H:%i:%s') as createTime,
@@ -134,7 +135,7 @@
                 properties = #{properties,jdbcType=LONGVARCHAR},
             </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT} and uid=#{uid}
     </update>
 
     <update id="increGoodsNum">

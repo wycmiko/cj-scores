@@ -50,6 +50,12 @@ public interface UserApi {
     String deleteFromCart(Long cartId, Long uid);
 
     /**
+     * 修改购物车商品数量
+     * @return
+     */
+    String updateFromCart(UserCartRequest request);
+
+    /**
      * 查询我的购物车
      */
     public UserCartListDto getGoodsFromCart(Long uid, Integer page_num, Integer page_size);
