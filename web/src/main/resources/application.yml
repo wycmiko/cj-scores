@@ -9,7 +9,7 @@ spring:
     proxy-target-class: true
   cache:
     type: redis
-  http:
+  servlet:
     multipart:
       maxFileSize: 20Mb
       maxRequestSize: 20Mb
@@ -19,21 +19,15 @@ mybatis:
   mapper-locations: classpath*:mapping/*.xml
   config-location: classpath:mybatis-config.xml
 
-#pagehelper分页插件
-pagehelper:
-  helperDialect: mysql
-  reasonable: false
-  supportMethodsArguments: true
-  params: count=countSql
-
 #配置springcloud feign请求处理的超时时间
 ribbon:
   ReadTimeout: 120000
  #请求连接的超时时间
   ConnectTimeout: 60000
 
-endpoints:
-  enabled: false
+management:
+  endpoints:
+    enabled: false
   metrics:
     enabled: true
     sensitive: false
@@ -54,13 +48,6 @@ endpoints:
     enabled: true
     sensitive: false
 
-# Security-JWT
-jwt:
-  header: Authorization
-  secret: cj-mall|secret
-  expiration: 3600
-  tokenHead: "Bearer "
-
 # 用户中心app-id 以及支付 app-id
 cjmall:
   user-app-id: platform_app
@@ -71,3 +58,4 @@ cj:
     express:
       userId: 1361369
       apiKey: 0bd5c350-18a4-41ea-bfde-a56a8c103185
+

@@ -2,34 +2,7 @@
 # mysql - local - url
 spring:
   application:
-    name: mall-api
-  datasource:
-          name: dev
-          url: jdbc:mysql://127.0.0.1:3306/cj_mall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
-          username: root
-          password: root
-#          url: jdbc:mysql://172.28.3.45:20010/cj_mall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
-#          username: cj_weng
-#          password: 123456
-#          url: jdbc:mysql://47.100.222.71:3306/cj_mall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
-#          username: m_match
-#          password: YEMINHE2du0xYBna
-#           使用druid数据源
-          type: com.alibaba.druid.pool.DruidDataSource
-          driver-class-name: com.mysql.jdbc.Driver
-          filters: stat
-          maxActive: 400
-          initialSize: 1
-          maxWait: 60000
-          minIdle: 1
-          timeBetweenEvictionRunsMillis: 60000
-          minEvictableIdleTimeMillis: 300000
-          validationQuery: select 'x'
-          testWhileIdle: true
-          testOnBorrow: false
-          testOnReturn: false
-          poolPreparedStatements: true
-          maxOpenPreparedStatements: 20
+    name: cj-push
   cloud:
       consul:
         host: 172.28.3.45
@@ -39,12 +12,14 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-    pool:
-      max-idle: 100
-      min-idle: 1
-      max-active: 1000
-      max-wait: -1
     expire-time: 3600
+    soTimeout: 2000
+    jedis:
+      pool:
+        max-idle: 100
+        min-idle: 1
+        max-active: 1000
+        max-wait: -1ms
 #  rabbitmq:
 #      host: localhost
 #      port: 5672
@@ -59,36 +34,39 @@ spring:
       publisher-confirms: true
 
 
-# file-system config
-seaweed:
-  ip: 172.28.3.9
-  port: 9333
-
-# wechat config
-wechat:
-#  app-id: wxbea125c311c43dd2
-  app-id: wx66eab4b767e88ff9
-  redirect-uri: http://demo.com
-#  app-secret: 78717f140c4394ce13a345a0242ae3c7
-  app-secret: 81653ea574f7a2dbc3e6cffd5be1a345
-
 # server config
 server:
-  port: 8888
+  port: 8088
   compression:
     enabled: true
     min-response-size: 2048
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
   tomcat:
     uri-encoding: UTF-8
-# uc-api module config
-ucapi:
-    service-name: uc
-    app-id: platform_app
-    secret: 1ArLkQgVaWUYFPHv7NwzkpudzDFsfsaQ
-    pool-max-total: 50
-    pool-block-when-exhausted: true
-    pool-max-wait-millis: -1
-    pool-min-evictable-idle-time-millis: 600000
-    pool-max-idle: 10
-    pool-min-idle: 0
+
+
+mongo:
+  address: localhost:27017
+#  replica-set:
+  database: admin
+  username: root
+  password: root
+  options.min-connections-per-host: 30
+  options.max-connections-per-host: 30
+  options.threads-allowed-to-block-for-connection-multiplier: 5
+  options.server-selection-timeout: 30000
+  options.max-wait-time: 120000
+  options.max-connection-idel-time: 0
+  options.max-connection-life-time: 0
+  options.connect-timeout: 10000
+  options.socket-timeout: 0
+  options.socket-keep-alive: false
+  options.ssl-enabled: false
+  options.ssl-invalid-host-name-allowed: false
+  options.always-use-m-beans: false
+  options.heartbeat-socket-timeout: 20000
+  options.heartbeat-connect-timeout: 20000
+  options.min-heartbeat-frequency: 500
+  options.heartbeat-frequency: 10000
+  options.local-threshold: 15
+
