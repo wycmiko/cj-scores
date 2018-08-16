@@ -66,5 +66,4 @@ public class ValidatorUtil {
         return m.replaceAll("\\x").trim();
     }
 
-
 }

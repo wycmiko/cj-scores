@@ -52,8 +52,8 @@ public class WebApplicationTests {
 
     @Test
     public void test() throws Exception {
-        List<PushEvent> allEvents = service.getAllEvents();
-        allEvents.forEach(x ->
+        PagedList<PushEvent> allEvents = service.getAllEvents(1, 20, null);
+        allEvents.getList().forEach(x ->
         {
             log.info("result={}", JSON.toJSONString(x));
         });

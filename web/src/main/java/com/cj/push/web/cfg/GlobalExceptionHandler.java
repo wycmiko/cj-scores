@@ -1,7 +1,7 @@
 package com.cj.push.web.cfg;
 
-import com.cj.push.web.consts.ResultConsts;
-import com.cj.push.web.dto.Result;
+import com.cj.push.api.pojo.Result;
+import com.cj.push.service.consts.ResultConsts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
                                       Exception e) throws Exception {
         log.error("【error】  path: {}:{}{}, errMsg:{}", request.getRemoteAddr(), request.getLocalPort(), request.getRequestURI(), e.getMessage());
         Result result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR);
-        result.setData(ResultConsts.ERR_SERVER_DATA + "!--错误信息:" + e.getMessage());
+        result.setData(ResultConsts.ERR_SERVER_MSG + "!--错误信息:" + e.getMessage());
         e.printStackTrace();
         return result;
     }

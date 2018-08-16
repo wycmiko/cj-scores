@@ -1,4 +1,4 @@
-package com.cj.push.web.dto;
+package com.cj.push.api.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
