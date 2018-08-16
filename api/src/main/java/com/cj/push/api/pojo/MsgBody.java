@@ -1,5 +1,6 @@
 package com.cj.push.api.pojo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,11 @@ public class MsgBody implements Serializable {
      * 消息标题
      */
     private String title;
+    /**
+     * 副标题
+     */
+    @JsonProperty("sub_title")
+    private String subTitle;
     /**
      * 消息体
      */

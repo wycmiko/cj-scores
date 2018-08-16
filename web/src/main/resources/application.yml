@@ -14,11 +14,6 @@ spring:
       maxFileSize: 20Mb
       maxRequestSize: 20Mb
 
-# mybatis scanner
-mybatis:
-  mapper-locations: classpath*:mapping/*.xml
-  config-location: classpath:mybatis-config.xml
-
 #配置springcloud feign请求处理的超时时间
 ribbon:
   ReadTimeout: 120000
@@ -48,14 +43,5 @@ management:
     enabled: true
     sensitive: false
 
-# 用户中心app-id 以及支付 app-id
-cjmall:
-  user-app-id: platform_app
-  pay-app-id: test
-# 第三方物流接口 id 与 secret
-cj:
-  mall:
-    express:
-      userId: 1361369
-      apiKey: 0bd5c350-18a4-41ea-bfde-a56a8c103185
+
 

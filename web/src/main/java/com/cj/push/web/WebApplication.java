@@ -2,13 +2,13 @@ package com.cj.push.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.consul.ConsulProperties;
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@FeignClient
 @EnableAsync
+@EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = "com.cj")
 public class WebApplication {
 	/**

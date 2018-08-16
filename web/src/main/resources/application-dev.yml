@@ -8,7 +8,7 @@ spring:
         host: 172.28.3.45
         port: 8500
         discovery:
-          register: false
+          register: true
   redis:
     host: 127.0.0.1
     port: 6379
@@ -20,19 +20,6 @@ spring:
         min-idle: 1
         max-active: 1000
         max-wait: -1ms
-#  rabbitmq:
-#      host: localhost
-#      port: 5672
-#      username: guest
-#      password: guest
-#      publisher-confirms: true
-  rabbitmq:
-      host: 172.28.3.45
-      port: 5672
-      username: test
-      password: test
-      publisher-confirms: true
-
 
 # server config
 server:
@@ -70,3 +57,7 @@ mongo:
   options.heartbeat-frequency: 10000
   options.local-threshold: 15
 
+
+jiguang:
+  appkey: 928c19fc99d990c03efee5ea
+  masterSecret: 5c387bd797238429baba2fbd

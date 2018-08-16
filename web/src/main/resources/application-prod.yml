@@ -9,7 +9,7 @@ spring:
         host: ${CONSUL}
         port: ${CONSUL_PORT}
         discovery:
-          register: false
+          register: true
   redis:
     host: ${REDIS}
     port: ${REDIS_PORT}
@@ -22,27 +22,6 @@ spring:
         max-active: 1000
         max-wait: -1ms
     expire-time: 60
-  rabbitmq:
-      host: ${MQ}
-      port: ${MQ_PORT}
-      username: ${MQ_USER}
-      password: ${MQ_PWD}
-      publisher-confirms: true
-
-ucapi:
-    service-name: uc
-    app-id: platform_app
-    secret: 1ArLkQgVaWUYFPHv7NwzkpudzDFsfsaQ
-    pool-max-total: 50
-    pool-block-when-exhausted: true
-    pool-max-wait-millis: -1
-    pool-min-evictable-idle-time-millis: 600000
-    pool-max-idle: 10
-    pool-min-idle: 0
-
-seaweed:
-  ip: ${SEAWEED}
-  port: ${SEAWEED_PORT}
 
 server:
   port: 7077
@@ -52,3 +31,33 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
   tomcat:
     uri-encoding: UTF-8
+
+mongo:
+  address: localhost:27017
+#  replica-set:
+  database: admin
+  username: root
+  password: root
+  options.min-connections-per-host: 30
+  options.max-connections-per-host: 30
+  options.threads-allowed-to-block-for-connection-multiplier: 5
+  options.server-selection-timeout: 30000
+  options.max-wait-time: 120000
+  options.max-connection-idel-time: 0
+  options.max-connection-life-time: 0
+  options.connect-timeout: 10000
+  options.socket-timeout: 0
+  options.socket-keep-alive: false
+  options.ssl-enabled: false
+  options.ssl-invalid-host-name-allowed: false
+  options.always-use-m-beans: false
+  options.heartbeat-socket-timeout: 20000
+  options.heartbeat-connect-timeout: 20000
+  options.min-heartbeat-frequency: 500
+  options.heartbeat-frequency: 10000
+  options.local-threshold: 15
+
+
+jiguang:
+  appkey: 928c19fc99d990c03efee5ea
+  masterSecret: 5c387bd797238429baba2fbd
