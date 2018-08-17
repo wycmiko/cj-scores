@@ -44,6 +44,24 @@ public class DateUtils {
     }
 
     /**
+     * 推送时间定时任务时间校验
+     * @param time
+     * @return
+     * @throws ParseException
+     */
+    public static Date checkTimeFormatExpired(String time) throws ParseException {
+        Date date = COMMON_DATE_FORMAT.parse(time);
+        if (date.getTime() <= System.currentTimeMillis()) {
+            throw new IllegalArgumentException("不能小于当前时间");
+        }
+        return date;
+    }
+
+    public static Date checkTimeFormat(String time) throws ParseException {
+        return COMMON_DATE_FORMAT.parse(time);
+    }
+
+    /**
      * 获得当前的日期毫秒
      *
      * @return

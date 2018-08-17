@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,10 +29,11 @@ public class Target implements Serializable {
      * 4=tag_and
      * 5=tag_not
      */
+    @NotNull
     @JsonProperty("push_type")
-    private int pushType;
+    private Integer pushType;
     /**
      * 推送目标列表
      */
-    private List<String> array;
+    private List<String> array = new ArrayList<>();
 }

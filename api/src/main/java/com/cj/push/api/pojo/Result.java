@@ -17,4 +17,5 @@ public class Result extends TResult<Object> {
     public Result(String code, String msg) {
         super(code, msg, null);
     }
+
 }

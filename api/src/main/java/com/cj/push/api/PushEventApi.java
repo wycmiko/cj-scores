@@ -1,5 +1,6 @@
 package com.cj.push.api;
 
+import com.cj.push.api.pojo.PagedList;
 import com.cj.push.api.pojo.PushEvent;
 
 /**
@@ -14,4 +15,13 @@ public interface PushEventApi {
      */
     void insert(PushEvent pushEvent);
 
+
+    /**
+     * 查询全部事件
+     * @param pageNum
+     * @param pageSize
+     * @param msg
+     * @return
+     */
+    PagedList<PushEvent> getAllEvents(int pageNum, int pageSize, String msg);
 }

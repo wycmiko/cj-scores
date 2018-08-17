@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ public class EventOptions implements Serializable {
      * 如果不指定则为推送生产环境
      * 但注意，JPush 服务端 SDK 默认设置为推送 “开发环境”。
      */
+    @NotNull
     @JsonProperty("apns_production")
     private Boolean apnsProduction;
 }

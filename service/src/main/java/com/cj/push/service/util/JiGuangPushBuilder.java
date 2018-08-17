@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 @Component
 @Scope("singleton")
-public class JiGuangPushUtil {
+public class JiGuangPushBuilder {
     /**
      * 极光推送appKey&Value
      */
@@ -35,12 +36,12 @@ public class JiGuangPushUtil {
 
     @Value("${jiguang.appkey}")
     public void setAppKey(String appKey) {
-        JiGuangPushUtil.appKey = appKey;
+        JiGuangPushBuilder.appKey = appKey;
     }
 
     @Value("${jiguang.masterSecret}")
     public void setMasterSecret(String masterSecret) {
-        JiGuangPushUtil.masterSecret = masterSecret;
+        JiGuangPushBuilder.masterSecret = masterSecret;
     }
 
 
@@ -49,7 +50,9 @@ public class JiGuangPushUtil {
     }
 
     /**
+     * 获取客户端示例
      * static inner-class singleton
+     *
      * @return
      */
     public static JPushClient getJPushClient() {
@@ -62,7 +65,7 @@ public class JiGuangPushUtil {
      * @param alert 推送内容
      * @return
      */
-    public static PushPayload pushAll(String alert) {
+    public static PushPayload buildPushAllPayload(String alert) {
         return PushPayload.alertAll(alert);
     }
 
@@ -74,7 +77,7 @@ public class JiGuangPushUtil {
      * @param isProduction ture=推送生产环境 false=开发环境
      * @return
      */
-    public static PushPayload pushAllByAlias(List<String> alias, String alert, Boolean isProduction) {
+    public static PushPayload buildPushAllByAliasPayload(List<String> alias, String alert, Boolean isProduction) {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.all())
                 .setAudience(Audience.alias(alias))
@@ -92,7 +95,7 @@ public class JiGuangPushUtil {
      * @param isProduction ture=推送生产环境 false=开发环境
      * @return
      */
-    public static PushPayload pushAndroidIosByAlias(List<String> alias, String alert, Boolean isProduction) {
+    public static PushPayload buildPushAndroidIosByAliasPayload(List<String> alias, String alert, Boolean isProduction) {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.android_ios())
                 .setAudience(Audience.alias(alias))
@@ -104,17 +107,17 @@ public class JiGuangPushUtil {
     /**
      * 推送安卓端
      *
-     * @param alias        别名集合
+     * @param alias        别名集合 如果为空 则推送全部
      * @param alert        IOS推送内容体
      * @param title        IOS推送标题
      * @param isProduction 是否推送生产环境
      * @param extras       业务扩展数据
      * @return
      */
-    public static PushPayload pushAndroid(List<String> alias, String alert, String title, Boolean isProduction, Map<String, String> extras) {
+    public static PushPayload buildPushAndroidPayload(List<String> alias, String alert, String title, Boolean isProduction, Map<String, String> extras) {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.android())
-                .setAudience(Audience.alias(alias))
+                .setAudience((alias == null || alias.isEmpty()) ? Audience.all() : Audience.alias(alias))
                 .setNotification(Notification.newBuilder()
                         .addPlatformNotification(AndroidNotification.newBuilder()
                                 .setAlert(alert)
@@ -129,7 +132,7 @@ public class JiGuangPushUtil {
     /**
      * 推送IOS端
      *
-     * @param alias        别名集合
+     * @param alias        别名集合 如果为空 则推送全部
      * @param alert        IOS推送内容体
      * @param title        IOS推送标题
      * @param subTitle     IOS推送副标题  需IOS10+
@@ -137,18 +140,21 @@ public class JiGuangPushUtil {
      * @param extras       业务扩展数据
      * @return
      */
-    public static PushPayload pushIOS(List<String> alias, String alert, String title, String subTitle, Boolean isProduction, Map<String, String> extras) {
-        JsonObject alertJson = new JsonObject();
-        alertJson.addProperty("title", title);
-        alertJson.addProperty("subtitle", subTitle);
-        alertJson.addProperty("body", alert);
+    public static PushPayload buildPushIosPayload(List<String> alias, String alert, String title, String subTitle, Boolean isProduction, Map<String, String> extras) {
+        JsonObject alertJson = null;
+        if (!StringUtils.isEmpty(title) || !StringUtils.isEmpty(subTitle)) {
+            alertJson = new JsonObject();
+            alertJson.addProperty("title", title);
+            alertJson.addProperty("subtitle", subTitle);
+            alertJson.addProperty("body", alert);
+        }
 
         return PushPayload.newBuilder()
                 .setPlatform(Platform.ios())
-                .setAudience(Audience.alias(alias))
+                .setAudience((alias == null || alias.isEmpty()) ? Audience.all() : Audience.alias(alias))
                 .setNotification(Notification.newBuilder()
                         .addPlatformNotification(IosNotification.newBuilder()
-                                .setAlert(alertJson)
+                                .setAlert(alertJson != null ? alertJson : alert)
                                 .addExtras(extras)
                                 .build())
                         .build())

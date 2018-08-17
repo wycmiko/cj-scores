@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,13 +19,15 @@ import java.util.Map;
 @Getter
 @Setter
 public class EventData implements Serializable {
+    @Valid
     @JsonProperty("msg_body")
     private MsgBody msgBody;
-
+    @Valid
     private EventOptions options;
 
     /**
      * 业务使用的key-value
      */
-    private Map<String,Object> values = new LinkedHashMap<>();
+    @NotNull
+    private Map<String,String> values = new LinkedHashMap<>();
 }
