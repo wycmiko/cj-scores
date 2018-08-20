@@ -47,7 +47,7 @@ public class WebApplicationTests {
         list.add("3");
         list.add("2");
         list.add("1");
-        event.setTarget(new Target(1, list));
+        event.setTarget(new Target(1, 3,list));
         service.insert(event);
     }
 

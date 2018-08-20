@@ -20,7 +20,6 @@ public class PushEvent {
     @NotBlank
     @JsonProperty("event_name")
     private String eventName;
-    @NotBlank
     @JsonProperty("create_time")
     private String createTime;
     /**

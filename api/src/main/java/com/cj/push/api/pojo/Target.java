@@ -33,6 +33,12 @@ public class Target implements Serializable {
     @JsonProperty("push_type")
     private Integer pushType;
     /**
+     * 1=android 2= ios 3=all
+     */
+    @NotNull
+    @JsonProperty("plat_form")
+    private Integer platForm;
+    /**
      * 推送目标列表
      */
     private List<String> array = new ArrayList<>();

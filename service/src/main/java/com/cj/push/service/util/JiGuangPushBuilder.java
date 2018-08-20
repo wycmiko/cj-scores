@@ -72,16 +72,29 @@ public class JiGuangPushBuilder {
     /**
      * 通过别名推送全平台用户内容
      *
-     * @param alias        别名集合
+     * @param alias        别名集合 如果为空 默认推送无别名的
      * @param alert        推送内容
      * @param isProduction ture=推送生产环境 false=开发环境
      * @return
      */
-    public static PushPayload buildPushAllByAliasPayload(List<String> alias, String alert, Boolean isProduction) {
+    public static PushPayload buildPushAllByAliasPayload(List<String> alias, String alert, String title, String subTitle, Boolean isProduction
+            , Map<String, String> extras) {
+        JsonObject alertJson = getAlertJson(title, subTitle, alert);
         return PushPayload.newBuilder()
                 .setPlatform(Platform.all())
-                .setAudience(Audience.alias(alias))
-                .setNotification(Notification.alert(alert))
+                .setAudience((alias == null || alias.isEmpty()) ? Audience.all() : Audience.alias(alias))
+                .setNotification(Notification.newBuilder()
+                        .addPlatformNotification(AndroidNotification.newBuilder()
+                                .setAlert(alert)
+                                .setTitle(title)
+                                .addExtras(extras)
+                                .build())
+                        .addPlatformNotification(
+                                IosNotification.newBuilder()
+                                        .setAlert(alertJson != null ? alertJson : alert)
+                                        .addExtras(extras)
+                                        .build()
+                        ).build())
                 .setOptions(Options.newBuilder().setApnsProduction(isProduction).build())
                 .build();
     }
@@ -141,13 +154,7 @@ public class JiGuangPushBuilder {
      * @return
      */
     public static PushPayload buildPushIosPayload(List<String> alias, String alert, String title, String subTitle, Boolean isProduction, Map<String, String> extras) {
-        JsonObject alertJson = null;
-        if (!StringUtils.isEmpty(title) || !StringUtils.isEmpty(subTitle)) {
-            alertJson = new JsonObject();
-            alertJson.addProperty("title", title);
-            alertJson.addProperty("subtitle", subTitle);
-            alertJson.addProperty("body", alert);
-        }
+        JsonObject alertJson = getAlertJson(title, subTitle, alert);
 
         return PushPayload.newBuilder()
                 .setPlatform(Platform.ios())
@@ -162,5 +169,17 @@ public class JiGuangPushBuilder {
                 .build();
     }
 
+
+
+    private static JsonObject getAlertJson(String title, String subTitle, String alert){
+        JsonObject alertJson = null;
+        if (!StringUtils.isEmpty(title) || !StringUtils.isEmpty(subTitle)) {
+            alertJson = new JsonObject();
+            alertJson.addProperty("title", title);
+            alertJson.addProperty("subtitle", subTitle);
+            alertJson.addProperty("body", alert);
+        }
+        return alertJson;
+    }
 
 }

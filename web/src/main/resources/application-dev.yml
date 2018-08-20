@@ -9,6 +9,8 @@ spring:
         port: 8500
         discovery:
           register: true
+          hostname: 172.28.3.9
+          serviceName: cj-push
   redis:
     host: 127.0.0.1
     port: 6379
