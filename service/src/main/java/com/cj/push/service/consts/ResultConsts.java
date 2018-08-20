@@ -27,7 +27,7 @@ public abstract class ResultConsts {
 
     //日期格式不合法
     public static final String INVALID_TIME = "err:1200";
-    //定时任务日期大于当前日期
+    //定时任务日期小于当前日期
     public static final String INVALID_TIME_MILL = "err:1201";
     //别名数量过多
     public static final String ALIAS_MORE = "err:1202";

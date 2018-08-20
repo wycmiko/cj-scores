@@ -201,7 +201,7 @@ public class PushEventService {
         } catch (APIRequestException e) {
             result.setCode(ResultConsts.REQUEST_FAILURE_STATUS);
             result.setMsg(ResultConsts.JIGUANG_API_REQUEST_ERR);
-            result.setData("通知不存在或者已禁用");
+            result.setData("通知不存在或者已失效");
         } catch (UnsupportedEncodingException e) {
             result.setCode(ResultConsts.REQUEST_FAILURE_STATUS);
             result.setMsg(ResultConsts.SERVER_ERROR);

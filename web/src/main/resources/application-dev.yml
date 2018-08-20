@@ -22,6 +22,12 @@ spring:
         min-idle: 1
         max-active: 1000
         max-wait: -1ms
+  rabbitmq:
+    host: 172.28.3.45
+    port: 5672
+    username: test
+    password: test
+    publisher-confirms: true
 
 # server config
 server:

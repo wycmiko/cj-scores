@@ -38,10 +38,10 @@ public class EventController {
      */
     @GetMapping("/eventList")
     public Result getEventList(Integer page_num, Integer page_size, String msg) {
+        log.info("getEventList page_num={}, page_size={}, msg={}", page_num, page_size, msg);
         if (CommandValidator.isEmpty(page_num, page_size)) {
             return ResultUtil.paramNullResult();
         }
-        log.info("getEventList page_num={}, page_size={}, msg={}", page_num, page_size, msg);
         return ResultUtil.getResult(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG,
                 pushEventService.getAllEvents(page_num, page_size, msg));
     }
