@@ -33,7 +33,6 @@ public class EventConsumer {
     public void process(String pushEvent) {
         try {
             log.info("消息队列接受消息{}", pushEvent);
-
             Result result = pushEventService.insert(JSON.parseObject(pushEvent, PushEvent.class));
             log.info("event queue handle result={}", JSON.toJSONString(result));
         } catch (Exception e) {
