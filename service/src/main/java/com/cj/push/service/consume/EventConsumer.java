@@ -25,10 +25,7 @@ public class EventConsumer {
     private PushEventService pushEventService;
 
     /**
-     * 此处用于监听订单的状态：
-     * 1、订单未付款30分钟自动关闭
-     * 2、订单未签收15天后自动签收
-     *
+     * 监听推送消息
      * @param pushEvent
      */
     @RabbitListener(queues = "cj-push")
@@ -36,6 +33,7 @@ public class EventConsumer {
     public void process(String pushEvent) {
         try {
             log.info("消息队列接受消息{}", pushEvent);
+
             Result result = pushEventService.insert(JSON.parseObject(pushEvent, PushEvent.class));
             log.info("event queue handle result={}", JSON.toJSONString(result));
         } catch (Exception e) {
