@@ -23,7 +23,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
-@RequestMapping("/v1/push/event")
+@RequestMapping("/v1/push/event/manage")
 public class EventController {
     @Autowired
     private PushEventService pushEventService;

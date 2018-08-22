@@ -18,7 +18,7 @@ spring:
 
 # server config
 server:
-  port: 8088
+  port: 8089
   compression:
     enabled: true
     min-response-size: 2048
@@ -30,7 +30,7 @@ server:
 mongo:
   address: ${MONGO_HOST}:${MONGO_PORT}
 #  replica-set:
-  database: ${MONGO_DB_NAME}
+  database: cj-push-log
   username: ${MONGO_USER}
   password: ${MONGO_PWD}
   options.min-connections-per-host: 30
