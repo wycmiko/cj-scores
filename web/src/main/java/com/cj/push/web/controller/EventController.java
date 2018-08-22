@@ -28,7 +28,6 @@ public class EventController {
     @Autowired
     private PushEventService pushEventService;
 
-
     /**
      * 查询推送事件列表
      * @param page_num
@@ -45,25 +44,6 @@ public class EventController {
         return ResultUtil.getResult(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG,
                 pushEventService.getAllEvents(page_num, page_size, msg));
     }
-
-
-    /**
-     * 推送事件
-     * @param pushEvent
-     * @param error
-     * @return
-     */
-    @PostMapping("/send")
-    public Result sendEvent(@Valid @RequestBody PushEvent pushEvent, BindingResult error) {
-        if (error.hasErrors()) {
-            return ResultUtil.paramNullResult();
-        }
-        log.info("sendEvent body={} begin", JSON.toJSONString(pushEvent));
-        Result insert = pushEventService.insert(pushEvent);
-        log.info("sendEvent  end result={}", JSON.toJSONString(insert));
-        return insert;
-    }
-
 
     /**
      * 查询定时任务列表
@@ -97,5 +77,21 @@ public class EventController {
         return result;
     }
 
-
+    /**
+     * 推送事件（走队列）
+     * @param pushEvent
+     * @param error
+     * @return
+     */
+    @Deprecated
+    @PostMapping("/send")
+    public Result sendEvent(@Valid @RequestBody PushEvent pushEvent, BindingResult error) {
+        if (error.hasErrors()) {
+            return ResultUtil.paramNullResult();
+        }
+        log.info("sendEvent body={} begin", JSON.toJSONString(pushEvent));
+        Result insert = pushEventService.insert(pushEvent);
+        log.info("sendEvent  end result={}", JSON.toJSONString(insert));
+        return insert;
+    }
 }

@@ -1,5 +1,4 @@
 # dev开发环境
-# mysql - local - url
 spring:
   application:
     name: cj-push
@@ -11,17 +10,6 @@ spring:
           register: true
           hostname: 172.28.3.9
           serviceName: cj-push
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    expire-time: 3600
-    soTimeout: 2000
-    jedis:
-      pool:
-        max-idle: 100
-        min-idle: 1
-        max-active: 1000
-        max-wait: -1ms
   rabbitmq:
     host: 172.28.3.45
     port: 5672

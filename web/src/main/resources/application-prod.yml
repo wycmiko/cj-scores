@@ -1,30 +1,24 @@
-# dev开发环境
-
-# mysql - local - url
+# PROD 环境
 spring:
   application:
-    name: mall-api
+    name: cj-push
   cloud:
       consul:
-        host: ${CONSUL}
+        host: ${CONSUL_HOST}
         port: ${CONSUL_PORT}
         discovery:
           register: true
-  redis:
-    host: ${REDIS}
-    port: ${REDIS_PORT}
-    password: ${REDIS_PWD}
-    soTimeout: 2000
-    jedis:
-      pool:
-        max-idle: 100
-        min-idle: 1
-        max-active: 1000
-        max-wait: -1ms
-    expire-time: 60
+          serviceName: cj-push
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: ${MQ_PORT}    #5672
+    username: ${MQ_USERNAME}  #test
+    password: ${MQ_PWD}  #test
+    publisher-confirms: true
 
+# server config
 server:
-  port: 7077
+  port: 8088
   compression:
     enabled: true
     min-response-size: 2048
@@ -32,12 +26,13 @@ server:
   tomcat:
     uri-encoding: UTF-8
 
+
 mongo:
-  address: localhost:27017
+  address: ${MONGO_HOST}:${MONGO_PORT}
 #  replica-set:
-  database: admin
-  username: root
-  password: root
+  database: ${MONGO_DB_NAME}
+  username: ${MONGO_USER}
+  password: ${MONGO_PWD}
   options.min-connections-per-host: 30
   options.max-connections-per-host: 30
   options.threads-allowed-to-block-for-connection-multiplier: 5
@@ -60,4 +55,4 @@ mongo:
 
 jiguang:
   appkey: 928c19fc99d990c03efee5ea
-  masterSecret: 5c387bd797238429baba2fbd
+  masterSecret: ${JIGUANG_SECRET}   #5c387bd797238429baba2fbd

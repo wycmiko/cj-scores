@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -61,6 +62,8 @@ public class PushEventService {
                 if (target.getArray().size() > 1000) {
                     return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ALIAS_MORE, ResultConsts.ALIAS_TOO_MORE);
                 }
+            } else if (3 == target.getPushType()) {
+                target.setArray(new ArrayList<>());
             }
             //推送类群：
             @NotNull Integer form = target.getPlatForm();
@@ -130,7 +133,7 @@ public class PushEventService {
     }
 
     /**
-     * 查询全部事件
+     * 分页查询全部事件
      *
      * @param msg 模糊匹配内容 匹配事件名、标题、内容
      * @return
@@ -151,13 +154,17 @@ public class PushEventService {
             query.addCriteria(criteria);
         }
         long count = mongoTemplate.count(query, PushEvent.class, "PushEvent");
-
         List<PushEvent> events = ValidatorUtil.checkNotEmptyList(mongoTemplate.find(query, PushEvent.class, "PushEvent"));
-        PagedList<PushEvent> pagedList = new PagedList<>(events, count, pageNum, pageSize);
-        return pagedList;
+        return new PagedList<>(events, count, pageNum, pageSize);
     }
 
-
+    /**
+     * 分页查询定时任务列表
+     * @param pageNum
+     * @param pageSize
+     * @param msg
+     * @return
+     */
     public PagedList<SchedulePlan> getScheduleList(int pageNum, int pageSize, String msg) {
         //page-limit
         Query query = new Query();
@@ -210,6 +217,4 @@ public class PushEventService {
         }
         return result;
     }
-
-
 }
