@@ -78,7 +78,7 @@ public class EventController {
     }
 
     /**
-     * 推送事件（走队列）
+     * 推送事件（这里暂时不用 走队列）
      * @param pushEvent
      * @param error
      * @return

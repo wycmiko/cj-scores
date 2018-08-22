@@ -7,8 +7,7 @@ spring:
         host: ${CONSUL_HOST}
         port: ${CONSUL_PORT}
         discovery:
-          register: true
-          serviceName: cj-push
+          register: false
   rabbitmq:
     host: ${MQ_HOST}
     port: ${MQ_PORT}    #5672

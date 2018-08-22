@@ -7,14 +7,10 @@ spring:
         host: 172.28.3.45
         port: 8500
         discovery:
-          register: true
-          hostname: 172.28.3.9
-          serviceName: cj-push
+          register: false
   rabbitmq:
-    host: 172.28.3.45
+    host: 127.0.0.1
     port: 5672
-    username: test
-    password: test
     publisher-confirms: true
 
 # server config

@@ -123,7 +123,8 @@ public class PushEventService {
             e.printStackTrace();
             return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.JIGUANG_API_CONNECT_ERR, e.getDoneRetriedTimes());
         } catch (APIRequestException e) {
-            if (1011 == e.getErrorCode()) {
+            if (1011 == e.getErrorCode() || 1303 == e.getErrorCode()) {
+                log.info("别名Alias未找到");
                 return new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, ResultConsts.ALIAS_NOT_FOUND_MSG);
             }
             e.printStackTrace();

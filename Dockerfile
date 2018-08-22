@@ -3,7 +3,7 @@ VOLUME /tmp:/tmp
 COPY ./web/target/web-0.0.1-SNAPSHOT.jar app.jar
 RUN /bin/sh -c 'touch /app.jar'
 ENV SERVICE_TAGS traefik.tags=cj.com,traefik.frontend.rule=Host:platform.api.loongcent.com.cn;PathPrefix:/v1/push,traefik.enable=true,traefik.frontend.entryPoints=http,traefik.frontend.passHostHeader=true
-ENV SERVICE_8089_CHECK_HTTP /health
+ENV SERVICE_8089_CHECK_HTTP /actuator/health
 ENV SERVICE_8089_NAME cj-push
 ENV TZ=Asia/Shanghai
 ENV LANG C.UTF-8
