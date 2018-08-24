@@ -2,7 +2,7 @@
 # mysql - local - url
 spring:
   application:
-    name: mall-api
+    name: cj-scores
   datasource:
           name: dev
           url: jdbc:mysql://127.0.0.1:3306/cj_scores?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
