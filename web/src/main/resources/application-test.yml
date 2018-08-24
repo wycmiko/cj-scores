@@ -1,7 +1,7 @@
 # test 测试环境
 spring:
   application:
-    name: cj-push
+    name: cj-scores
   cloud:
       consul:
         host: ${CONSUL_HOST}
@@ -29,7 +29,7 @@ server:
 mongo:
   address: ${MONGO_HOST}:${MONGO_PORT}
 #  replica-set:
-  database: cj-push-log
+  database: cj-scores-log
   username: ${MONGO_USER}
   password: ${MONGO_PWD}
   options.min-connections-per-host: 30

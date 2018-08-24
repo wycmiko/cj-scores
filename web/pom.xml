@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.cj.push</groupId>
+    <groupId>com.cj.scores</groupId>
     <artifactId>web</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -12,7 +12,7 @@
 
     <parent>
         <groupId>com.cj</groupId>
-        <artifactId>push</artifactId>
+        <artifactId>scores</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
     </parent>
@@ -47,7 +47,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.cj.push</groupId>
+            <groupId>com.cj.scores</groupId>
             <artifactId>service</artifactId>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
@@ -98,7 +98,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix></classpathPrefix>
-                            <mainClass>com.cj.push.web.WebApplication</mainClass>
+                            <mainClass>com.cj.scores.web.WebApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

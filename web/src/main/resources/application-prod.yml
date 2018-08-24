@@ -1,14 +1,14 @@
 # PROD 环境
 spring:
   application:
-    name: cj-push
+    name: cj-scores
   cloud:
       consul:
         host: ${CONSUL_HOST}
         port: ${CONSUL_PORT}
         discovery:
           register: true
-          serviceName: cj-push
+          serviceName: cj-scores
   rabbitmq:
     host: ${MQ_HOST}
     port: ${MQ_PORT}    #5672

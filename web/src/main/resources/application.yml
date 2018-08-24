@@ -20,6 +20,18 @@ ribbon:
  #请求连接的超时时间
   ConnectTimeout: 60000
 
+# mybatis scanner
+mybatis:
+  mapper-locations: classpath*:mapping/*.xml
+  config-location: classpath:mybatis-config.xml
+
+#pagehelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: false
+  supportMethodsArguments: true
+  params: count=countSql
+
 management:
   endpoints:
     enabled: false
