@@ -57,4 +57,22 @@ public class ScoresController {
         Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getUserScoreByUid(uid));
         return result;
     }
+
+
+    /**
+     * 根据uid查询收支明细
+     */
+    @GetMapping("/getScoreLogByUid")
+    public Result getScoreLogByUid(String token, Integer page_num, Integer page_size) throws Exception {
+        if (CommandValidator.isEmpty(token)) {
+            return ResultUtil.paramNullResult();
+        }
+        if (!tokenValidator.checkToken(token)) {
+            log.info("getScoreLogByUid【Invaild token!】");
+            return tokenValidator.invaildTokenFailedResult();
+        }
+        long uid = tokenValidator.getUidByToken(token);
+        Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getScoreLogList(uid, page_num, page_size));
+        return result;
+    }
 }

@@ -1,9 +1,8 @@
 package com.cj.scores.dao.mapper;
 
+import com.cj.scores.api.dto.UserScoreLogDto;
 import com.cj.scores.api.pojo.InsertScoresLog;
-import com.cj.scores.api.pojo.UserScoreLog;
 import com.cj.scores.api.pojo.UserScores;
-import com.cj.scores.api.pojo.select.ScoreLogSelect;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,6 +18,7 @@ public interface ScoresMapper {
 
     /**
      * 判断表是否存在
+     *
      * @param tableName
      * @return
      */
@@ -26,6 +26,7 @@ public interface ScoresMapper {
 
     /**
      * 创建积分日志表 t_user_scores_log_0x
+     *
      * @param tableName
      * @return
      */
@@ -39,7 +40,8 @@ public interface ScoresMapper {
 
     UserScores selectScoresById(Long uid);
 
-    List<UserScoreLog> getScoreLogList(ScoreLogSelect select);
+
+    List<UserScoreLogDto> getScoreLogDetail(@Param("table") String table, @Param("uid") Long uid);
 
 
 }

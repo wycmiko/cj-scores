@@ -1,5 +1,6 @@
 package com.cj.scores.service.impl;
 
+import com.cj.scores.api.dto.UserScoreLogDto;
 import com.cj.scores.api.pojo.InsertScoresLog;
 import com.cj.scores.api.pojo.Result;
 import com.cj.scores.api.pojo.UserScores;
@@ -9,11 +10,13 @@ import com.cj.scores.service.cfg.JedisCache;
 import com.cj.scores.service.consts.ResultConsts;
 import com.cj.scores.service.util.ResultUtil;
 import com.cj.scores.service.util.ValidatorUtil;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -98,7 +101,7 @@ public class ScoreService {
     }
 
 
-    public UserScores getUserScoreByUid(long uid) {
+    public UserScores getUserScoreByUid(Long uid) {
         String key = JEDIS_PREFIX + uid;
         UserScores hget = jedisCache.hget(key, String.valueOf(uid), UserScores.class);
         if (hget == null) {
@@ -108,6 +111,31 @@ public class ScoreService {
             }
         }
         return hget;
+    }
+
+
+    public List<UserScoreLogDto> getScoreLogList(Long uid, Integer pageNum, Integer pageSize) {
+        if (pageNum != null && pageSize != null) {
+            PageHelper.startPage(pageNum, pageSize);
+        }
+        List<UserScoreLogDto> scoreLogDetail = scoresMapper.getScoreLogDetail(ValidatorUtil.getPaylogTableNameByUid(uid), uid);
+        scoreLogDetail.forEach(x -> {
+            x.setTypeName(getTypeName(x.getType()));
+        });
+        return scoreLogDetail;
+    }
+
+
+    private String getTypeName(int type) {
+        switch (type) {
+            case 1:
+                return "收入";
+            case 2:
+                return "支出";
+            case 3:
+                return "冻结";
+        }
+        return "其它类型";
     }
 
 

@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author yuchuanWeng
@@ -37,10 +36,10 @@ public class UserScores implements Serializable {
     private String properties;
 
     @JsonProperty("update_time")
-    private Date updateTime;
+    private String updateTime;
 
     @JsonProperty("create_time")
-    private Date createTime;
+    private String createTime;
 
     private Long version;
 }

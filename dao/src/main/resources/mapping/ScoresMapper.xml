@@ -23,44 +23,44 @@
   </update>
 
     <insert id="insertUserScores" parameterType="com.cj.scores.api.pojo.UserScores">
-      insert into t_user_scores
-        <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="uid != null" >
+        insert into t_user_scores
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uid != null">
                 uid,
             </if>
-            <if test="totalScores != null" >
+            <if test="totalScores != null">
                 total_scores,
             </if>
-            <if test="scores != null" >
+            <if test="scores != null">
                 scores,
             </if>
-            <if test="lockScores != null" >
+            <if test="lockScores != null">
                 lock_scores,
             </if>
-            <if test="enabled != null" >
+            <if test="enabled != null">
                 enabled,
             </if>
-            <if test="version != null" >
+            <if test="version != null">
                 version,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="uid != null" >
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uid != null">
                 #{uid},
             </if>
-            <if test="totalScores != null" >
+            <if test="totalScores != null">
                 #{totalScores},
             </if>
-            <if test="scores != null" >
+            <if test="scores != null">
                 #{scores},
             </if>
-            <if test="lockScores != null" >
+            <if test="lockScores != null">
                 #{lockScores},
             </if>
-            <if test="enabled != null" >
+            <if test="enabled != null">
                 #{enabled},
             </if>
-            <if test="version != null" >
+            <if test="version != null">
                 #{version},
             </if>
         </trim>
@@ -70,19 +70,19 @@
     <update id="updateUserScores" parameterType="com.cj.scores.api.pojo.UserScores">
         update t_user_scores
         <set>
-            <if test="totalScores != null" >
+            <if test="totalScores != null">
                 total_scores=#{totalScores},
             </if>
-            <if test="scores != null" >
+            <if test="scores != null">
                 scores = #{scores},
             </if>
-            <if test="lockScores != null" >
+            <if test="lockScores != null">
                 lock_scores=#{lockScores},
             </if>
-            <if test="enabled != null" >
+            <if test="enabled != null">
                 enabled=#{enabled},
             </if>
-            <if test="version != null" >
+            <if test="version != null">
                 version=#{version} + 1,
             </if>
         </set>
@@ -92,61 +92,61 @@
 
     <insert id="insertScoresLog" parameterType="com.cj.scores.api.pojo.InsertScoresLog">
         insert into ${tableName}
-        <trim prefix="(" suffix=")" suffixOverrides="," >
+        <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
             </if>
-            <if test="uid != null" >
+            <if test="uid != null">
                 uid,
             </if>
-            <if test="fromScores != null" >
+            <if test="fromScores != null">
                 from_scores,
             </if>
-            <if test="scores != null" >
+            <if test="scores != null">
                 scores,
             </if>
-            <if test="changeScores != null" >
+            <if test="changeScores != null">
                 change_scores,
             </if>
-            <if test="type != null" >
+            <if test="type != null">
                 type,
             </if>
-            <if test="src != null" >
+            <if test="src != null">
                 src,
             </if>
-            <if test="srcId != null" >
+            <if test="srcId != null">
                 src_id,
             </if>
-            <if test="comment != null" >
+            <if test="comment != null">
                 comment,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
                 #{id},
             </if>
-            <if test="uid != null" >
+            <if test="uid != null">
                 #{uid},
             </if>
-            <if test="fromScores != null" >
+            <if test="fromScores != null">
                 #{fromScores},
             </if>
-            <if test="scores != null" >
+            <if test="scores != null">
                 #{scores},
             </if>
-            <if test="changeScores != null" >
+            <if test="changeScores != null">
                 #{changeScores},
             </if>
-            <if test="type != null" >
+            <if test="type != null">
                 #{type},
             </if>
-            <if test="src != null" >
+            <if test="src != null">
                 #{src},
             </if>
-            <if test="srcId != null" >
+            <if test="srcId != null">
                 #{srcId},
             </if>
-            <if test="comment != null" >
+            <if test="comment != null">
                 #{comment},
             </if>
         </trim>
@@ -160,11 +160,32 @@
         lock_scores as lockScores,
         enabled,
         properties,
-        update_time as updateTime,
-        create_time as createTime,
+        DATE_FORMAT(update_time,'%Y-%m-%d %H:%i:%s') as updateTime,
+        DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as createTime,
         version
         from t_user_scores
         where uid = #{uid}
     </select>
+
+    <select id="getScoreLogDetail" parameterType="String"
+            resultType="com.cj.scores.api.dto.UserScoreLogDto"
+    >
+        select
+        id,
+        uid,
+        from_scores as fromScores,
+        scores,
+        change_scores as changeScores,
+        type,
+        src,
+        src_id as srcId,
+        comment,
+        DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as createTime
+        from ${table}
+        where uid=#{uid}
+    </select>
+
+
+
 
 </mapper>
