@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cj.scores.dao.mapper.ScoresMapper">
+    <select id="isExistTable" resultType="java.lang.String" parameterType="java.lang.String">
+    SELECT table_name FROM information_schema.TABLES WHERE table_name =#{tableName}
+  </select>
+
+    <update id="createScoresLogTable" parameterType="java.lang.String">
+    CREATE TABLE `${tableName}` (
+      `id` varchar(20)  NOT NULL  COMMENT '主键',
+      `uid` bigint(16) NOT NULL COMMENT '用户中心id',
+      `from_scores` decimal(11,2) NOT NULL COMMENT '起始积分',
+      `scores` decimal(11,2) NOT NULL COMMENT '当前积分',
+      `change_scores` decimal(11,2) NOT NULL COMMENT '变化积分',
+      `type` varchar(50) NOT NULL COMMENT '1=收入 2=支出 3=冻结',
+      `src` varchar(255) NOT NULL COMMENT '来源',
+      `src_id` int(11) NOT NULL COMMENT '来源ID',
+      `desc` text  COMMENT '描述',
+      `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+      PRIMARY KEY (`id`),
+      KEY(`src_id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='积分日志表'
+  </update>
+
+    <insert id="insertUserScores" parameterType="com.cj.scores.api.pojo.UserScores">
+      insert into t_user_scores
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="uid != null" >
+                uid,
+            </if>
+            <if test="totalScores != null" >
+                total_scores,
+            </if>
+            <if test="scores != null" >
+                scores,
+            </if>
+            <if test="lockScores != null" >
+                lock_scores,
+            </if>
+            <if test="enabled != null" >
+                enabled,
+            </if>
+            <if test="version != null" >
+                version,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="uid != null" >
+                #{uid},
+            </if>
+            <if test="totalScores != null" >
+                #{totalScores},
+            </if>
+            <if test="scores != null" >
+                #{scores},
+            </if>
+            <if test="lockScores != null" >
+                #{lockScores},
+            </if>
+            <if test="enabled != null" >
+                #{enabled},
+            </if>
+            <if test="version != null" >
+                #{version},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateUserScores" parameterType="com.cj.scores.api.pojo.UserScores">
+        update t_user_scores
+        <set>
+            <if test="totalScores != null" >
+                total_scores=#{totalScores},
+            </if>
+            <if test="scores != null" >
+                scores = #{scores},
+            </if>
+            <if test="lockScores != null" >
+                lock_scores=#{lockScores},
+            </if>
+            <if test="enabled != null" >
+                enabled=#{enabled},
+            </if>
+            <if test="version != null" >
+                version=#{version} + 1,
+            </if>
+        </set>
+        where uid =#{uid} and version=#{version}
+    </update>
+
+
+    <insert id="insertScoresLog" parameterType="com.cj.scores.api.pojo.InsertScoresLog">
+        insert into #{tableName}
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null">
+                id,
+            </if>
+            <if test="uid != null" >
+                uid,
+            </if>
+            <if test="fromScores != null" >
+                from_scores,
+            </if>
+            <if test="scores != null" >
+                scores,
+            </if>
+            <if test="changeScores != null" >
+                change_scores,
+            </if>
+            <if test="type != null" >
+                type,
+            </if>
+            <if test="src != null" >
+                src,
+            </if>
+            <if test="srcId != null" >
+                src_id,
+            </if>
+            <if test="desc != null" >
+                desc,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id},
+            </if>
+            <if test="uid != null" >
+                #{uid},
+            </if>
+            <if test="fromScores != null" >
+                #{fromScores},
+            </if>
+            <if test="scores != null" >
+                #{scores},
+            </if>
+            <if test="changeScores != null" >
+                #{changeScores},
+            </if>
+            <if test="type != null" >
+                #{type},
+            </if>
+            <if test="src != null" >
+                #{src},
+            </if>
+            <if test="srcId != null" >
+                #{srcId},
+            </if>
+            <if test="desc != null" >
+                #{desc},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
