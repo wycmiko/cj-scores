@@ -54,13 +54,6 @@ seaweed:
   ip: 172.28.3.9
   port: 9333
 
-# wechat config
-wechat:
-#  app-id: wxbea125c311c43dd2
-  app-id: wx66eab4b767e88ff9
-  redirect-uri: http://demo.com
-#  app-secret: 78717f140c4394ce13a345a0242ae3c7
-  app-secret: 81653ea574f7a2dbc3e6cffd5be1a345
 
 # server config
 server:

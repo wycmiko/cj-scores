@@ -67,10 +67,17 @@ public class ValidatorUtil {
     }
 
     //根据uid得到表名
-    public static String getPaylogTableName(long uid) {
+    public static String getPaylogTableNameByUid(long uid) {
         String prefix = "t_user_scores_log_";
         String tableName = prefix + String.format("%02d", uid % 8 + 1);
         return tableName;
     }
+
+    //根据uid得到表名
+    public static String getPaylogTableName(int tableNum) {
+        String prefix = "t_user_scores_log_";
+        return prefix + String.format("%02d", tableNum);
+    }
+
 
 }

@@ -11,13 +11,19 @@ import com.cj.scores.service.consts.ResultConsts;
 public class ResultUtil {
 
 
-
     public static Result paramNullResult() {
         return getResult(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.PARAM_NULL, ResultConsts.PARAM_MSG);
     }
 
     public static Result getResult(String code, String msg, Object data) {
         return new Result(code, msg, data);
+    }
+
+    public static Result getDmlResult(int i) {
+        if (i > 0) {
+            return getResult(ResultConsts.REQUEST_SUCCEED_STATUS,ResultConsts.RESPONSE_SUCCEED_MSG, ResultConsts.RESPONSE_SUCCEED_DATA);
+        }
+        return getResult(ResultConsts.REQUEST_FAILURE_STATUS,ResultConsts.RESPONSE_FAILURE_MSG, ResultConsts.RESPONSE_FAILURE_DATA);
     }
 
 }

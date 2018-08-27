@@ -37,7 +37,7 @@ public class WebApplicationTests {
         boolean exist =  scoresMapper.isExistTable(tableName) != null;
         if (!exist) {
             log.info("建表操作");
-            scoresMapper.createTable(tableName);
+            scoresMapper.createScoresLogTable(tableName);
         }
     }
 }

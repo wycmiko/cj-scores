@@ -1,9 +1,13 @@
 package com.cj.scores.dao.mapper;
 
 import com.cj.scores.api.pojo.InsertScoresLog;
+import com.cj.scores.api.pojo.UserScoreLog;
 import com.cj.scores.api.pojo.UserScores;
+import com.cj.scores.api.pojo.select.ScoreLogSelect;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author yuchuanWeng
@@ -32,5 +36,10 @@ public interface ScoresMapper {
     int updateUserScores(UserScores userScores);
 
     int insertScoresLog(InsertScoresLog log);
+
+    UserScores selectScoresById(Long uid);
+
+    List<UserScoreLog> getScoreLogList(ScoreLogSelect select);
+
 
 }

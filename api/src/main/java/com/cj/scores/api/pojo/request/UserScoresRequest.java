@@ -1,9 +1,12 @@
-package com.cj.scores.api.pojo;
+package com.cj.scores.api.pojo.request;
 
+import com.cj.scores.api.pojo.UserScores;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -13,20 +16,14 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class UserScoreLog implements Serializable {
-    private String id;
-    private Long uid;
-    @JsonProperty("from_scores")
-    private Double fromScores;
-    private Double scores;
+public class UserScoresRequest extends UserScores implements Serializable {
+    @NotNull
     @JsonProperty("change_scores")
     private Double changeScores;
-    /**
-     * 1=增加 2=减少 3=冻结
-     */
-    private Integer type;
-    private String src;
+    @NotNull
     @JsonProperty("src_id")
     private Integer srcId;
+    @NotBlank
+    private String src;
     private String comment;
 }

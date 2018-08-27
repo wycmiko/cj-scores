@@ -7,7 +7,7 @@
 
     <update id="createScoresLogTable" parameterType="java.lang.String">
     CREATE TABLE `${tableName}` (
-      `id` varchar(20)  NOT NULL  COMMENT '主键',
+      `id` varchar(40)  NOT NULL  COMMENT '主键',
       `uid` bigint(16) NOT NULL COMMENT '用户中心id',
       `from_scores` decimal(11,2) NOT NULL COMMENT '起始积分',
       `scores` decimal(11,2) NOT NULL COMMENT '当前积分',
@@ -15,7 +15,7 @@
       `type` varchar(50) NOT NULL COMMENT '1=收入 2=支出 3=冻结',
       `src` varchar(255) NOT NULL COMMENT '来源',
       `src_id` int(11) NOT NULL COMMENT '来源ID',
-      `desc` text  COMMENT '描述',
+      `comment` varchar(255)  COMMENT '描述',
       `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
       PRIMARY KEY (`id`),
       KEY(`src_id`)
@@ -91,7 +91,7 @@
 
 
     <insert id="insertScoresLog" parameterType="com.cj.scores.api.pojo.InsertScoresLog">
-        insert into #{tableName}
+        insert into ${tableName}
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="id != null">
                 id,
@@ -117,8 +117,8 @@
             <if test="srcId != null" >
                 src_id,
             </if>
-            <if test="desc != null" >
-                desc,
+            <if test="comment != null" >
+                comment,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -146,10 +146,25 @@
             <if test="srcId != null" >
                 #{srcId},
             </if>
-            <if test="desc != null" >
-                #{desc},
+            <if test="comment != null" >
+                #{comment},
             </if>
         </trim>
     </insert>
+
+    <select id="selectScoresById" parameterType="java.lang.Long" resultType="com.cj.scores.api.pojo.UserScores">
+        select
+        uid,
+        total_scores as totalScores,
+        scores,
+        lock_scores as lockScores,
+        enabled,
+        properties,
+        update_time as updateTime,
+        create_time as createTime,
+        version
+        from t_user_scores
+        where uid = #{uid}
+    </select>
 
 </mapper>

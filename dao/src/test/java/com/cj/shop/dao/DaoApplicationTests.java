@@ -1,4 +1,4 @@
-package com.cj.shop.dao;
+package com.cj.scores.dao;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
