@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * @author yuchuanWeng( )
+ * @author yuchuanWeng()
  * @date 2018/4/4
  * @since 1.0
  */
@@ -64,6 +64,13 @@ public class ValidatorUtil {
         Pattern p = Pattern.compile(regEx);
         Matcher m = p.matcher(str);
         return m.replaceAll("\\x").trim();
+    }
+
+    //根据uid得到表名
+    public static String getPaylogTableName(long uid) {
+        String prefix = "t_user_scores_log_";
+        String tableName = prefix + String.format("%02d", uid % 8 + 1);
+        return tableName;
     }
 
 }
