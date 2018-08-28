@@ -1,4 +1,4 @@
-package com.cj.scores.service.consts;
+package com.cj.scores.api.consts;
 
 /**
  * @author yuchuanWeng()
