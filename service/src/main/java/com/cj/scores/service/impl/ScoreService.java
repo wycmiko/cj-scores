@@ -1,5 +1,6 @@
 package com.cj.scores.service.impl;
 
+import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.consts.ScoreTypeEnum;
 import com.cj.scores.api.dto.UserScoreLogDto;
 import com.cj.scores.api.pojo.InsertScoresLog;
@@ -10,7 +11,6 @@ import com.cj.scores.api.pojo.request.UserScoresRequest;
 import com.cj.scores.api.pojo.select.ScoreSelect;
 import com.cj.scores.dao.mapper.ScoresMapper;
 import com.cj.scores.service.cfg.JedisCache;
-import com.cj.scores.service.consts.ResultConsts;
 import com.cj.scores.service.util.ResultUtil;
 import com.cj.scores.service.util.ValidatorUtil;
 import com.github.pagehelper.Page;
