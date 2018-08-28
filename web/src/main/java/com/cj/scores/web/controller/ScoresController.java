@@ -34,7 +34,7 @@ public class ScoresController {
     /**
      * 修改积分
      */
-    @PostMapping("/updateUserScore")
+    @PostMapping("/json/updateUserScore")
     public Result updateUserScore(@Valid @RequestBody UserScoresRequest request, BindingResult result) throws Exception {
         if (result.hasErrors() || StringUtils.isEmpty(request.getToken())
                 || SrcEnum.getTypeName(request.getSrcId()) == null) {
@@ -68,7 +68,7 @@ public class ScoresController {
     /**
      * 根据uid查询积分
      */
-    @GetMapping("/getScoreByUid")
+    @GetMapping("/json/getScoreByUid")
     public Result getScoreByUid(String token) throws Exception {
         if (CommandValidator.isEmpty(token)) {
             return ResultUtil.paramNullResult();
@@ -96,9 +96,11 @@ public class ScoresController {
      * 根据uid查询收支明细
      */
     @GetMapping("/manage/getScoreLog")
-    public Result getScoreLogByUidManage(String token, Integer page_num, Integer page_size) throws Exception {
+    public Result getScoreLogByUidManage(Long uid, Integer page_num, Integer page_size) throws Exception {
         log.info("getScoreLogByUidManage");
-        long uid = tokenValidator.getUidByToken(token);
+        if (CommandValidator.isEmpty(uid)) {
+            return ResultUtil.paramNullResult();
+        }
         Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getScoreLogList(uid, page_num, page_size));
         return result;
     }
@@ -107,7 +109,7 @@ public class ScoresController {
     /**
      * 根据uid查询收支明细
      */
-    @GetMapping("/getScoreLogByUid")
+    @GetMapping("/json/getScoreLogByUid")
     public Result getScoreLogByUid(String token, Integer page_num, Integer page_size) throws Exception {
         if (CommandValidator.isEmpty(token)) {
             return ResultUtil.paramNullResult();
