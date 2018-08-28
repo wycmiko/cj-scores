@@ -2,6 +2,7 @@ package com.cj.scores.service.impl;
 
 import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.consts.ScoreTypeEnum;
+import com.cj.scores.api.consts.SrcEnum;
 import com.cj.scores.api.dto.UserScoreLogDto;
 import com.cj.scores.api.pojo.InsertScoresLog;
 import com.cj.scores.api.pojo.PagedList;
@@ -94,7 +95,7 @@ public class ScoreService {
                 log2.setSrcId(scores.getSrcId());
                 log2.setType(scores.getType());
                 log2.setUid(scores.getUid());
-                log2.setSrc(scores.getSrc());
+                log2.setSrc(SrcEnum.getTypeName(scores.getSrcId()));
                 log2.setId(UUID.randomUUID().toString());
                 int var2 = scoresMapper.insertScoresLog(log2);
                 log.info("insertScoresLog result={}", var2 > 0);

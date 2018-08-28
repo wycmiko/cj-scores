@@ -1,6 +1,7 @@
 package com.cj.scores.web.controller;
 
 import com.cj.scores.api.consts.ResultConsts;
+import com.cj.scores.api.consts.SrcEnum;
 import com.cj.scores.api.pojo.Result;
 import com.cj.scores.api.pojo.request.UserScoresRequest;
 import com.cj.scores.api.pojo.select.ScoreSelect;
@@ -35,7 +36,8 @@ public class ScoresController {
      */
     @PostMapping("/updateUserScore")
     public Result updateUserScore(@Valid @RequestBody UserScoresRequest request, BindingResult result) throws Exception {
-        if (result.hasErrors() || StringUtils.isEmpty(request.getToken())) {
+        if (result.hasErrors() || StringUtils.isEmpty(request.getToken())
+                || SrcEnum.getTypeName(request.getSrcId()) == null) {
             return ResultUtil.paramNullResult();
         }
         if (!tokenValidator.checkToken(request.getToken())) {
@@ -50,11 +52,12 @@ public class ScoresController {
 
 
     /**
-     * 修改积分
+     * 修改积分-后台管理
      */
     @PostMapping("/manage/updateUserScore")
     public Result updateUserScoreManage(@Valid @RequestBody UserScoresRequest request, BindingResult result) throws Exception {
-        if (result.hasErrors() || request.getUid() == null) {
+        if (result.hasErrors() || request.getUid() == null
+                || SrcEnum.getTypeName(request.getSrcId()) == null) {
             return ResultUtil.paramNullResult();
         }
         log.info("updateUserScoreManage begin");
@@ -63,7 +66,7 @@ public class ScoresController {
 
 
     /**
-     * 根据uid积分
+     * 根据uid查询积分
      */
     @GetMapping("/getScoreByUid")
     public Result getScoreByUid(String token) throws Exception {

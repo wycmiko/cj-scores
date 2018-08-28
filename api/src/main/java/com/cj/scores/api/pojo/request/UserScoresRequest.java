@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -23,8 +22,6 @@ public class UserScoresRequest extends UserScores implements Serializable {
     @NotNull
     @JsonProperty("src_id")
     private Integer srcId;
-    @NotBlank
-    private String src;
     private String token;
     private String comment;
 }
