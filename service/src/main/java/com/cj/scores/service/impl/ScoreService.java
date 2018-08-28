@@ -1,5 +1,6 @@
 package com.cj.scores.service.impl;
 
+import com.cj.scores.api.consts.ScoreTypeEnum;
 import com.cj.scores.api.dto.UserScoreLogDto;
 import com.cj.scores.api.pojo.InsertScoresLog;
 import com.cj.scores.api.pojo.PagedList;
@@ -41,21 +42,19 @@ public class ScoreService {
     public Result updateUserScores(UserScoresRequest scores) {
         Result result = null;
         String key = String.valueOf(scores.getUid());
-        boolean getLock = jedisCache.tryGetDistributedLock(key, "1", 15);
+        boolean hasGotLock = jedisCache.tryGetDistributedLock(key, "1", 15);
         try {
-            if (getLock) {
+            if (hasGotLock) {
                 int var1 = 0;
                 Integer type = scores.getType();
                 Double fromScores = 0.0;
                 UserScores userScores = scoresMapper.selectScoresById(scores.getUid());
                 if (userScores == null) {
                     //insert
-                    if (1 == type) {
-                        scores.setScores(scores.getChangeScores());
-                        scores.setTotalScores(scores.getChangeScores());
-                    } else {
+                    if (1 != type)
                         return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                    }
+                    scores.setScores(scores.getChangeScores());
+                    scores.setTotalScores(scores.getChangeScores());
                     scores.setEnabled(1);
                     var1 = scoresMapper.insertUserScores(scores);
                 } else {
@@ -66,15 +65,12 @@ public class ScoreService {
                             return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
                         }
                         scores.setScores(userScores.getScores() - scores.getChangeScores());
-                        if (3 == type) {
-                            //lock-score
-                            scores.setLockScores(userScores.getLockScores() + scores.getChangeScores());
-                        }
+                        //lock-score
+                        if (3 == type) scores.setLockScores(userScores.getLockScores() + scores.getChangeScores());
                     } else if (4 == type) {
                         //unlock score
-                        if (scores.getChangeScores() > userScores.getLockScores()) {
+                        if (scores.getChangeScores() > userScores.getLockScores())
                             return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                        }
                         scores.setLockScores(userScores.getLockScores() - scores.getChangeScores());
                         scores.setScores(userScores.getScores() + scores.getChangeScores());
                     } else {
@@ -100,14 +96,14 @@ public class ScoreService {
                 log2.setUid(scores.getUid());
                 log2.setSrc(scores.getSrc());
                 log2.setId(UUID.randomUUID().toString());
-                int insertScoresLog = scoresMapper.insertScoresLog(log2);
-                log.info("insertScoresLog result={}", insertScoresLog > 0);
+                int var2 = scoresMapper.insertScoresLog(log2);
+                log.info("insertScoresLog result={}", var2 > 0);
             } else {
                 //未获得锁 返回重试信息
                 result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, ResultConsts.ERR_SERVER_MSG);
             }
         } finally {
-            if (getLock) jedisCache.releaseDistributedLock(key, "1");
+            if (hasGotLock) jedisCache.releaseDistributedLock(key, "1");
         }
         return result;
     }
@@ -119,6 +115,7 @@ public class ScoreService {
         Integer pageNum = select.getPage_num();
         Integer pageSize = select.getPage_size();
         if (pageNum != null && pageSize != null) {
+            //if need page-limit
             objects = PageHelper.startPage(pageNum, pageSize);
         } else {
             pageNum = 0;
@@ -153,22 +150,9 @@ public class ScoreService {
         }
         List<UserScoreLogDto> scoreLogDetail = scoresMapper.getScoreLogDetail(ValidatorUtil.getPaylogTableNameByUid(uid), uid);
         scoreLogDetail.forEach(x -> {
-            x.setTypeName(getTypeName(x.getType()));
+            x.setTypeName(ScoreTypeEnum.getTypeName(x.getType()));
         });
         return scoreLogDetail;
-    }
-
-
-    private String getTypeName(int type) {
-        switch (type) {
-            case 1:
-                return "收入";
-            case 2:
-                return "支出";
-            case 3:
-                return "冻结";
-        }
-        return "其它类型";
     }
 
 
