@@ -1,7 +1,7 @@
 package com.cj.scores.web.cfg;
 
+import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.pojo.Result;
-import com.cj.scores.service.consts.ResultConsts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
