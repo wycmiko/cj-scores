@@ -112,7 +112,6 @@ public class ScoreService {
         return result;
     }
 
-
     public PagedList<UserScores> getUserScoreList(ScoreSelect select) {
         Page<Object> objects = null;
         List<UserScores> returnList = new ArrayList<>();
