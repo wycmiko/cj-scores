@@ -1,7 +1,7 @@
 package com.cj.scores.service.util;
 
+import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.pojo.Result;
-import com.cj.scores.service.consts.ResultConsts;
 
 /**
  * @author yuchuanWeng

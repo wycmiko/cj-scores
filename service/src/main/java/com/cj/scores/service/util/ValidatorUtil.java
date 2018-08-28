@@ -76,7 +76,7 @@ public class ValidatorUtil {
     //根据uid得到表名
     public static String getPaylogTableName(int tableNum) {
         String prefix = "t_user_scores_log_";
-        return prefix + String.format("%02d", tableNum);
+        return prefix + String.format("%02d", tableNum+1);
     }
 
 

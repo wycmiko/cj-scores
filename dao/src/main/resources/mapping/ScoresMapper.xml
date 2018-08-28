@@ -183,6 +183,7 @@
         DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as createTime
         from ${table}
         where uid=#{uid}
+        order by create_time desc
     </select>
 
     <select id="selectAllScores" parameterType="com.cj.scores.api.pojo.select.ScoreSelect" resultType="Long">

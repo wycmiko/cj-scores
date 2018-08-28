@@ -84,21 +84,24 @@ public class ScoreService {
                     var1 = scoresMapper.updateUserScores(scores);
                 }
                 result = ResultUtil.getDmlResult(var1);
-                Double nowScore = scores.getScores();
-                log.info("insert scores result={}", result);
-                InsertScoresLog log2 = new InsertScoresLog();
-                log2.setTableName(ValidatorUtil.getPaylogTableNameByUid(scores.getUid()));
-                log2.setChangeScores(scores.getChangeScores());
-                log2.setComment(scores.getComment());
-                log2.setScores(nowScore == null ? scores.getChangeScores() : nowScore);
-                log2.setFromScores(fromScores);
-                log2.setSrcId(scores.getSrcId());
-                log2.setType(scores.getType());
-                log2.setUid(scores.getUid());
-                log2.setSrc(SrcEnum.getTypeName(scores.getSrcId()));
-                log2.setId(UUID.randomUUID().toString());
-                int var2 = scoresMapper.insertScoresLog(log2);
-                log.info("insertScoresLog result={}", var2 > 0);
+                if (var1 > 0) {
+                    Double nowScore = scores.getScores();
+                    log.info("insert scores result={}", result);
+                    InsertScoresLog log2 = new InsertScoresLog();
+                    log2.setTableName(ValidatorUtil.getPaylogTableNameByUid(scores.getUid()));
+                    log2.setChangeScores(scores.getChangeScores());
+                    log2.setComment(scores.getComment());
+                    log2.setScores(nowScore == null ? scores.getChangeScores() : nowScore);
+                    log2.setFromScores(fromScores);
+                    log2.setSrcId(scores.getSrcId());
+                    log2.setType(scores.getType());
+                    log2.setUid(scores.getUid());
+                    log2.setSrc(SrcEnum.getTypeName(scores.getSrcId()));
+                    log2.setId(UUID.randomUUID().toString());
+                    int var2 = scoresMapper.insertScoresLog(log2);
+                    jedisCache.hdel(JEDIS_PREFIX, String.valueOf(scores.getUid()));
+                    log.info("insertScoresLog result={}", var2 > 0);
+                }
             } else {
                 //未获得锁 返回重试信息
                 result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, ResultConsts.ERR_SERVER_MSG);
@@ -133,7 +136,7 @@ public class ScoreService {
 
 
     public UserScores getUserScoreByUid(Long uid) {
-        String key = JEDIS_PREFIX + uid;
+        String key = JEDIS_PREFIX;
         UserScores hget = jedisCache.hget(key, String.valueOf(uid), UserScores.class);
         if (hget == null) {
             hget = scoresMapper.selectScoresById(uid);
@@ -145,14 +148,17 @@ public class ScoreService {
     }
 
 
-    public List<UserScoreLogDto> getScoreLogList(Long uid, Integer pageNum, Integer pageSize) {
+    public PagedList<UserScoreLogDto> getScoreLogList(Long uid, Integer pageNum, Integer pageSize) {
+        Page<Object> objects = null;
+        List<UserScoreLogDto> returnList = new ArrayList<>();
         if (pageNum != null && pageSize != null) {
-            PageHelper.startPage(pageNum, pageSize);
+            objects = PageHelper.startPage(pageNum, pageSize);
         }
         List<UserScoreLogDto> scoreLogDetail = scoresMapper.getScoreLogDetail(ValidatorUtil.getPaylogTableNameByUid(uid), uid);
         scoreLogDetail.forEach(x -> {
             x.setTypeName(ScoreTypeEnum.getTypeName(x.getType()));
+            returnList.add(x);
         });
-        return scoreLogDetail;
+        return new PagedList<>(returnList, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
     }
 }
