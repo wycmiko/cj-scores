@@ -1,9 +1,9 @@
 package com.cj.scores.web.controller;
 
+import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.pojo.Result;
 import com.cj.scores.api.pojo.request.UserScoresRequest;
 import com.cj.scores.api.pojo.select.ScoreSelect;
-import com.cj.scores.service.consts.ResultConsts;
 import com.cj.scores.service.impl.ScoreService;
 import com.cj.scores.service.util.ResultUtil;
 import com.cj.scores.web.validator.CommandValidator;
