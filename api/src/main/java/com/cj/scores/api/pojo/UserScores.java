@@ -15,7 +15,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class UserScores implements Serializable {
-    @NotNull
     private Long uid;
 
     @JsonProperty("total_scores")
@@ -28,7 +27,7 @@ public class UserScores implements Serializable {
 
     private Integer enabled;
     /**
-     * 1=收入 2=支出 3=冻结
+     * 1=收入 2=支出 3=冻结 4=解冻
      */
     @NotNull
     private Integer type;

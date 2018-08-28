@@ -45,12 +45,12 @@ public class ScoreService {
         try {
             if (getLock) {
                 int var1 = 0;
-                Integer var2 = scores.getType();
+                Integer type = scores.getType();
                 Double fromScores = 0.0;
                 UserScores userScores = scoresMapper.selectScoresById(scores.getUid());
                 if (userScores == null) {
                     //insert
-                    if (1 == var2) {
+                    if (1 == type) {
                         scores.setScores(scores.getChangeScores());
                         scores.setTotalScores(scores.getChangeScores());
                     } else {
@@ -60,15 +60,23 @@ public class ScoreService {
                     var1 = scoresMapper.insertUserScores(scores);
                 } else {
                     //update
-                    if (var2 != 1) {
+                    //decre or lock
+                    if (type != 1 && type != 4) {
                         if (scores.getChangeScores() > userScores.getScores()) {
                             return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
                         }
                         scores.setScores(userScores.getScores() - scores.getChangeScores());
-                        if (3 == var2) {
+                        if (3 == type) {
                             //lock-score
                             scores.setLockScores(userScores.getLockScores() + scores.getChangeScores());
                         }
+                    } else if (4 == type) {
+                        //unlock score
+                        if (scores.getChangeScores() > userScores.getLockScores()) {
+                            return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
+                        }
+                        scores.setLockScores(userScores.getLockScores() - scores.getChangeScores());
+                        scores.setScores(userScores.getScores() + scores.getChangeScores());
                     } else {
                         //incre
                         scores.setTotalScores(userScores.getTotalScores() + scores.getChangeScores());
@@ -118,11 +126,11 @@ public class ScoreService {
         }
         List<Long> longs = ValidatorUtil.checkNotEmptyList(scoresMapper.selectAllScores(select));
         if (!longs.isEmpty()) {
-            longs.forEach(x ->{
+            longs.forEach(x -> {
                 returnList.add(getUserScoreByUid(x));
             });
         }
-        return  new PagedList<>(returnList, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
+        return new PagedList<>(returnList, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
     }
 
 

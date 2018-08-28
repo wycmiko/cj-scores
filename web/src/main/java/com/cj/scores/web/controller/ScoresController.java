@@ -32,12 +32,12 @@ public class ScoresController {
     /**
      * 修改积分
      */
-    @PostMapping("/updateUserScore")
-    public Result updateUserScore(@Valid @RequestBody UserScoresRequest request, BindingResult result) {
-        if (result.hasErrors()) {
+    @PostMapping("/manage/updateUserScore")
+    public Result updateUserScoreManage(@Valid @RequestBody UserScoresRequest request, BindingResult result) throws Exception {
+        if (result.hasErrors() || request.getUid() == null) {
             return ResultUtil.paramNullResult();
         }
-        log.info("update user score begin");
+        log.info("updateUserScoreManage begin");
         return service.updateUserScores(request);
     }
 
