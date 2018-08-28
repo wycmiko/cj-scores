@@ -25,5 +25,6 @@ public class UserScoresRequest extends UserScores implements Serializable {
     private Integer srcId;
     @NotBlank
     private String src;
+    private String token;
     private String comment;
 }

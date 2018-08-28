@@ -10,6 +10,7 @@ import com.cj.scores.web.validator.CommandValidator;
 import com.cj.scores.web.validator.TokenValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,25 @@ public class ScoresController {
     private ScoreService service;
     @Autowired
     private TokenValidator tokenValidator;
+
+    /**
+     * 修改积分
+     */
+    @PostMapping("/updateUserScore")
+    public Result updateUserScore(@Valid @RequestBody UserScoresRequest request, BindingResult result) throws Exception {
+        if (result.hasErrors() || StringUtils.isEmpty(request.getToken())) {
+            return ResultUtil.paramNullResult();
+        }
+        if (!tokenValidator.checkToken(request.getToken())) {
+            log.info("getScoreByUid【Invaild token!】");
+            return tokenValidator.invaildTokenFailedResult();
+        }
+        long uid = tokenValidator.getUidByToken(request.getToken());
+        request.setUid(uid);
+        log.info("update user score begin");
+        return service.updateUserScores(request);
+    }
+
 
     /**
      * 修改积分
