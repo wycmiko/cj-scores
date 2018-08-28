@@ -2,6 +2,7 @@ package com.cj.scores.web.controller;
 
 import com.cj.scores.api.pojo.Result;
 import com.cj.scores.api.pojo.request.UserScoresRequest;
+import com.cj.scores.api.pojo.select.ScoreSelect;
 import com.cj.scores.service.consts.ResultConsts;
 import com.cj.scores.service.impl.ScoreService;
 import com.cj.scores.service.util.ResultUtil;
@@ -55,6 +56,27 @@ public class ScoresController {
         }
         long uid = tokenValidator.getUidByToken(token);
         Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getUserScoreByUid(uid));
+        return result;
+    }
+
+
+    /**
+     * 查询用户积分列表
+     */
+    @GetMapping("/manage/getUserScoreList")
+    public Result getUserScoreList(ScoreSelect select) throws Exception {
+        Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getUserScoreList(select));
+        return result;
+    }
+
+    /**
+     * 根据uid查询收支明细
+     */
+    @GetMapping("/manage/getScoreLog")
+    public Result getScoreLogByUidManage(String token, Integer page_num, Integer page_size) throws Exception {
+        log.info("getScoreLogByUidManage");
+        long uid = tokenValidator.getUidByToken(token);
+        Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getScoreLogList(uid, page_num, page_size));
         return result;
     }
 

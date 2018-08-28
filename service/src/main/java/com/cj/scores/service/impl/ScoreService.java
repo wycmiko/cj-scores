@@ -2,20 +2,24 @@ package com.cj.scores.service.impl;
 
 import com.cj.scores.api.dto.UserScoreLogDto;
 import com.cj.scores.api.pojo.InsertScoresLog;
+import com.cj.scores.api.pojo.PagedList;
 import com.cj.scores.api.pojo.Result;
 import com.cj.scores.api.pojo.UserScores;
 import com.cj.scores.api.pojo.request.UserScoresRequest;
+import com.cj.scores.api.pojo.select.ScoreSelect;
 import com.cj.scores.dao.mapper.ScoresMapper;
 import com.cj.scores.service.cfg.JedisCache;
 import com.cj.scores.service.consts.ResultConsts;
 import com.cj.scores.service.util.ResultUtil;
 import com.cj.scores.service.util.ValidatorUtil;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,12 +45,12 @@ public class ScoreService {
         try {
             if (getLock) {
                 int var1 = 0;
-                Integer type = scores.getType();
+                Integer var2 = scores.getType();
                 Double fromScores = 0.0;
                 UserScores userScores = scoresMapper.selectScoresById(scores.getUid());
                 if (userScores == null) {
                     //insert
-                    if (1 == type) {
+                    if (1 == var2) {
                         scores.setScores(scores.getChangeScores());
                         scores.setTotalScores(scores.getChangeScores());
                     } else {
@@ -56,12 +60,12 @@ public class ScoreService {
                     var1 = scoresMapper.insertUserScores(scores);
                 } else {
                     //update
-                    if (type != 1) {
+                    if (var2 != 1) {
                         if (scores.getChangeScores() > userScores.getScores()) {
                             return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
                         }
                         scores.setScores(userScores.getScores() - scores.getChangeScores());
-                        if (3 == type) {
+                        if (3 == var2) {
                             //lock-score
                             scores.setLockScores(userScores.getLockScores() + scores.getChangeScores());
                         }
@@ -98,6 +102,27 @@ public class ScoreService {
             if (getLock) jedisCache.releaseDistributedLock(key, "1");
         }
         return result;
+    }
+
+
+    public PagedList<UserScores> getUserScoreList(ScoreSelect select) {
+        Page<Object> objects = null;
+        List<UserScores> returnList = new ArrayList<>();
+        Integer pageNum = select.getPage_num();
+        Integer pageSize = select.getPage_size();
+        if (pageNum != null && pageSize != null) {
+            objects = PageHelper.startPage(pageNum, pageSize);
+        } else {
+            pageNum = 0;
+            pageSize = 0;
+        }
+        List<Long> longs = ValidatorUtil.checkNotEmptyList(scoresMapper.selectAllScores(select));
+        if (!longs.isEmpty()) {
+            longs.forEach(x ->{
+                returnList.add(getUserScoreByUid(x));
+            });
+        }
+        return  new PagedList<>(returnList, objects == null ? 0 : objects.getTotal(), pageNum, pageSize);
     }
 
 

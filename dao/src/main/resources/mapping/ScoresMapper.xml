@@ -83,7 +83,7 @@
                 enabled=#{enabled},
             </if>
             <if test="version != null">
-                version=#{version} + 1,
+                version=version + 1,
             </if>
         </set>
         where uid =#{uid} and version=#{version}
@@ -183,6 +183,26 @@
         DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as createTime
         from ${table}
         where uid=#{uid}
+    </select>
+
+    <select id="selectAllScores" parameterType="com.cj.scores.api.pojo.select.ScoreSelect" resultType="Long">
+        select uid
+        from t_user_scores
+        <where>
+            1=1
+        <if test="uid != null">
+          and uid = #{uid}
+        </if>
+        </where>
+        <if test="sort_flag == null">
+            order by create_time desc
+        </if>
+        <if test="sort_flag == 1">
+            order by scores desc
+        </if>
+        <if test="sort_flag == 2">
+            order by scores asc
+        </if>
     </select>
 
 
