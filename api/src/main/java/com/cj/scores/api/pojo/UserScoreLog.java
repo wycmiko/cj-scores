@@ -29,6 +29,8 @@ public class UserScoreLog implements Serializable {
     @JsonProperty("src_id")
     private Integer srcId;
     private String comment;
+    @JsonProperty("order_no")
+    private String orderNo;
     @JsonProperty("create_time")
     private String createTime;
 }

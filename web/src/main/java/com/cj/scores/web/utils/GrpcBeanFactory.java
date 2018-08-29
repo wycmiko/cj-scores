@@ -28,6 +28,7 @@ public final class GrpcBeanFactory {
         var1.setSrcId(request.getSrcId());
         var1.setComment(request.getComment());
         var1.setType(request.getType());
+        var1.setOrderNo(request.getOrderNo());
         return var1;
     }
 

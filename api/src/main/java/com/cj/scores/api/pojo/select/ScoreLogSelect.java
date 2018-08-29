@@ -1,6 +1,5 @@
 package com.cj.scores.api.pojo.select;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,10 +15,12 @@ import java.io.Serializable;
 @Setter
 public class ScoreLogSelect implements Serializable {
     private String id;
-    private String uid;
+    private String order_no;
+    private String token;
+    private Long uid;
     private int type;
-    @JsonProperty("src_id")
-    private int srcId;
-
+    private int src_id;
+    private Integer page_num;
+    private Integer page_size;
     private String table;
 }

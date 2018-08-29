@@ -1,6 +1,5 @@
 package com.cj.scores.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.consts.ScoreTypeEnum;
 import com.cj.scores.api.consts.SrcEnum;
@@ -10,6 +9,7 @@ import com.cj.scores.api.pojo.PagedList;
 import com.cj.scores.api.pojo.Result;
 import com.cj.scores.api.pojo.UserScores;
 import com.cj.scores.api.pojo.request.UserScoresRequest;
+import com.cj.scores.api.pojo.select.ScoreLogSelect;
 import com.cj.scores.api.pojo.select.ScoreSelect;
 import com.cj.scores.dao.mapper.ScoresMapper;
 import com.cj.scores.service.cfg.JedisCache;
@@ -44,34 +44,12 @@ public class ScoreService {
     private static final String JEDIS_PREFIX_LOCK = JEDIS_PREFIX + "lock:";
 
     public Result updateUserScoresGrpc(@Valid UserScoresRequest request) {
-        if (ValidatorUtil.isEmpty(request.getSrcId(), request.getType(), request.getChangeScores(), request.getUid())
+        if (ValidatorUtil.isEmpty(request.getSrcId(), request.getType(), request.getChangeScores(), request.getUid(),
+                request.getOrderNo())
                 || SrcEnum.getTypeName(request.getSrcId()) == null) {
             return ResultUtil.paramNullResult();
         }
         return updateUserScores(request);
-    }
-
-    public Result getUserScoreByUidGrpc(long uid) {
-        Result result = null;
-        try {
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, JSON.toJSONString(getUserScoreByUid(uid)));
-        } catch (Exception e) {
-            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, e.getMessage());
-        }
-        return result;
-    }
-
-    public Result getUserScoreLogByUidGrpc(long uid, Integer pageNum, Integer pageSize) {
-        Result result = null;
-        try {
-            if (ValidatorUtil.isEmpty(pageNum, pageSize)) {
-                return ResultUtil.paramNullResult();
-            }
-            result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, JSON.toJSONString(getScoreLogList(uid, pageNum, pageSize)));
-        } catch (Exception e) {
-            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, e.getMessage());
-        }
-        return result;
     }
 
 
@@ -126,6 +104,8 @@ public class ScoreService {
                     log2.setScores(nowScore == null ? scores.getChangeScores() : nowScore);
                     log2.setFromScores(fromScores);
                     int var2 = scoresMapper.insertScoresLog(log2);
+                    if (type == ScoreTypeEnum.LOCK.getType() || type == ScoreTypeEnum.UNLOCK.getType())
+                        result.setMsg(log2.getId());
                     jedisCache.hdel(JEDIS_PREFIX, String.valueOf(scores.getUid()));
                     log.info("uid = {} insert score log result={}", scores.getUid(), var2 > 0);
                 }
@@ -173,13 +153,19 @@ public class ScoreService {
     }
 
 
-    public PagedList<UserScoreLogDto> getScoreLogList(Long uid, Integer pageNum, Integer pageSize) {
+    public PagedList<UserScoreLogDto> getScoreLogList(ScoreLogSelect select) {
         Page<Object> objects = null;
         List<UserScoreLogDto> returnList = new ArrayList<>();
+        Integer pageNum = select.getPage_num();
+        Integer pageSize = select.getPage_size();
         if (pageNum != null && pageSize != null) {
             objects = PageHelper.startPage(pageNum, pageSize);
+        } else {
+            pageNum = 0;
+            pageSize = 0;
         }
-        List<UserScoreLogDto> scoreLogDetail = scoresMapper.getScoreLogDetail(ValidatorUtil.getPaylogTableNameByUid(uid), uid);
+        select.setTable(ValidatorUtil.getPaylogTableNameByUid(select.getUid()));
+        List<UserScoreLogDto> scoreLogDetail = scoresMapper.getScoreLogDetail(select);
         scoreLogDetail.forEach(x -> {
             x.setSrc(SrcEnum.getTypeName(x.getSrcId()));
             x.setTypeName(ScoreTypeEnum.getTypeName(x.getType()));
@@ -197,6 +183,7 @@ public class ScoreService {
         log2.setSrcId(scores.getSrcId());
         log2.setType(scores.getType());
         log2.setUid(scores.getUid());
+        log2.setOrderNo(scores.getOrderNo());
         log2.setSrc(SrcEnum.getTypeName(scores.getSrcId()));
         log2.setId(UUID.randomUUID().toString());
         return log2;

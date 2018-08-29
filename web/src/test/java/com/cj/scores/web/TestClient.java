@@ -3,7 +3,6 @@ package com.cj.scores.web;
 import com.cj.scores.web.grpc.GrpcResult;
 import com.cj.scores.web.grpc.UserScoreGrpc;
 import com.cj.scores.web.grpc.UserScoreGrpcRequest;
-import com.cj.scores.web.grpc.UserSelectRequest;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -55,28 +54,10 @@ public class TestClient {
     }
 
 
-    private UserSelectRequest request = UserSelectRequest.newBuilder().setUid(476).setPageNum(1).setPageSize(20).build();
-
-    public void testGetScoreByUid() {
-        UserScoreGrpc.UserScoreBlockingStub stub = UserScoreGrpc.newBlockingStub(channel);
-
-        GrpcResult scoreByUid = stub.getScoreByUid(request);
-
-        log.info("result = {}", scoreByUid.getData());
-    }
-
-    public void testGetScoreLogByUid() {
-        UserScoreGrpc.UserScoreBlockingStub stub = UserScoreGrpc.newBlockingStub(channel);
-        GrpcResult scoreByUid = stub.getScoreLogByUid(request);
-        log.info("result = {}", scoreByUid.getData());
-    }
-
 
     public static void main(String[] args) throws InterruptedException {
         TestClient client = new TestClient("172.28.3.9", 9091);
         client.testGprcUpdateScoreService();
-        client.testGetScoreByUid();
-        client.testGetScoreLogByUid();
     }
 
 

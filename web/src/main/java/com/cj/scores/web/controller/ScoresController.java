@@ -4,6 +4,7 @@ import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.consts.SrcEnum;
 import com.cj.scores.api.pojo.Result;
 import com.cj.scores.api.pojo.request.UserScoresRequest;
+import com.cj.scores.api.pojo.select.ScoreLogSelect;
 import com.cj.scores.api.pojo.select.ScoreSelect;
 import com.cj.scores.service.impl.ScoreService;
 import com.cj.scores.service.util.ResultUtil;
@@ -96,12 +97,12 @@ public class ScoresController {
      * 根据uid查询收支明细
      */
     @GetMapping("/manage/getScoreLog")
-    public Result getScoreLogByUidManage(Long uid, Integer page_num, Integer page_size) throws Exception {
+    public Result getScoreLogByUidManage(ScoreLogSelect select) throws Exception {
         log.info("getScoreLogByUidManage");
-        if (CommandValidator.isEmpty(uid)) {
+        if (CommandValidator.isEmpty(select.getUid())) {
             return ResultUtil.paramNullResult();
         }
-        Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getScoreLogList(uid, page_num, page_size));
+        Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getScoreLogList(select));
         return result;
     }
 
@@ -110,7 +111,8 @@ public class ScoresController {
      * 根据uid查询收支明细
      */
     @GetMapping("/json/getScoreLogByUid")
-    public Result getScoreLogByUid(String token, Integer page_num, Integer page_size) throws Exception {
+    public Result getScoreLogByUid(ScoreLogSelect select) throws Exception {
+        String token = select.getToken();
         if (CommandValidator.isEmpty(token)) {
             return ResultUtil.paramNullResult();
         }
@@ -119,7 +121,8 @@ public class ScoresController {
             return tokenValidator.invaildTokenFailedResult();
         }
         long uid = tokenValidator.getUidByToken(token);
-        Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getScoreLogList(uid, page_num, page_size));
+        select.setUid(uid);
+        Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getScoreLogList(select));
         return result;
     }
 }
