@@ -12,15 +12,14 @@ public class IClientManager {
 
     @Autowired
     private UcApiConfig ucApiConfig;
-    //private volatile GenericObjectPool<IClient> pool;
+    private volatile GenericObjectPool<IClient> pool;
 
     public GenericObjectPool<IClient> getPool() {
-//        if (pool == null) {
-//            pool=ClientPool.getPool(ucApiConfig);
-//            return pool;
-//        }
-//        return pool;
-        return ClientPool.getPool(ucApiConfig);
+        if (pool == null) {
+            pool=ClientPool.getPool(ucApiConfig);
+            return pool;
+        }
+        return pool;
     }
 
 

@@ -1,6 +1,6 @@
 package com.cj.scores.web.validator;
 
-import com.cj.scores.service.consts.ResultConsts;
+import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.web.cfg.IClientManager;
 import com.cj.ucapi.client.IClient;
 import com.cj.ucapi.message.Result;

@@ -25,7 +25,6 @@ public class CommandValidator {
             if (t[i] == null) {
                 return true;
             }
-
         }
 
         return false;

@@ -14,6 +14,23 @@ import java.util.regex.PatternSyntaxException;
 public class ValidatorUtil {
 
     /**
+     * 判断传入的多个参数 如果有一个为null 则返回true
+     * 不为null返回false
+     *
+     * @param t
+     * @param <T>
+     * @return
+     */
+    public static <T> boolean isEmpty(T... t) {
+        for (int i = 0; i < t.length; i++) {
+            if (t[i] == null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    /**
      * 判断非空集合 如果为null 返回[]
      *
      * @param list

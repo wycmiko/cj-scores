@@ -44,11 +44,13 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <!-- 分页插件 -->
+        <!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.1.2</version>
+            <version>1.2.5</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -64,14 +66,7 @@
             <groupId>com.cj</groupId>
             <artifactId>ucapi</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>grpc-netty</artifactId>
-                    <groupId>io.grpc</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
-
     </dependencies>
 
 

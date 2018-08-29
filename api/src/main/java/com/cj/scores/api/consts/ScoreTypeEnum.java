@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 public enum ScoreTypeEnum {
     INCOME(1, "收入"),
-    OUTCOMT(2, "支出"),
+    OUTCOME(2, "支出"),
     LOCK(3, "冻结"),
     UNLOCK(4, "解冻"),
     UNKNOWN(5, "未知类型");
@@ -30,12 +30,26 @@ public enum ScoreTypeEnum {
             case 1:
                 return INCOME.typeName;
             case 2:
-                return OUTCOMT.typeName;
+                return OUTCOME.typeName;
             case 3:
                 return LOCK.typeName;
             case 4:
                 return UNLOCK.typeName;
         }
         return UNKNOWN.typeName;
+    }
+
+    public static int getType(int type) {
+        switch (type) {
+            case 1:
+                return INCOME.type;
+            case 2:
+                return OUTCOME.type;
+            case 3:
+                return LOCK.type;
+            case 4:
+                return UNLOCK.type;
+        }
+        return UNKNOWN.type;
     }
 }

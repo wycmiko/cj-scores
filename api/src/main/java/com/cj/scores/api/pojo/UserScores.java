@@ -25,7 +25,7 @@ public class UserScores implements Serializable {
     @JsonProperty("lock_scores")
     private Double lockScores;
 
-    private Integer enabled;
+    private Boolean enabled;
     /**
      * 1=收入 2=支出 3=冻结 4=解冻
      */

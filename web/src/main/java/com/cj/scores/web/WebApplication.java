@@ -1,8 +1,8 @@
 package com.cj.scores.web;
 
-import com.cj.ucapi.cfg.ConsulProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.consul.ConsulProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 

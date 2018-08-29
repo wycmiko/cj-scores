@@ -13,7 +13,6 @@
       `scores` decimal(11,2) NOT NULL COMMENT '当前积分',
       `change_scores` decimal(11,2) NOT NULL COMMENT '变化积分',
       `type` varchar(50) NOT NULL COMMENT '1=收入 2=支出 3=冻结',
-      `src` varchar(255) NOT NULL COMMENT '来源',
       `src_id` int(11) NOT NULL COMMENT '来源ID',
       `comment` varchar(255)  COMMENT '描述',
       `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -111,9 +110,6 @@
             <if test="type != null">
                 type,
             </if>
-            <if test="src != null">
-                src,
-            </if>
             <if test="srcId != null">
                 src_id,
             </if>
@@ -139,9 +135,6 @@
             </if>
             <if test="type != null">
                 #{type},
-            </if>
-            <if test="src != null">
-                #{src},
             </if>
             <if test="srcId != null">
                 #{srcId},
@@ -177,7 +170,6 @@
         scores,
         change_scores as changeScores,
         type,
-        src,
         src_id as srcId,
         comment,
         DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as createTime

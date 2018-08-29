@@ -32,7 +32,7 @@ public abstract class ResultConsts {
 
     public static final String TOKEN_FAILURE = "Token不合法!";
     //日期格式不合法
-    public static final String PARAM_MSG = "参数不能为空";
+    public static final String PARAM_MSG = "必要参数为空或不合法";
     public static final String SCORES_NOT_FULL_MSG = "剩余积分不足";
     public static final String INVALID_TIME_MSG = "日期格式不合法";
 }

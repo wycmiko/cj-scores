@@ -1,4 +1,9 @@
 # dev开发环境
+grpc:
+  server:
+    port: 9091
+    address: 172.28.3.9
+
 # mysql - local - url
 spring:
   application:
