@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class ScoreService {
 
     public Result updateUserScoresGrpc(@Valid UserScoresRequest request) {
         if (ValidatorUtil.isEmpty(request.getSrcId(), request.getType(), request.getChangeScores(), request.getUid(),
-                request.getOrderNo())
+                request.getOrderNo() ) || StringUtils.isEmpty(request.getOrderNo())
                 || SrcEnum.getTypeName(request.getSrcId()) == null) {
             return ResultUtil.paramNullResult();
         }
