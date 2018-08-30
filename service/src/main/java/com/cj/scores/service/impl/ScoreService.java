@@ -1,5 +1,6 @@
 package com.cj.scores.service.impl;
 
+import com.cj.scores.api.ScoresApi;
 import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.consts.ScoreTypeEnum;
 import com.cj.scores.api.consts.SrcEnum;
@@ -36,17 +37,11 @@ import java.util.UUID;
 @Service
 @Transactional
 @Slf4j
-public class ScoreService {
+public class ScoreService implements ScoresApi {
     @Autowired
     private ScoresMapper scoresMapper;
     @Autowired
     private JedisCache jedisCache;
-    private static final String JEDIS_PREFIX = "cj_scores:user:";
-    private static final String JEDIS_PREFIX_LOCK = JEDIS_PREFIX + "lock:";
-    //score type
-    private static final int INCOME = 1;
-    private static final int LOCK = 3;
-    private static final int UNLOCK = 4;
 
     public Result updateUserScoresGrpc(@Valid UserScoresRequest request) {
         if (ValidatorUtil.isEmpty(request.getSrcId(), request.getType(), request.getChangeScores(), request.getUid(),
@@ -56,7 +51,6 @@ public class ScoreService {
         }
         return updateUserScores(request);
     }
-
 
     public Result updateUserScores(UserScoresRequest request) {
         Result result = null;
