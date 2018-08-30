@@ -64,16 +64,17 @@ public class ScoreService {
         boolean hasGotLock = jedisCache.tryGetDistributedLock(key, "1", 15);
         try {
             if (hasGotLock) {
+                final double changeScore = scores.getChangeScores();
                 int var1 = 0;
-                final Integer type = scores.getType();
-                Double fromScores = 0.0;
+                final int type = scores.getType();
+                double fromScores = 0.0;
                 UserScores userScores = scoresMapper.selectScoresById(scores.getUid());
                 if (userScores == null) {
                     //插入操作
                     if (ScoreTypeEnum.INCOME.getType() != type)
                         return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                    scores.setScores(scores.getChangeScores());
-                    scores.setTotalScores(scores.getChangeScores());
+                    scores.setScores(changeScore);
+                    scores.setTotalScores(changeScore);
                     scores.setEnabled(Boolean.TRUE);
                     var1 = scoresMapper.insertUserScores(scores);
                 } else {
@@ -81,25 +82,25 @@ public class ScoreService {
                     switch (type) {
                         case INCOME:
                             //收入
-                            scores.setTotalScores(userScores.getTotalScores() + scores.getChangeScores());
-                            scores.setScores(userScores.getScores() + scores.getChangeScores());
+                            scores.setTotalScores(userScores.getTotalScores() + changeScore);
+                            scores.setScores(userScores.getScores() + changeScore);
                             break;
                         case UNLOCK:
                             //解锁
-                            if (scores.getChangeScores() > userScores.getLockScores())
+                            if (changeScore > userScores.getLockScores())
                                 return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                            scores.setLockScores(userScores.getLockScores() - scores.getChangeScores());
-                            scores.setScores(userScores.getScores() + scores.getChangeScores());
+                            scores.setLockScores(userScores.getLockScores() - changeScore);
+                            scores.setScores(userScores.getScores() + changeScore);
                             break;
                         default:
                             //锁定或支出
-                            if (scores.getChangeScores() > userScores.getScores())
+                            if (changeScore > userScores.getScores())
                                 return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                            scores.setScores(userScores.getScores() - scores.getChangeScores());
-                            scores.setLockScores(ScoreTypeEnum.LOCK.getType() == type ? userScores.getLockScores() + scores.getChangeScores() : null);
+                            scores.setScores(userScores.getScores() - changeScore);
+                            scores.setLockScores(LOCK == type ? userScores.getLockScores() + changeScore : null);
                             break;
                     }
-                    //计算起始分数
+                    //得到起始分数
                     fromScores = userScores.getScores();
                     scores.setVersion(userScores.getVersion());
                     var1 = scoresMapper.updateUserScores(scores);
@@ -110,7 +111,7 @@ public class ScoreService {
                     //如未冲突 则更新
                     Double nowScore = scores.getScores();
                     InsertScoresLog log2 = this.setLogObjByScores(scores);
-                    log2.setScores(nowScore == null ? scores.getChangeScores() : nowScore);
+                    log2.setScores(nowScore == null ? changeScore : nowScore);
                     log2.setFromScores(fromScores);
                     int var2 = scoresMapper.insertScoresLog(log2);
                     if (LOCK == type || UNLOCK == type)
