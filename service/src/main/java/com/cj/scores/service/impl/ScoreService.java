@@ -58,66 +58,67 @@ public class ScoreService {
     }
 
 
-    public Result updateUserScores(UserScoresRequest scores) {
+    public Result updateUserScores(UserScoresRequest request) {
         Result result = null;
-        String key = JEDIS_PREFIX_LOCK + String.valueOf(scores.getUid());
+        String key = JEDIS_PREFIX_LOCK + String.valueOf(request.getUid());
         boolean hasGotLock = jedisCache.tryGetDistributedLock(key, "1", 15);
         try {
             if (hasGotLock) {
-                final double changeScore = scores.getChangeScores();
+                final double changeScore = request.getChangeScores();
                 int var1 = 0;
-                final int type = scores.getType();
+                final int type = request.getType();
                 double fromScores = 0.0;
-                UserScores userScores = scoresMapper.selectScoresById(scores.getUid());
+                UserScores userScores = scoresMapper.selectScoresById(request.getUid());
                 if (userScores == null) {
                     //插入操作
-                    if (ScoreTypeEnum.INCOME.getType() != type)
+                    if (INCOME != type)
                         return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                    scores.setScores(changeScore);
-                    scores.setTotalScores(changeScore);
-                    scores.setEnabled(Boolean.TRUE);
-                    var1 = scoresMapper.insertUserScores(scores);
+                    request.setScores(changeScore);
+                    request.setTotalScores(changeScore);
+                    request.setEnabled(Boolean.TRUE);
+                    var1 = scoresMapper.insertUserScores(request);
                 } else {
                     //更新操作
                     switch (type) {
                         case INCOME:
                             //收入
-                            scores.setTotalScores(userScores.getTotalScores() + changeScore);
-                            scores.setScores(userScores.getScores() + changeScore);
+                            request.setTotalScores(userScores.getTotalScores() + changeScore);
+                            request.setScores(userScores.getScores() + changeScore);
                             break;
                         case UNLOCK:
                             //解锁
                             if (changeScore > userScores.getLockScores())
                                 return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                            scores.setLockScores(userScores.getLockScores() - changeScore);
-                            scores.setScores(userScores.getScores() + changeScore);
+                            request.setLockScores(userScores.getLockScores() - changeScore);
+                            request.setScores(userScores.getScores() + changeScore);
                             break;
                         default:
                             //锁定或支出
                             if (changeScore > userScores.getScores())
                                 return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                            scores.setScores(userScores.getScores() - changeScore);
-                            scores.setLockScores(LOCK == type ? userScores.getLockScores() + changeScore : null);
+                            request.setScores(userScores.getScores() - changeScore);
+                            request.setLockScores(LOCK == type ? userScores.getLockScores() + changeScore : null);
                             break;
                     }
                     //得到起始分数
                     fromScores = userScores.getScores();
-                    scores.setVersion(userScores.getVersion());
-                    var1 = scoresMapper.updateUserScores(scores);
+                    request.setVersion(userScores.getVersion());
+                    var1 = scoresMapper.updateUserScores(request);
                 }
                 result = ResultUtil.getDmlResult(var1);
-                log.info("uid={} update scores result={}", scores.getUid(), result.getMsg());
-                if (var1 > 0) {
+                log.info("uid={} update scores result={}", request.getUid(), result.getMsg());
+                boolean insertSucceed = var1 > 0;
+                if (insertSucceed) {
                     //如未冲突 则更新
-                    Double nowScore = scores.getScores();
-                    InsertScoresLog log2 = this.setLogObjByScores(scores);
+                    Double nowScore = request.getScores();
+                    InsertScoresLog log2 = this.setLogObjByScores(request);
                     log2.setScores(nowScore == null ? changeScore : nowScore);
                     log2.setFromScores(fromScores);
                     int var2 = scoresMapper.insertScoresLog(log2);
                     if (LOCK == type || UNLOCK == type)
                         result.setMsg(log2.getId());
-                    jedisCache.hdel(JEDIS_PREFIX, String.valueOf(scores.getUid()));
-                    log.info("uid = {} insert score log result={}", scores.getUid(), var2 > 0);
+                    jedisCache.hdel(JEDIS_PREFIX, String.valueOf(request.getUid()));
+                    log.info("uid = {} insert score log result={}", request.getUid(), var2 > 0);
                 }
             } else {
                 //未获得锁 返回重试信息
@@ -185,16 +186,16 @@ public class ScoreService {
     }
 
 
-    private InsertScoresLog setLogObjByScores(UserScoresRequest scores) {
+    private InsertScoresLog setLogObjByScores(UserScoresRequest request) {
         InsertScoresLog log2 = new InsertScoresLog();
-        log2.setTableName(ValidatorUtil.getPaylogTableNameByUid(scores.getUid()));
-        log2.setChangeScores(scores.getChangeScores());
-        log2.setComment(scores.getComment());
-        log2.setSrcId(scores.getSrcId());
-        log2.setType(scores.getType());
-        log2.setUid(scores.getUid());
-        log2.setOrderNo(scores.getOrderNo());
-        log2.setSrc(SrcEnum.getTypeName(scores.getSrcId()));
+        log2.setTableName(ValidatorUtil.getPaylogTableNameByUid(request.getUid()));
+        log2.setChangeScores(request.getChangeScores());
+        log2.setComment(request.getComment());
+        log2.setSrcId(request.getSrcId());
+        log2.setType(request.getType());
+        log2.setUid(request.getUid());
+        log2.setOrderNo(request.getOrderNo());
+        log2.setSrc(SrcEnum.getTypeName(request.getSrcId()));
         log2.setId(UUID.randomUUID().toString());
         return log2;
     }
