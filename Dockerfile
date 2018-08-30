@@ -9,4 +9,5 @@ ENV TZ=Asia/Shanghai
 ENV LANG C.UTF-8
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 EXPOSE 9001
+EXPOSE 9091
 ENTRYPOINT ["java","-jar","/app.jar"]
