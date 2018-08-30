@@ -1,7 +1,7 @@
 # dev开发环境
 grpc:
   server:
-    port: ${GRPC_PORT}
+    port: 9091
 
 # mysql - local - url
 spring:
