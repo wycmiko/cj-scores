@@ -109,8 +109,7 @@ public class ScoreService implements ScoresApi {
                     log2.setScores(nowScore == null ? changeScore : nowScore);
                     log2.setFromScores(fromScores);
                     int var2 = scoresMapper.insertScoresLog(log2);
-                    if (LOCK == type || UNLOCK == type)
-                        result.setMsg(log2.getId());
+                    result.setData(log2.getId());
                     jedisCache.hdel(JEDIS_PREFIX, String.valueOf(request.getUid()));
                     log.info("uid = {} insert score log result={}", request.getUid(), var2 > 0);
                 }
