@@ -54,11 +54,6 @@ spring:
     expire-time: 3600
 
 
-# file-system config
-seaweed:
-  ip: 172.28.3.9
-  port: 9333
-
 
 # server config
 server:

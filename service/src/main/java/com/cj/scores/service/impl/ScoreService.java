@@ -43,10 +43,14 @@ public class ScoreService {
     private JedisCache jedisCache;
     private static final String JEDIS_PREFIX = "cj_scores:user:";
     private static final String JEDIS_PREFIX_LOCK = JEDIS_PREFIX + "lock:";
+    //score type
+    private static final int INCOME = 1;
+    private static final int LOCK = 3;
+    private static final int UNLOCK = 4;
 
     public Result updateUserScoresGrpc(@Valid UserScoresRequest request) {
         if (ValidatorUtil.isEmpty(request.getSrcId(), request.getType(), request.getChangeScores(), request.getUid(),
-                request.getOrderNo() ) || StringUtils.isEmpty(request.getOrderNo())
+                request.getOrderNo()) || StringUtils.isEmpty(request.getOrderNo())
                 || SrcEnum.getTypeName(request.getSrcId()) == null) {
             return ResultUtil.paramNullResult();
         }
@@ -74,22 +78,26 @@ public class ScoreService {
                     var1 = scoresMapper.insertUserScores(scores);
                 } else {
                     //更新操作
-                    if (type == ScoreTypeEnum.LOCK.getType() || type == ScoreTypeEnum.OUTCOME.getType()) {
-                        //锁定或支出
-                        if (scores.getChangeScores() > userScores.getScores())
-                            return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                        scores.setScores(userScores.getScores() - scores.getChangeScores());
-                        scores.setLockScores(ScoreTypeEnum.LOCK.getType() == type ? userScores.getLockScores() + scores.getChangeScores() : null);
-                    } else if (ScoreTypeEnum.UNLOCK.getType() == type) {
-                        //解锁
-                        if (scores.getChangeScores() > userScores.getLockScores())
-                            return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                        scores.setLockScores(userScores.getLockScores() - scores.getChangeScores());
-                        scores.setScores(userScores.getScores() + scores.getChangeScores());
-                    } else {
-                        //收入
-                        scores.setTotalScores(userScores.getTotalScores() + scores.getChangeScores());
-                        scores.setScores(userScores.getScores() + scores.getChangeScores());
+                    switch (type) {
+                        case INCOME:
+                            //收入
+                            scores.setTotalScores(userScores.getTotalScores() + scores.getChangeScores());
+                            scores.setScores(userScores.getScores() + scores.getChangeScores());
+                            break;
+                        case UNLOCK:
+                            //解锁
+                            if (scores.getChangeScores() > userScores.getLockScores())
+                                return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
+                            scores.setLockScores(userScores.getLockScores() - scores.getChangeScores());
+                            scores.setScores(userScores.getScores() + scores.getChangeScores());
+                            break;
+                        default:
+                            //锁定或支出
+                            if (scores.getChangeScores() > userScores.getScores())
+                                return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
+                            scores.setScores(userScores.getScores() - scores.getChangeScores());
+                            scores.setLockScores(ScoreTypeEnum.LOCK.getType() == type ? userScores.getLockScores() + scores.getChangeScores() : null);
+                            break;
                     }
                     //计算起始分数
                     fromScores = userScores.getScores();
@@ -105,7 +113,7 @@ public class ScoreService {
                     log2.setScores(nowScore == null ? scores.getChangeScores() : nowScore);
                     log2.setFromScores(fromScores);
                     int var2 = scoresMapper.insertScoresLog(log2);
-                    if (type == ScoreTypeEnum.LOCK.getType() || type == ScoreTypeEnum.UNLOCK.getType())
+                    if (LOCK == type || UNLOCK == type)
                         result.setMsg(log2.getId());
                     jedisCache.hdel(JEDIS_PREFIX, String.valueOf(scores.getUid()));
                     log.info("uid = {} insert score log result={}", scores.getUid(), var2 > 0);
