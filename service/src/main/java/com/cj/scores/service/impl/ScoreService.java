@@ -13,6 +13,7 @@ import com.cj.scores.api.pojo.request.UserScoresRequest;
 import com.cj.scores.api.pojo.select.ScoreLogSelect;
 import com.cj.scores.api.pojo.select.ScoreSelect;
 import com.cj.scores.dao.mapper.ScoresMapper;
+import com.cj.scores.service.cache.LocalCache;
 import com.cj.scores.service.cfg.JedisCache;
 import com.cj.scores.service.util.ResultUtil;
 import com.cj.scores.service.util.ValidatorUtil;
@@ -28,6 +29,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author yuchuanWeng
@@ -42,6 +44,8 @@ public class ScoreService implements ScoresApi {
     private ScoresMapper scoresMapper;
     @Autowired
     private JedisCache jedisCache;
+    @Autowired
+    private LocalCache localCache;
 
     public Result updateUserScoresGrpc(@Valid UserScoresRequest request) {
         if (ValidatorUtil.isEmpty(request.getSrcId(), request.getType(), request.getChangeScores(), request.getUid(),
@@ -62,6 +66,9 @@ public class ScoreService implements ScoresApi {
                 int var1 = 0;
                 final int type = request.getType();
                 double fromScores = 0.0;
+                String localKey = request.getUid() + "=" + request.getOrderNo();
+                if (localCache.orderIsExist(localKey))
+                    return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1107, ResultConsts.ERR_1107_MSG);
                 UserScores userScores = scoresMapper.selectScoresById(request.getUid());
                 if (userScores == null) {
                     //插入操作
@@ -110,6 +117,7 @@ public class ScoreService implements ScoresApi {
                     log2.setFromScores(fromScores);
                     int var2 = scoresMapper.insertScoresLog(log2);
                     result.setData(log2.getId());
+                    localCache.putKey(localKey, Boolean.TRUE);
                     jedisCache.hdel(JEDIS_PREFIX, String.valueOf(request.getUid()));
                     log.info("uid = {} insert score log result={}", request.getUid(), var2 > 0);
                 }
@@ -117,6 +125,10 @@ public class ScoreService implements ScoresApi {
                 //未获得锁 返回重试信息
                 result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, ResultConsts.ERR_SERVER_MSG);
             }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, ResultConsts.ERR_SERVER_MSG);
+            log.error("guava loading cache exception {}", e.getMessage());
         } finally {
             if (hasGotLock) jedisCache.releaseDistributedLock(key, "1");
         }
