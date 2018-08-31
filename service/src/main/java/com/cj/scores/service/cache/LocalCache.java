@@ -37,7 +37,6 @@ public class LocalCache {
                     log.info("load value by db");
                     return getObjByKey(s);
                 }
-
                 private Boolean getObjByKey(String key) {
                     ScoreLogSelect select = new ScoreLogSelect();
                     long uid = Long.valueOf(key.split("=")[0]);
