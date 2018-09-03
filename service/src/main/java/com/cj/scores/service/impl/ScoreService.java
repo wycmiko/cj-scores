@@ -63,13 +63,15 @@ public class ScoreService implements ScoresApi {
         try {
             if (hasGotLock) {
                 final double changeScore = request.getChangeScores();
+                long uid = request.getUid();
+                log.info("update score begin uid={}, changeScore={}", uid, changeScore);
                 int var1 = 0;
                 final int type = request.getType();
                 double fromScores = 0.0;
-                String localKey = request.getUid() + "=" + request.getOrderNo();
+                String localKey = uid + "=" + request.getOrderNo();
                 if (localCache.orderIsExist(localKey))
                     return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1107, ResultConsts.ERR_1107_MSG);
-                UserScores userScores = scoresMapper.selectScoresById(request.getUid());
+                UserScores userScores = scoresMapper.selectScoresById(uid);
                 if (userScores == null) {
                     //插入操作
                     if (INCOME != type)
@@ -86,12 +88,18 @@ public class ScoreService implements ScoresApi {
                             request.setTotalScores(userScores.getTotalScores() + changeScore);
                             request.setScores(userScores.getScores() + changeScore);
                             break;
-                        case UNLOCK:
-                            //解锁
+                        case UNLOCK_INCRE:
+                            //解锁增
                             if (changeScore > userScores.getLockScores())
                                 return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
                             request.setLockScores(userScores.getLockScores() - changeScore);
                             request.setScores(userScores.getScores() + changeScore);
+                            break;
+                        case UNLOCK_DECRE:
+                            //解锁减
+                            if (changeScore > userScores.getLockScores())
+                                return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
+                            request.setLockScores(userScores.getLockScores() - changeScore);
                             break;
                         default:
                             //锁定或支出
@@ -107,7 +115,7 @@ public class ScoreService implements ScoresApi {
                     var1 = scoresMapper.updateUserScores(request);
                 }
                 result = ResultUtil.getDmlResult(var1);
-                log.info("uid={} update scores result={}", request.getUid(), result.getMsg());
+                log.info("uid={} update scores result={}", uid, result.getMsg());
                 boolean insertSucceed = var1 > 0;
                 if (insertSucceed) {
                     //如未冲突 则更新
@@ -118,8 +126,8 @@ public class ScoreService implements ScoresApi {
                     int var2 = scoresMapper.insertScoresLog(log2);
                     result.setData(log2.getId());
                     localCache.putKey(localKey, Boolean.TRUE);
-                    jedisCache.hdel(JEDIS_PREFIX, String.valueOf(request.getUid()));
-                    log.info("uid = {} insert score log result={}", request.getUid(), var2 > 0);
+                    jedisCache.hdel(JEDIS_PREFIX, String.valueOf(uid));
+                    log.info("uid = {} insert score log result={}", uid, var2 > 0);
                 }
             } else {
                 //未获得锁 返回重试信息

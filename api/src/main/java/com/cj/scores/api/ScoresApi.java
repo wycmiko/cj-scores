@@ -28,7 +28,14 @@ public interface ScoresApi {
     int INCOME = 1;
     int OUTCOME = 2;
     int LOCK = 3;
-    int UNLOCK = 4;
+    /**
+     * 解锁增
+     */
+    int UNLOCK_INCRE = 4;
+    /**
+     * 解锁减
+     */
+    int UNLOCK_DECRE = 5;
 
     /**
      * 变更用户积分

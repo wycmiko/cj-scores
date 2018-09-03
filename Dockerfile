@@ -6,6 +6,7 @@ ENV SERVICE_9001_TAGS traefik.tags=cj.com,traefik.frontend.rule=Host:platform.ap
 ENV SERVICE_9001_CHECK_HTTP /actuator/health
 ENV SERVICE_9001_NAME cj-scores
 ENV SERVICE_9091_NAME cj-scores-rpc
+ENV SERVICE_9091_TAGS cj-version:1.0
 ENV TZ=Asia/Shanghai
 ENV LANG C.UTF-8
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

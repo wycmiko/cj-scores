@@ -52,7 +52,7 @@ public class TestClient {
 
 
     public static void main(String[] args) throws InterruptedException {
-        TestClient client = new TestClient("172.28.3.9", 9091);
+        TestClient client = new TestClient("172.28.3.45", 9091);
         client.testGprcUpdateScoreService();
     }
 
