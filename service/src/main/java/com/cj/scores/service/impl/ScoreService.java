@@ -15,11 +15,13 @@ import com.cj.scores.api.pojo.select.ScoreSelect;
 import com.cj.scores.dao.mapper.ScoresMapper;
 import com.cj.scores.service.cache.LocalCache;
 import com.cj.scores.service.cfg.JedisCache;
+import com.cj.scores.service.util.RedisLockUtil;
 import com.cj.scores.service.util.ResultUtil;
 import com.cj.scores.service.util.ValidatorUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author yuchuanWeng
@@ -59,9 +61,8 @@ public class ScoreService implements ScoresApi {
     public Result updateUserScores(UserScoresRequest request) {
         Result result = null;
         String key = JEDIS_PREFIX_LOCK + String.valueOf(request.getUid());
-        boolean hasGotLock = jedisCache.tryGetDistributedLock(key, "1", 15);
+        RLock lock = RedisLockUtil.lock(key, TimeUnit.SECONDS, 10);
         try {
-            if (hasGotLock) {
                 final double changeScore = request.getChangeScores();
                 long uid = request.getUid();
                 log.info("update score begin uid={}, changeScore={}", uid, changeScore);
@@ -69,8 +70,6 @@ public class ScoreService implements ScoresApi {
                 final int type = request.getType();
                 double fromScores = 0.0;
                 String localKey = uid + "=" + request.getOrderNo();
-                if (localCache.orderIsExist(localKey))
-                    return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1107, ResultConsts.ERR_1107_MSG);
                 UserScores userScores = scoresMapper.selectScoresById(uid);
                 if (userScores == null) {
                     //插入操作
@@ -129,16 +128,12 @@ public class ScoreService implements ScoresApi {
                     jedisCache.hdel(JEDIS_PREFIX, String.valueOf(uid));
                     log.info("uid = {} insert score log result={}", uid, var2 > 0);
                 }
-            } else {
-                //未获得锁 返回重试信息
-                result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, ResultConsts.ERR_SERVER_MSG);
-            }
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, ResultConsts.ERR_SERVER_MSG);
             log.error("guava loading cache exception {}", e.getMessage());
         } finally {
-            if (hasGotLock) jedisCache.releaseDistributedLock(key, "1");
+            if (lock.isHeldByCurrentThread()) lock.forceUnlock();
         }
         return result;
     }

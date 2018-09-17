@@ -1,6 +1,12 @@
 package com.cj.scores.service.cfg;
 
+import com.cj.scores.service.impl.RedissonLockImpl;
+import com.cj.scores.service.util.RedisLockUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+import org.redisson.config.SingleServerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.interceptor.CacheErrorHandler;
@@ -112,4 +118,37 @@ public class JedisConfiguration {
             }
         };
     }
+
+
+    /**
+     * 单机模式自动装配
+     *
+     * @return
+     */
+    @Bean
+    RedissonClient redissonSingle() {
+        Config config = new Config();
+        SingleServerConfig serverConfig = config.useSingleServer()
+                .setAddress("redis://" + jedisProperties.getHost() + ":" + jedisProperties.getPort())
+                .setPassword(jedisProperties.getPassword())
+                .setTimeout(jedisProperties.getSoTimeout())
+                .setConnectionPoolSize(200)
+                .setConnectionMinimumIdleSize(10);
+
+        return Redisson.create(config);
+    }
+
+    /**
+     * 装配locker类，并将实例注入到RedissLockUtil中
+     *
+     * @return
+     */
+    @Bean
+    DistributedLocker distributedLocker(RedissonClient redissonClient) {
+        RedissonLockImpl locker = new RedissonLockImpl();
+        locker.setRedissonClient(redissonClient);
+        RedisLockUtil.setLocker(locker);
+        return locker;
+    }
+
 }
