@@ -63,71 +63,73 @@ public class ScoreService implements ScoresApi {
         String key = JEDIS_PREFIX_LOCK + String.valueOf(request.getUid());
         RLock lock = RedisLockUtil.lock(key, TimeUnit.SECONDS, 10);
         try {
-                final double changeScore = request.getChangeScores();
-                long uid = request.getUid();
-                log.info("update score begin uid={}, changeScore={}", uid, changeScore);
-                int var1 = 0;
-                final int type = request.getType();
-                double fromScores = 0.0;
-                String localKey = uid + "=" + request.getOrderNo();
-                UserScores userScores = scoresMapper.selectScoresById(uid);
-                if (userScores == null) {
-                    //插入操作
-                    if (INCOME != type)
-                        return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                    request.setScores(changeScore);
-                    request.setTotalScores(changeScore);
-                    request.setEnabled(Boolean.TRUE);
-                    var1 = scoresMapper.insertUserScores(request);
-                } else {
-                    //更新操作
-                    switch (type) {
-                        case INCOME:
-                            //收入
-                            request.setTotalScores(userScores.getTotalScores() + changeScore);
-                            request.setScores(userScores.getScores() + changeScore);
-                            break;
-                        case UNLOCK_INCRE:
-                            //解锁增
-                            if (changeScore > userScores.getLockScores())
-                                return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                            request.setLockScores(userScores.getLockScores() - changeScore);
-                            request.setScores(userScores.getScores() + changeScore);
-                            break;
-                        case UNLOCK_DECRE:
-                            //解锁减
-                            if (changeScore > userScores.getLockScores())
-                                return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                            request.setLockScores(userScores.getLockScores() - changeScore);
-                            break;
-                        default:
-                            //锁定或支出
-                            if (changeScore > userScores.getScores())
-                                return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                            request.setScores(userScores.getScores() - changeScore);
-                            request.setLockScores(LOCK == type ? userScores.getLockScores() + changeScore : null);
-                            break;
-                    }
-                    //得到起始分数
-                    fromScores = userScores.getScores();
-                    request.setVersion(userScores.getVersion());
-                    var1 = scoresMapper.updateUserScores(request);
+            final double changeScore = request.getChangeScores();
+            long uid = request.getUid();
+            log.info("update score begin uid={}, changeScore={}", uid, changeScore);
+            int var1 = 0;
+            final int type = request.getType();
+            double fromScores = 0.0;
+            String localKey = uid + "=" + request.getOrderNo();
+            UserScores userScores = scoresMapper.selectScoresById(uid);
+            boolean b = localCache.orderIsExist(localKey);
+            if (b) return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1107, ResultConsts.ERR_1107_MSG);
+            if (userScores == null) {
+                //插入操作
+                if (INCOME != type)
+                    return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
+                request.setScores(changeScore);
+                request.setTotalScores(changeScore);
+                request.setEnabled(Boolean.TRUE);
+                var1 = scoresMapper.insertUserScores(request);
+            } else {
+                //更新操作
+                switch (type) {
+                    case INCOME:
+                        //收入
+                        request.setTotalScores(userScores.getTotalScores() + changeScore);
+                        request.setScores(userScores.getScores() + changeScore);
+                        break;
+                    case UNLOCK_INCRE:
+                        //解锁增
+                        if (changeScore > userScores.getLockScores())
+                            return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
+                        request.setLockScores(userScores.getLockScores() - changeScore);
+                        request.setScores(userScores.getScores() + changeScore);
+                        break;
+                    case UNLOCK_DECRE:
+                        //解锁减
+                        if (changeScore > userScores.getLockScores())
+                            return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
+                        request.setLockScores(userScores.getLockScores() - changeScore);
+                        break;
+                    default:
+                        //锁定或支出
+                        if (changeScore > userScores.getScores())
+                            return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
+                        request.setScores(userScores.getScores() - changeScore);
+                        request.setLockScores(LOCK == type ? userScores.getLockScores() + changeScore : null);
+                        break;
                 }
-                result = ResultUtil.getDmlResult(var1);
-                log.info("uid={} update scores result={}", uid, result.getMsg());
-                boolean insertSucceed = var1 > 0;
-                if (insertSucceed) {
-                    //如未冲突 则更新
-                    Double nowScore = request.getScores();
-                    InsertScoresLog log2 = this.setLogObjByScores(request);
-                    log2.setScores(nowScore == null ? changeScore : nowScore);
-                    log2.setFromScores(fromScores);
-                    int var2 = scoresMapper.insertScoresLog(log2);
-                    result.setData(log2.getId());
-                    localCache.putKey(localKey, Boolean.TRUE);
-                    jedisCache.hdel(JEDIS_PREFIX, String.valueOf(uid));
-                    log.info("uid = {} insert score log result={}", uid, var2 > 0);
-                }
+                //得到起始分数
+                fromScores = userScores.getScores();
+                request.setVersion(userScores.getVersion());
+                var1 = scoresMapper.updateUserScores(request);
+            }
+            result = ResultUtil.getDmlResult(var1);
+            log.info("uid={} update scores result={}", uid, result.getMsg());
+            boolean insertSucceed = var1 > 0;
+            if (insertSucceed) {
+                //如未冲突 则更新
+                Double nowScore = request.getScores();
+                InsertScoresLog log2 = this.setLogObjByScores(request);
+                log2.setScores(nowScore == null ? changeScore : nowScore);
+                log2.setFromScores(fromScores);
+                int var2 = scoresMapper.insertScoresLog(log2);
+                result.setData(log2.getId());
+                localCache.putKey(localKey, Boolean.TRUE);
+                jedisCache.hdel(JEDIS_PREFIX, String.valueOf(uid));
+                log.info("uid = {} insert score log result={}", uid, var2 > 0);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, ResultConsts.ERR_SERVER_MSG);
