@@ -31,9 +31,9 @@ public class ScoreGrpcServer extends UserScoreGrpc.UserScoreImplBase {
      */
     @Override
     public void updateScore(UserScoreGrpcRequest request, StreamObserver<GrpcResult> responseObserver) {
-        log.info("grpc updateScore request = {}", request);
+        log.info("grpc 【updateScore】begin request = {}", request);
         GrpcResult reply = GrpcBeanFactory.createGrpcResult(service.updateUserScoresGrpc(GrpcBeanFactory.createUserScoreRequest(request)));
-        log.info("grpc updateScore end reply = {}", reply.toString());
+        log.info("grpc 【updateScore】 end reply code = {}, msg = {}, data = {}", reply.getCode(), reply.getMsg(), reply.getData());
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }

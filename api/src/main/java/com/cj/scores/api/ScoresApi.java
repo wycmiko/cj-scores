@@ -10,7 +10,7 @@ import com.cj.scores.api.pojo.select.ScoreSelect;
 
 /**
  * 积分处理api
- * api-address: <a href='http://172.28.3.45:3008/project/39/interface/api'>http://172.28.3.45:3008/project/39/interface/api</a>
+ * api-url: <a href='http://172.28.3.45:3008/project/39/interface/api'>http://172.28.3.45:3008/project/39/interface/api</a>
  *
  * @author yuchaunWeng
  */
@@ -20,10 +20,12 @@ public interface ScoresApi {
     String JEDIS_PREFIX_LOCK = JEDIS_PREFIX + "lock:";
     /**
      * score type：
+     *
      * 1=收入
      * 2=支出
      * 3=冻结
-     * 4=解冻
+     * 4=解冻增
+     * 5=解冻减
      */
     int INCOME = 1;
     int OUTCOME = 2;

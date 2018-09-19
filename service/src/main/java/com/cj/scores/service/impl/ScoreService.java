@@ -23,6 +23,7 @@ import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -31,6 +32,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,9 +41,10 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Slf4j
 public class ScoreService implements ScoresApi {
+
     @Autowired
     private ScoresMapper scoresMapper;
     @Autowired
@@ -61,6 +64,7 @@ public class ScoreService implements ScoresApi {
     public Result updateUserScores(UserScoresRequest request) {
         Result result = null;
         String key = JEDIS_PREFIX_LOCK + String.valueOf(request.getUid());
+        //redisson lock
         RLock lock = RedisLockUtil.lock(key, TimeUnit.SECONDS, 10);
         try {
             final double changeScore = request.getChangeScores();
@@ -72,7 +76,8 @@ public class ScoreService implements ScoresApi {
             String localKey = uid + "=" + request.getOrderNo();
             UserScores userScores = scoresMapper.selectScoresById(uid);
             boolean b = localCache.orderIsExist(localKey);
-            if (b) return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1107, ResultConsts.ERR_1107_MSG);
+            if (b)
+                return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1107, ResultConsts.ERR_1107_MSG);
             if (userScores == null) {
                 //插入操作
                 if (INCOME != type)
@@ -130,11 +135,16 @@ public class ScoreService implements ScoresApi {
                 jedisCache.hdel(JEDIS_PREFIX, String.valueOf(uid));
                 log.info("uid = {} insert score log result={}", uid, var2 > 0);
             }
-        } catch (Exception e) {
+        } catch (ExecutionException e) {
             e.printStackTrace();
-            result = new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.SERVER_ERROR, ResultConsts.ERR_SERVER_MSG);
-            log.error("guava loading cache exception {}", e.getMessage());
+            result = ResultUtil.getServerErrorResult();
+            log.error("guava loading cache error msg = {}", e.getMessage());
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            result = ResultUtil.getServerErrorResult();
+            log.error("mybatis error msg = {}", e.getMessage());
         } finally {
+            //redisson unlock
             if (lock.isHeldByCurrentThread()) lock.forceUnlock();
         }
         return result;
