@@ -73,7 +73,8 @@ public class ScoreService implements ScoresApi {
             int var1 = 0;
             final int type = request.getType();
             double fromScores = 0.0;
-            String localKey = uid + "=" + request.getOrderNo();
+            //local cache key  uid=srcId+orderNo
+            String localKey = uid + "=" + request.getSrcId() + request.getOrderNo();
             UserScores userScores = scoresMapper.selectScoresById(uid);
             boolean b = localCache.orderIsExist(localKey);
             if (b)

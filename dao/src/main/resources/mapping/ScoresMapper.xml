@@ -19,7 +19,7 @@
       `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
       PRIMARY KEY (`id`),
       KEY(`src_id`),
-      KEY(`order_no`)
+      UNIQUE KEY `src_no_uk` (`order_no`,`src_id`) USING BTREE
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='积分日志表'
   </update>
 
