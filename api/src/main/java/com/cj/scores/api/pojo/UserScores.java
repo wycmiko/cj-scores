@@ -18,12 +18,12 @@ public class UserScores implements Serializable {
     private Long uid;
 
     @JsonProperty("total_scores")
-    private Double totalScores;
+    private Double totalScores = 0.0;
 
-    private Double scores;
+    private Double scores = 0.0;
 
     @JsonProperty("lock_scores")
-    private Double lockScores;
+    private Double lockScores = 0.0;
 
     private Boolean enabled;
     /**

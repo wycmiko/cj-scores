@@ -179,6 +179,25 @@ public class ScoreService implements ScoresApi {
             hget = scoresMapper.selectScoresById(uid);
             if (hget != null) {
                 jedisCache.hset(JEDIS_PREFIX, String.valueOf(uid), hget);
+            } else {
+                RLock lock = RedisLockUtil.lock(JEDIS_PREFIX + uid, TimeUnit.SECONDS, 10);
+                try {
+                    //insert one record
+                    UserScoresRequest request = new UserScoresRequest();
+                    request.setUid(uid);
+                    request.setEnabled(Boolean.TRUE);
+                    request.setProperties("{}");
+                    int var1 = scoresMapper.insertUserScores(request);
+                    if (var1 > 0) {
+                        hget = getUserScoreByUid(uid);
+                    } else {
+                        hget = new UserScores();
+                    }
+
+                } finally {
+                    if (lock.isHeldByCurrentThread()) lock.forceUnlock();
+                }
+
             }
         }
         return hget;
