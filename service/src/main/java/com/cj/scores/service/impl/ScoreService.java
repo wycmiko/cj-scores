@@ -190,10 +190,7 @@ public class ScoreService implements ScoresApi {
                     int var1 = scoresMapper.insertUserScores(request);
                     if (var1 > 0) {
                         hget = getUserScoreByUid(uid);
-                    } else {
-                        hget = new UserScores();
                     }
-
                 } finally {
                     if (lock.isHeldByCurrentThread()) lock.forceUnlock();
                 }
