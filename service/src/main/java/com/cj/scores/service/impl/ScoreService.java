@@ -1,5 +1,6 @@
 package com.cj.scores.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.cj.scores.api.ScoresApi;
 import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.consts.ScoreTypeEnum;
@@ -74,11 +75,11 @@ public class ScoreService implements ScoresApi {
             final int type = request.getType();
             double fromScores = 0.0;
             //local cache key  uid=srcId+orderNo
-            String localKey = uid + "=" + request.getSrcId() + request.getOrderNo();
+            String localKey = JSON.toJSONString(request);
             UserScores userScores = scoresMapper.selectScoresById(uid);
             boolean b = localCache.orderIsExist(localKey);
             if (b)
-                return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1107, ResultConsts.ERR_1107_MSG);
+                return new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_DATA, ResultConsts.ERR_1107_MSG);
             if (userScores == null) {
                 //插入操作
                 if (INCOME != type)
@@ -142,6 +143,8 @@ public class ScoreService implements ScoresApi {
             log.error("guava loading cache error msg = {}", e.getMessage());
         } catch (DataAccessException e) {
             e.printStackTrace();
+            //redisson unlock
+            if (lock.isHeldByCurrentThread()) lock.forceUnlock();
             result = ResultUtil.getServerErrorResult();
             log.error("mybatis error msg = {}", e.getMessage());
         } finally {

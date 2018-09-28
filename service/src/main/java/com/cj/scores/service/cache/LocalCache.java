@@ -1,6 +1,8 @@
 package com.cj.scores.service.cache;
 
+import com.alibaba.fastjson.JSON;
 import com.cj.scores.api.dto.UserScoreLogDto;
+import com.cj.scores.api.pojo.request.UserScoresRequest;
 import com.cj.scores.api.pojo.select.ScoreLogSelect;
 import com.cj.scores.dao.mapper.ScoresMapper;
 import com.cj.scores.service.util.ValidatorUtil;
@@ -39,11 +41,11 @@ public class LocalCache {
                 }
                 private Boolean getObjByKey(String key) {
                     ScoreLogSelect select = new ScoreLogSelect();
-                    long uid = Long.valueOf(key.split("=")[0]);
-                    String key2 = key.split("=")[1];
-                    select.setOrder_no(key2);
-                    select.setUid(uid);
-                    select.setTable(ValidatorUtil.getPaylogTableNameByUid(uid));
+                    UserScoresRequest request = JSON.parseObject(key, UserScoresRequest.class);
+                    select.setOrder_no(request.getOrderNo());
+                    select.setUid(request.getUid());
+                    select.setSrc_id(request.getSrcId());
+                    select.setTable(ValidatorUtil.getPaylogTableNameByUid(request.getUid()));
                     List<UserScoreLogDto> scoreLogDetail = scoresMapper.getScoreLogDetail(select);
                     return (scoreLogDetail != null && !scoreLogDetail.isEmpty()) ? true : false;
                 }
