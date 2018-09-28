@@ -223,6 +223,12 @@
         <if test="uid != null">
           and uid = #{uid}
         </if>
+        <if test="start_time != null">
+            and create_time >= #{start_time}
+        </if>
+        <if test="end_time != null">
+            and create_time &lt;= #{end_time}
+        </if>
         </where>
         <if test="sort_flag == null">
             order by create_time desc

@@ -10,12 +10,12 @@ spring:
     name: cj-scores
   datasource:
           name: dev
-          url: jdbc:mysql://127.0.0.1:3306/cj_scores?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
-          username: root
-          password: root
-#          url: jdbc:mysql://172.28.3.45:20010/cj_mall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
-#          username: cj_weng
-#          password: 123456
+#          url: jdbc:mysql://127.0.0.1:3306/cj_scores?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+#          username: root
+#          password: root
+          url: jdbc:mysql://172.28.3.45:20010/cj_point?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
+          username: cj_point
+          password: 123
 #          url: jdbc:mysql://47.100.222.71:3306/cj_mall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
 #          username: m_match
 #          password: YEMINHE2du0xYBna

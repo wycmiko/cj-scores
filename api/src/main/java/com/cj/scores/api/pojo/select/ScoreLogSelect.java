@@ -19,7 +19,7 @@ public class ScoreLogSelect implements Serializable {
     private String token;
     private Long uid;
     private int type;
-    private int src_id;
+    private Integer src_id;
     private Integer page_num;
     private Integer page_size;
     private String table;

@@ -22,4 +22,8 @@ public class ScoreSelect implements Serializable {
      * null = 默认创建时间倒序
      */
     private Integer sort_flag;
+
+    private String start_time;
+
+    private String end_time;
 }
