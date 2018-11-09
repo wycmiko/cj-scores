@@ -17,6 +17,7 @@ import com.cj.scores.api.pojo.select.ScoreSelect;
 public interface ScoresApi {
 
     String JEDIS_PREFIX = "cj_scores:user:";
+    String JEDIS_PREFIX_COUNT = "cj_scores:count:";
     String JEDIS_PREFIX_LOCK = JEDIS_PREFIX + "lock:";
     /**
      * score type：

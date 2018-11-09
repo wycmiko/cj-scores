@@ -92,7 +92,7 @@
 
 
     <insert id="insertScoresLog" parameterType="com.cj.scores.api.pojo.InsertScoresLog"
-     useGeneratedKeys="true" keyProperty="id">
+            useGeneratedKeys="true" keyProperty="id">
         insert into ${tableName}
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -197,6 +197,26 @@
         order by create_time desc
     </select>
 
+
+    <select id="getLogScoreCount" resultType="Double">
+        select
+        ifnull(sum(change_scores),0)
+        from ${table}
+        where type=#{type}
+    </select>
+
+    <select id="getUserCount" resultType="Long">
+        select
+        count(1)
+        from t_user_scores
+    </select>
+
+    <select id="getScoreCountNow" resultType="Double">
+        select
+        ifnull(sum(scores),0)
+        from t_user_scores
+    </select>
+
     <select id="getScoreLogDetailByid" parameterType="String"
             resultType="com.cj.scores.api.dto.UserScoreLogDto"
     >
@@ -220,15 +240,15 @@
         from t_user_scores
         <where>
             1=1
-        <if test="uid != null">
-          and uid = #{uid}
-        </if>
-        <if test="start_time != null">
-            and create_time >= #{start_time}
-        </if>
-        <if test="end_time != null">
-            and create_time &lt;= #{end_time}
-        </if>
+            <if test="uid != null">
+                and uid = #{uid}
+            </if>
+            <if test="start_time != null">
+                and create_time >= #{start_time}
+            </if>
+            <if test="end_time != null">
+                and create_time &lt;= #{end_time}
+            </if>
         </where>
         <if test="sort_flag == null">
             order by create_time desc
@@ -240,8 +260,6 @@
             order by scores asc
         </if>
     </select>
-
-
 
 
 </mapper>

@@ -2,6 +2,7 @@ package com.cj.scores.web;
 
 import com.cj.scores.dao.mapper.ScoresMapper;
 import com.cj.scores.service.cfg.JedisCache;
+import com.cj.scores.web.validator.TokenValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,4 +41,15 @@ public class WebApplicationTests {
             scoresMapper.createScoresLogTable(tableName);
         }
     }
+
+    @Autowired
+    private TokenValidator tokenValidator;
+
+    @Test
+    public void test3() throws Exception {
+        long uidByToken = tokenValidator.getUidByToken("eyJ0eXBlIjoiQ0oiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjai5jb20iLCJleHAiOjE1NDIxNzM2NDksIm5hbWUiOiIxODgwMDU2Nzk4NSIsInVpZCI6NDc2fQ.wixZJWDfAtfLXOE6DvR_R0sLSAEfoR5T6sQqcY2dBs0");
+        log.info("check token uid={} result={}", uidByToken, tokenValidator.checkToken("eyJ0eXBlIjoiQ0oiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjai5jb20iLCJleHAiOjE1NDIxNzM2NDksIm5hbWUiOiIxODgwMDU2Nzk4NSIsInVpZCI6NDc2fQ.wixZJWDfAtfLXOE6DvR_R0sLSAEfoR5T6sQqcY2dBs0"));
+
+    }
+
 }

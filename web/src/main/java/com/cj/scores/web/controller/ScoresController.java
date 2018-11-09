@@ -6,6 +6,7 @@ import com.cj.scores.api.pojo.Result;
 import com.cj.scores.api.pojo.request.UserScoresRequest;
 import com.cj.scores.api.pojo.select.ScoreLogSelect;
 import com.cj.scores.api.pojo.select.ScoreSelect;
+import com.cj.scores.service.impl.CountService;
 import com.cj.scores.service.impl.ScoreService;
 import com.cj.scores.service.util.ResultUtil;
 import com.cj.scores.web.validator.CommandValidator;
@@ -29,6 +30,8 @@ import javax.validation.Valid;
 public class ScoresController {
     @Autowired
     private ScoreService service;
+    @Autowired
+    private CountService countService;
     @Autowired
     private TokenValidator tokenValidator;
 
@@ -99,11 +102,29 @@ public class ScoresController {
     @GetMapping("/manage/getScoreLog")
     public Result getScoreLogByUidManage(ScoreLogSelect select) throws Exception {
         log.info("getScoreLogByUidManage");
-        if (CommandValidator.isEmpty(select.getUid())) {
+        if (CommandValidator.isEmpty(select.getUid()))
             return ResultUtil.paramNullResult();
-        }
         Result result = new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, service.getScoreLogList(select));
         return result;
+    }
+
+
+    /**
+     * 2018-11-7 new：
+     * 查询
+     * 1.获取总数量/消耗总数量/当前总数量
+     * 2.人平金币数量
+     */
+    @GetMapping("/manage/data/get")
+    public Result getData() throws Exception {
+        log.info("getData");
+        return new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, countService.getScoreCount());
+    }
+
+    @GetMapping("/manage/data/refresh")
+    public Result refreshData() throws Exception {
+        log.info("refreshData");
+        return new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_MSG, countService.refreshData());
     }
 
 
@@ -113,9 +134,8 @@ public class ScoresController {
     @GetMapping("/json/getScoreLogByUid")
     public Result getScoreLogByUid(ScoreLogSelect select) throws Exception {
         String token = select.getToken();
-        if (CommandValidator.isEmpty(token)) {
+        if (CommandValidator.isEmpty(token))
             return ResultUtil.paramNullResult();
-        }
         if (!tokenValidator.checkToken(token)) {
             log.info("getScoreLogByUid【Invaild token!】");
             return tokenValidator.invaildTokenFailedResult();

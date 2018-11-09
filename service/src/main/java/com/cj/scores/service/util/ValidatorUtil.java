@@ -90,7 +90,7 @@ public class ValidatorUtil {
         return tableName;
     }
 
-    //根据uid得到表名
+    //获取分表名
     public static String getPaylogTableName(int tableNum) {
         String prefix = "t_user_scores_log_";
         return prefix + String.format("%02d", tableNum+1);

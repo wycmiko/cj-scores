@@ -48,5 +48,22 @@ public interface ScoresMapper {
 
     UserScoreLogDto getScoreLogDetailByid(@Param("table") String table, @Param("id") String id, @Param("uid") Long uid);
 
+    /**
+     * 2018-11-6 new
+     * 统计 获取总数量/消耗总数量/当前总数量
+     */
+    double getLogScoreCount(@Param("table") String tableName, @Param("type") int type);
+
+    /**
+     * 当前积分总量
+     * @return
+     */
+    double getScoreCountNow();
+
+    /**
+     * 当前总用户数
+     */
+    long getUserCount();
+
 
 }
