@@ -52,7 +52,19 @@ spring:
         max-active: 1000
         max-wait: -1ms
     expire-time: 3600
-
+  rabbitmq:
+#      host: 127.0.0.1
+#      port: 5672
+#      username: guest
+#      password: guest
+      host: 172.28.3.45
+      port: 5672
+      username: test
+      password: test
+      listener:
+        simple:
+          acknowledge-mode: manual
+      publisher-confirms: true
 
 
 # server config

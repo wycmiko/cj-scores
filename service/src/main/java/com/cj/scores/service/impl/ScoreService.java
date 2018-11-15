@@ -6,16 +6,14 @@ import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.consts.ScoreTypeEnum;
 import com.cj.scores.api.consts.SrcEnum;
 import com.cj.scores.api.dto.UserScoreLogDto;
-import com.cj.scores.api.pojo.InsertScoresLog;
-import com.cj.scores.api.pojo.PagedList;
-import com.cj.scores.api.pojo.Result;
-import com.cj.scores.api.pojo.UserScores;
+import com.cj.scores.api.pojo.*;
 import com.cj.scores.api.pojo.request.UserScoresRequest;
 import com.cj.scores.api.pojo.select.ScoreLogSelect;
 import com.cj.scores.api.pojo.select.ScoreSelect;
 import com.cj.scores.dao.mapper.ScoresMapper;
 import com.cj.scores.service.cache.LocalCache;
 import com.cj.scores.service.cfg.JedisCache;
+import com.cj.scores.service.consume.TaskQueueClient;
 import com.cj.scores.service.util.RedisLockUtil;
 import com.cj.scores.service.util.ResultUtil;
 import com.cj.scores.service.util.ValidatorUtil;
@@ -52,6 +50,8 @@ public class ScoreService implements ScoresApi {
     private JedisCache jedisCache;
     @Autowired
     private LocalCache localCache;
+    @Autowired
+    private TaskQueueClient taskQueueClient;
 
     public Result updateUserScoresGrpc(@Valid UserScoresRequest request) {
         if (ValidatorUtil.isEmpty(request.getSrcId(), request.getType(), request.getChangeScores(), request.getUid(),
@@ -80,6 +80,15 @@ public class ScoreService implements ScoresApi {
             boolean b = localCache.orderIsExist(localKey);
             if (b)
                 return new Result(ResultConsts.REQUEST_SUCCEED_STATUS, ResultConsts.RESPONSE_SUCCEED_DATA, ResultConsts.ERR_1107_MSG);
+            if (type == INCOME) {
+                log.info("type=Income send Event Task ");
+                TaskEventMsgBody body = new TaskEventMsgBody();
+                body.setUid(uid);
+                body.setC((int) Math.round(changeScore));
+                body.setEvent(GET_GOLD_TASK);
+                body.setTs(System.currentTimeMillis());
+                taskQueueClient.sendEvent(body);
+            }
             if (userScores == null) {
                 //插入操作
                 if (INCOME != type)
@@ -90,35 +99,36 @@ public class ScoreService implements ScoresApi {
                 var1 = scoresMapper.insertUserScores(request);
             } else {
                 //更新操作
+                request.setTotalScores(userScores.getTotalScores().doubleValue());
                 switch (type) {
                     case INCOME:
                         //收入
-                        request.setTotalScores(userScores.getTotalScores() + changeScore);
-                        request.setScores(userScores.getScores() + changeScore);
+                        request.setTotalScores(userScores.getTotalScores().doubleValue() + changeScore);
+                        request.setScores(userScores.getScores().doubleValue() + changeScore);
                         break;
                     case UNLOCK_INCRE:
                         //解锁增
-                        if (changeScore > userScores.getLockScores())
+                        if (changeScore > userScores.getLockScores().doubleValue())
                             return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                        request.setLockScores(userScores.getLockScores() - changeScore);
-                        request.setScores(userScores.getScores() + changeScore);
+                        request.setLockScores(userScores.getLockScores().doubleValue() - changeScore);
+                        request.setScores(userScores.getScores().doubleValue() + changeScore);
                         break;
                     case UNLOCK_DECRE:
                         //解锁减
-                        if (changeScore > userScores.getLockScores())
+                        if (changeScore > userScores.getLockScores().doubleValue())
                             return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                        request.setLockScores(userScores.getLockScores() - changeScore);
+                        request.setLockScores(userScores.getLockScores().doubleValue() - changeScore);
                         break;
                     default:
                         //锁定或支出
-                        if (changeScore > userScores.getScores())
+                        if (changeScore > userScores.getScores().doubleValue())
                             return new Result(ResultConsts.REQUEST_FAILURE_STATUS, ResultConsts.ERR_1106, ResultConsts.SCORES_NOT_FULL_MSG);
-                        request.setScores(userScores.getScores() - changeScore);
-                        request.setLockScores(LOCK == type ? userScores.getLockScores() + changeScore : null);
+                        request.setScores(userScores.getScores().doubleValue() - changeScore);
+                        request.setLockScores(LOCK == type ? userScores.getLockScores().doubleValue() + changeScore : null);
                         break;
                 }
                 //得到起始分数
-                fromScores = userScores.getScores();
+                fromScores = userScores.getScores().doubleValue();
                 request.setVersion(userScores.getVersion());
                 var1 = scoresMapper.updateUserScores(request);
             }
@@ -129,7 +139,7 @@ public class ScoreService implements ScoresApi {
                 //如未冲突 则更新
                 Double nowScore = request.getScores();
                 InsertScoresLog log2 = this.setLogObjByScores(request);
-                log2.setScores(nowScore == null ? changeScore : nowScore);
+                log2.setScores(nowScore == null ? changeScore : nowScore.doubleValue());
                 log2.setFromScores(fromScores);
                 int var2 = scoresMapper.insertScoresLog(log2);
                 result.setData(log2.getId());

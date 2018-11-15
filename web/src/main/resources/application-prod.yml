@@ -10,12 +10,14 @@ spring:
           register: true
           serviceName: cj-scores
   rabbitmq:
-    host: ${MQ_HOST}
-    port: ${MQ_PORT}    #5672
-    username: ${MQ_USERNAME}  #test
-    password: ${MQ_PWD}  #test
-    publisher-confirms: true
-
+      host: ${MQ}
+      port: ${MQ_PORT}
+      username: ${MQ_USER}
+      password: ${MQ_PWD}
+      listener:
+        simple:
+          acknowledge-mode: manual
+      publisher-confirms: true
 # server config
 server:
   port: 8088

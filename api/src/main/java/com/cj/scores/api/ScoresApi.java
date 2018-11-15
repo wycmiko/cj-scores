@@ -15,7 +15,12 @@ import com.cj.scores.api.pojo.select.ScoreSelect;
  * @author yuchaunWeng
  */
 public interface ScoresApi {
-
+    //2018-11-15新增
+    /**
+     * 收入500分 完成任务
+     */
+    String GET_GOLD_TASK="get_gold";
+    //redis 前缀
     String JEDIS_PREFIX = "cj_scores:user:";
     String JEDIS_PREFIX_COUNT = "cj_scores:count:";
     String JEDIS_PREFIX_LOCK = JEDIS_PREFIX + "lock:";

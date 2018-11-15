@@ -45,6 +45,15 @@ spring:
         max-wait: -1ms
     expire-time: 3600
     password: ${REDIS_PWD}
+  rabbitmq:
+      host: ${MQ_HOST}
+      port: ${MQ_PORT}
+      username: ${MQ_USER}
+      password: ${MQ_PWD}
+      listener:
+        simple:
+          acknowledge-mode: manual
+      publisher-confirms: true
 
 
 # server config
