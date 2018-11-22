@@ -41,9 +41,9 @@ public class TestClient {
     public void testGprcUpdateScoreService() {
         UserScoreGrpc.UserScoreBlockingStub stub = UserScoreGrpc.newBlockingStub(channel);
         UserScoreGrpcRequest testGrpc = UserScoreGrpcRequest.newBuilder()
-                .setUid(477).setType(2).setChangeScores(200).setComment("test grpc")
+                .setUid(475).setType(1).setChangeScores(2000).setComment("test grpc")
                 .setSrcId(1)
-                .setOrderNo("12345616")
+                .setOrderNo("87845")
                 .build();
         GrpcResult response = stub.updateScore(testGrpc);
         log.info("result= {}", response.getData());
