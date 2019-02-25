@@ -41,9 +41,10 @@ public class TestClient {
     public void testGprcUpdateScoreService() {
         UserScoreGrpc.UserScoreBlockingStub stub = UserScoreGrpc.newBlockingStub(channel);
         UserScoreGrpcRequest testGrpc = UserScoreGrpcRequest.newBuilder()
-                .setUid(475).setType(1).setChangeScores(2000).setComment("test grpc")
+                .setUid(481).setType(1).setChangeScores(3000).setComment("test grpc")
                 .setSrcId(1)
-                .setOrderNo("87845")
+                .setOrderNo("87841141115")
+                .setComment("管理员代加-测试用")
                 .build();
         GrpcResult response = stub.updateScore(testGrpc);
         log.info("result= {}", response.getData());
@@ -53,7 +54,8 @@ public class TestClient {
 
 
     public static void main(String[] args) throws InterruptedException {
-        TestClient client = new TestClient("172.28.3.45", 9091);
+//        TestClient client = new TestClient("172.28.3.45", 9091);
+        TestClient client = new TestClient("172.28.3.9", 9091);
         client.testGprcUpdateScoreService();
     }
 

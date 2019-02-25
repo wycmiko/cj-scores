@@ -56,7 +56,7 @@ public class ScoreService implements ScoresApi {
     public Result updateUserScoresGrpc(@Valid UserScoresRequest request) {
         if (ValidatorUtil.isEmpty(request.getSrcId(), request.getType(), request.getChangeScores(), request.getUid(),
                 request.getOrderNo()) || StringUtils.isEmpty(request.getOrderNo())
-                || SrcEnum.getTypeName(request.getSrcId()) == null) {
+                || SrcEnum.getTypeName(request.getSrcId()) == null || request.getChangeScores().doubleValue() <= 0) {
             return ResultUtil.paramNullResult();
         }
         return updateUserScores(request);

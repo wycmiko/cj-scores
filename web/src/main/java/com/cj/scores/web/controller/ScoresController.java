@@ -41,7 +41,7 @@ public class ScoresController {
     @PostMapping("/json/updateUserScore")
     public Result updateUserScore(@Valid @RequestBody UserScoresRequest request, BindingResult result) throws Exception {
         if (result.hasErrors() || StringUtils.isEmpty(request.getToken())
-                || SrcEnum.getTypeName(request.getSrcId()) == null) {
+                || SrcEnum.getTypeName(request.getSrcId()) == null || request.getChangeScores() == null || request.getChangeScores().doubleValue() <= 0) {
             return ResultUtil.paramNullResult();
         }
         if (!tokenValidator.checkToken(request.getToken())) {
