@@ -1,7 +1,6 @@
 package com.cj.scores.api.consts;
 
 /**
- * @author yuchuanWeng()
  * @date 2018/4/23
  * @since 1.0
  */

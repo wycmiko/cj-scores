@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * 积分日志本地缓存
  *
- * @author yuchuanWeng
+ * @author
  * @date 2018/8/31
  * @since 1.0
  */

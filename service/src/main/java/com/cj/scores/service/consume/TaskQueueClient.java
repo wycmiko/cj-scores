@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * RabbitMQ - 消息队列生产者
  *
- * @author yuchuanWeng
+ * @author
  * @date 2018/9/17
  * @since 1.0
  */

@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 积分统计 服务层
  *
- * @author yuchuanWeng
  * @date 2018/11/7
  * @since 1.0
  */

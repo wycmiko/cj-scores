@@ -56,10 +56,8 @@
 	<build>
 		<resources>
 			<resource>
-				<!-- 标识配置文件所在的目录 -->
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
-				<!-- 构建时将这些配置文件全都排除掉 -->
 				<excludes>
 					<exclude>application.yml</exclude>
 					<exclude>application-dev.yml</exclude>
@@ -70,10 +68,8 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
-				<!-- 标识构建时所需要的配置文件 -->
 				<includes>
 					<include>application.yml</include>
-					<!-- ${profileActive}这个值会在maven构建时传入 -->
 					<include>application-${profileActive}.yml</include>
 				</includes>
 			</resource>

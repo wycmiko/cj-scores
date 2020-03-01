@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author yuchuanWeng
+ * @author
  * @date 2018/8/27
  * @since 1.0
  */

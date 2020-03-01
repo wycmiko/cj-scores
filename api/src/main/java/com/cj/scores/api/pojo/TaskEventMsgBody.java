@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * 消息队列消息体
  *
- * @author yuchuanWeng
  * @date 2018/9/17
  * @since 1.0
  */

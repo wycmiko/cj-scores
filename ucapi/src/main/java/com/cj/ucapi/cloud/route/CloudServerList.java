@@ -8,7 +8,7 @@ import com.netflix.loadbalancer.AbstractServerList;
 import java.util.List;
 
 /**
- * @author tangxd
+ * @author
  * @Description: TODO
  * @date 2017/12/8
  */

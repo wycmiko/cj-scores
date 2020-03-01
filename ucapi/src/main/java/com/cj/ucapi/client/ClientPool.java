@@ -6,7 +6,7 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 /**
  * <p>Create Time: 2018年03月22日</p>
- * <p>@author tangxd</p>
+ * <p>@author  </p>
  **/
 public class ClientPool {
 

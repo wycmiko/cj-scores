@@ -8,7 +8,7 @@ import com.netflix.loadbalancer.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author tangxd
+ * @author
  * @Description: TODO
  * @date 2017/12/8
  */

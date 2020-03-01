@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * grpc 对外服务
  *
- * @author yuchuanWeng
  * @date 2018/8/29
  * @since 1.0
  */

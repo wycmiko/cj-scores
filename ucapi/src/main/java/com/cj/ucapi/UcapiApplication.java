@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * <p>Create Time: 2018年03月22日</p>
- * <p>@author tangxd</p>
+ * <p>@author  </p>
  **/
 @SpringBootApplication
 public class UcapiApplication {

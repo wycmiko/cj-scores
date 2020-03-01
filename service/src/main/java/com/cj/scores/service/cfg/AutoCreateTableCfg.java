@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 /**
  * 启动时检查表是否创建
  *
- * @author yuchuanWeng
  * @date 2018/8/27
  * @since 1.0
  */

@@ -7,7 +7,7 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 
 /**
  * <p>Create Time: 2018年03月22日</p>
- * <p>@author tangxd</p>
+ * <p>@author  </p>
  **/
 public class ClientFactory extends BasePooledObjectFactory<IClient> {
     @Override

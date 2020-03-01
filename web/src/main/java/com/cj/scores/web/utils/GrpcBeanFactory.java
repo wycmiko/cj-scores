@@ -8,7 +8,6 @@ import com.cj.scores.web.grpc.UserScoreGrpcRequest;
 import java.util.Objects;
 
 /**
- * @author yuchuanWeng
  * @date 2018/8/29
  * @since 1.0
  */

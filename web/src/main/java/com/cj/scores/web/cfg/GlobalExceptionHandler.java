@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 全局异常处理
  *
- * @author yuchuanWeng( )
  * @date 2018/4/25
  * @since 1.0
  */

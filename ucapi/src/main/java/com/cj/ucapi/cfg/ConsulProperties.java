@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * <p>Create Time: 2018年03月22日</p>
- * <p>@author tangxd</p>
+ * <p>@author  </p>
  **/
 @Component
 @ConfigurationProperties(prefix = "spring.cloud.consul")

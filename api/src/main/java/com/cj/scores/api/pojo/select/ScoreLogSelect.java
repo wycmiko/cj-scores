@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 /**
  * 积分日志搜索对象
- * @author yuchuanWeng
  * @date 2018/8/27
  * @since 1.0
  */

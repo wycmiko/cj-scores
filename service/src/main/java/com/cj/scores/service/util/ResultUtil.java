@@ -4,7 +4,6 @@ import com.cj.scores.api.consts.ResultConsts;
 import com.cj.scores.api.pojo.Result;
 
 /**
- * @author yuchuanWeng
  * @date 2018/4/4
  * @since 1.0
  */

@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * @author yuchuanWeng
  * @date 2018/8/27
  * @since 1.0
  */

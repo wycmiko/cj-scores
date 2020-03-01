@@ -1,7 +1,7 @@
 package com.cj.scores.common.caching;
 
 /**
- * @author tangxd
+ * @author
  * @Description: TODO
  * @date 2017/10/27
  */

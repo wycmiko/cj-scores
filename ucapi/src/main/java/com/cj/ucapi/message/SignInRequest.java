@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * <p>Create Time: 2018年03月23日</p>
- * <p>@author tangxd</p>
+ * <p>@author  </p>
  **/
 @Data
 public class SignInRequest implements Serializable {

@@ -6,7 +6,6 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * @author yuchuanWeng
  * @date 2018/8/28
  * @since 1.0
  */

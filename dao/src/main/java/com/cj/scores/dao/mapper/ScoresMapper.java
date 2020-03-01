@@ -11,7 +11,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * @author yuchuanWeng
  * @date 2018/8/27
  * @since 1.0
  */

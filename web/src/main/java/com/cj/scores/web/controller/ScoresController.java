@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
- * @author yuchuanWeng
  * @date 2018/8/27
  * @since 1.0
  */

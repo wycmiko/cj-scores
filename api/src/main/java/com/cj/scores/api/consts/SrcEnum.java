@@ -4,7 +4,6 @@ import lombok.Getter;
 
 /**
  * 来源类型
- * @author yuchuanWeng
  * @date 2018/8/28
  * @since 1.0
  */

@@ -5,7 +5,6 @@ import lombok.Getter;
 /**
  * 积分收支类型
  *
- * @author yuchuanWeng
  * @date 2018/8/28
  * @since 1.0
  */

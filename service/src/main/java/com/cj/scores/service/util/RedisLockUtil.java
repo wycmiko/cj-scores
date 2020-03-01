@@ -6,7 +6,6 @@ import org.redisson.api.RLock;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author yuchuanWeng
  * @date 2018/9/17
  * @since 1.0
  */

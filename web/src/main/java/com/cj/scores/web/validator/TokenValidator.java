@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 /**
  * 校验请求Token
  *
- * @author yuchuanWeng( )
  * @date 2018/4/3
  * @since 1.0
  */

@@ -9,7 +9,6 @@ import java.io.Serializable;
 
 /**
  * 积分统计bean
- * @author yuchuanWeng
  * @date 2018/11/7
  * @since 1.0
  */
